@@ -1,9 +1,6 @@
 namespace SafriSoftv1._3.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<SafriSoftv1._3.Models.SafriSoftDbContext>
     {

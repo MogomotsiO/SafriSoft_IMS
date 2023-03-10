@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using SafriSoftv1._3.Models.Data;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using SafriSoftv1._3.Models.Data;
 
 namespace SafriSoftv1._3.Models
 {

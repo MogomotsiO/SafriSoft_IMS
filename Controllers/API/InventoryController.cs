@@ -1,31 +1,31 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using ExcelDataReader;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json.Linq;
 using SafriSoftv1._3.Models;
+using SafriSoftv1._3.Models.Data;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using SafriSoftv1._3.Models.Data;
-using System.Data.Entity;
-using System.IO;
-using System.Drawing;
-using System.Net.Mail;
-using ExcelDataReader;
 
 namespace SafriSoftv1._3.Controllers.API
 {
     [RoutePrefix("api/Inventory")]
     public class InventoryController : ApiController
     {
-        
+
         // GET: api/Inventory
         public IEnumerable<string> Get()
         {
@@ -39,12 +39,12 @@ namespace SafriSoftv1._3.Controllers.API
         }
 
         // POST: api/Inventory
-        public void Post([FromBody]string value)
+        public void Post([FromBody] string value)
         {
         }
 
         // PUT: api/Inventory/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 
@@ -118,7 +118,7 @@ namespace SafriSoftv1._3.Controllers.API
                         {
                             Users.RandValueSold = 0;
                         }
-                        
+
                         UserViewModel.Add(Users);
                     }
                     reader.NextResult();
@@ -203,9 +203,9 @@ namespace SafriSoftv1._3.Controllers.API
             }
             catch (Exception Ex)
             {
-                return Json(new { Success = false, Error = Ex.Message.ToString()});
+                return Json(new { Success = false, Error = Ex.Message.ToString() });
             }
-            
+
         }
 
         [HttpGet, Route("GetProducts/{Id}")]
@@ -225,7 +225,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database,Id, organisationId);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database, Id, organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -317,7 +317,7 @@ namespace SafriSoftv1._3.Controllers.API
 
             var product = SafriSoft.Products.FirstOrDefault(x => x.ProductReference == productReference || x.ProductCode == productCode);
 
-            if(product != null)
+            if (product != null)
             {
                 return BadRequest("Product already exists");
             }
@@ -329,8 +329,8 @@ namespace SafriSoftv1._3.Controllers.API
                     conn.Open();
                     var cmd = conn.CreateCommand();
                     cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[OrganisationId]) " +
-                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}')", 
-                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active",productCategory,productImage, productCode, organisationId);
+                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}')",
+                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active", productCategory, productImage, productCode, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                 }
@@ -340,7 +340,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 return BadRequest(Ex.ToString());
             }
-            
+
         }
 
         [HttpPost, Route("ProductUpdate")]
@@ -526,7 +526,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Customer] ([CustomerName],[CustomerEmail],[CustomerCell],[CustomerAddress],[DateCustomerCreated],[Status],[NumberOfOrders],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')", conn.Database, customerName, customerEmail, customerCell, customerAddress, dateCustomerCreated, "Active",1, organisationId);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Customer] ([CustomerName],[CustomerEmail],[CustomerCell],[CustomerAddress],[DateCustomerCreated],[Status],[NumberOfOrders],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')", conn.Database, customerName, customerEmail, customerCell, customerAddress, dateCustomerCreated, "Active", 1, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                 }
@@ -654,7 +654,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth] from [{0}].[dbo].[Orders] WHERE CustomerId = {1} ORDER BY OrderProgress ASC", conn.Database,id);
+                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth] from [{0}].[dbo].[Orders] WHERE CustomerId = {1} ORDER BY OrderProgress ASC", conn.Database, id);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -704,13 +704,13 @@ namespace SafriSoftv1._3.Controllers.API
 
             Random rnd = new Random();
 
-            string generateOrderId = "#0" ;
+            string generateOrderId = "#0";
 
-            for(int i = 0; i <= 9; i++)
+            for (int i = 0; i <= 9; i++)
             {
                 generateOrderId = generateOrderId + rnd.Next(1, 9).ToString();
             }
-            
+
             var product = SafriSoft.Products.Where(x => x.ProductReference == productReference).FirstOrDefault();
 
             if (product.ItemsAvailable == 0)
@@ -737,7 +737,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Orders] ([OrderId],[ProductName],[NumberOfItems],[CustomerId],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')", conn.Database, generateOrderId, productName, numberOfItems, customerId, customerName,"Processed",10,dateOrderCreated, expectedDateOfDelivery, organisationId);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Orders] ([OrderId],[ProductName],[NumberOfItems],[CustomerId],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')", conn.Database, generateOrderId, productName, numberOfItems, customerId, customerName, "Processed", 10, dateOrderCreated, expectedDateOfDelivery, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                     var auditCmd = conn.CreateCommand();
@@ -745,7 +745,7 @@ namespace SafriSoftv1._3.Controllers.API
                     await auditCmd.ExecuteNonQueryAsync();
 
                 }
-                if(orderWorth > 0)
+                if (orderWorth > 0)
                 {
                     var order = SafriSoft.Orders.First(x => x.OrderId == generateOrderId);
                     order.OrderWorth = Decimal.Parse(orderWorth.ToString());
@@ -754,8 +754,8 @@ namespace SafriSoftv1._3.Controllers.API
                     SafriSoft.SaveChanges();
                 }
                 var customerIdParse = int.Parse(customerId);
-                var customer = SafriSoft.Customers.FirstOrDefault(x=>x.Id == customerIdParse);
-                var downloadLink = "http://safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1,generateOrderId.Length - 1);
+                var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == customerIdParse);
+                var downloadLink = "http://safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1, generateOrderId.Length - 1);
                 var emailBody = "Hi " + customerName + ",<br/><br /> Your order has been created.<br/><br/> You will be notified when your order is Packaged, Intransit or Successfully delivered.<br /><br/> Download invoice here: " + downloadLink;
 
                 using (MailMessage mt = new MailMessage())
@@ -900,7 +900,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         customerCount = 0;
                     }
-                    
+
 
                     var stockSoldCmd = conn.CreateCommand();
                     stockSoldCmd.CommandText = string.Format("SELECT sum([ItemsSold]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -908,11 +908,11 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         stockSold = (Int32)stockSoldCmd.ExecuteScalar();
                     }
-                    catch(Exception Ex)
+                    catch (Exception Ex)
                     {
                         stockSold = 0;
                     }
-                    
+
 
                     var stockAvailableCmd = conn.CreateCommand();
                     stockAvailableCmd.CommandText = string.Format("SELECT sum([ItemsAvailable]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -924,7 +924,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         stockAvailable = 0;
                     }
-                    
+
 
                     var ordersProcessedCmd = conn.CreateCommand();
                     ordersProcessedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -936,7 +936,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         ordersProcessed = 0;
                     }
-                    
+
 
                     var ordersPackagedCmd = conn.CreateCommand();
                     ordersPackagedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -948,7 +948,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         ordersProcessed = 0;
                     }
-                    
+
 
                     var ordersInTransitCmd = conn.CreateCommand();
                     ordersInTransitCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -960,7 +960,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         ordersInTransit = 0;
                     }
-                    
+
 
                     var ordersDeliveredCmd = conn.CreateCommand();
                     ordersDeliveredCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -972,7 +972,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         ordersDelivered = 0;
                     }
-                    
+
 
                     var randValueSoldCmd = conn.CreateCommand();
                     randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] Where WHERE [OrderStatus] = 'Delivered' AND [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
@@ -984,7 +984,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         randValueSold = decimal.Parse("0");
                     }
-                    
+
 
                 }
                 return Json(new { Success = true, Customers = customerCount, StockSold = stockSold, StockAvailable = stockAvailable, OrdersProcessed = ordersProcessed, OrdersPackaged = ordersPackaged, OrdersInTransit = ordersInTransit, OrdersDelivered = ordersDelivered, RandValueSold = randValueSold });
@@ -1077,7 +1077,7 @@ namespace SafriSoftv1._3.Controllers.API
                         {
                             while (repliesReader.Read())
                             {
-                                InboxMessages.Replies.Add(new InboxReplies {Body = repliesReader.GetString(1), MessageId = repliesReader.GetInt32(5), DateCreated = repliesReader.GetDateTime(6)});
+                                InboxMessages.Replies.Add(new InboxReplies { Body = repliesReader.GetString(1), MessageId = repliesReader.GetInt32(5), DateCreated = repliesReader.GetDateTime(6) });
                             }
                             repliesReader.NextResult();
                             repliesReader.Close();
@@ -1101,7 +1101,7 @@ namespace SafriSoftv1._3.Controllers.API
 
             try
             {
-                SafriSoft.InboxMessages.Add(new InboxMessages {From = userId, To = MessageData.To, Body = MessageData.Body, Status = "Created", DateCreated = DateTime.Now });
+                SafriSoft.InboxMessages.Add(new InboxMessages { From = userId, To = MessageData.To, Body = MessageData.Body, Status = "Created", DateCreated = DateTime.Now });
                 SafriSoft.SaveChanges();
                 return Json(new { Success = true, Id = MessageData.To });
             }
@@ -1124,7 +1124,7 @@ namespace SafriSoftv1._3.Controllers.API
                 var Message = SafriSoft.InboxMessages.First(x => x.Id == MessageData.Id);
                 Message.Status = MessageData.Status;
                 SafriSoft.SaveChanges();
-                return Json(new { Success = true, UserToId = Message.From});
+                return Json(new { Success = true, UserToId = Message.From });
             }
             catch (Exception Ex)
             {
@@ -1336,13 +1336,13 @@ namespace SafriSoftv1._3.Controllers.API
                     orgConn.Open();
 
                     var orderCmd = conn.CreateCommand();
-                    orderCmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerId],[OrderWorth],[ShippingCost],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrderId = '{1}'", conn.Database,OrderData.OrderId);
-                    
+                    orderCmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerId],[OrderWorth],[ShippingCost],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrderId = '{1}'", conn.Database, OrderData.OrderId);
+
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            InvoiceDetails.OrganisationName = reader.GetString(1); 
+                            InvoiceDetails.OrganisationName = reader.GetString(1);
                             InvoiceDetails.OrganisationEmail = reader.GetString(2) != null ? reader.GetString(2) : "";
                             InvoiceDetails.OrganisationCell = reader.GetString(3) != null ? reader.GetString(3) : "";
                             InvoiceDetails.OrganisationLogo = reader.GetString(4);
@@ -1442,7 +1442,7 @@ namespace SafriSoftv1._3.Controllers.API
 
             //if (excelReader.re)
             var fieldCount = excelReader.FieldCount;
-        
+
             while (excelReader.Read())
             {
                 string productCode = excelReader.GetString(0);
@@ -1468,13 +1468,13 @@ namespace SafriSoftv1._3.Controllers.API
                         conn.Close();
                     }
                 }
-                               
+
 
             }
 
             excelReader.Close();
 
-            return Json(new { Success = true});
+            return Json(new { Success = true });
         }
 
         public static Bitmap Base64StringToBitmap(string base64String)

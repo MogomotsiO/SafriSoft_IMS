@@ -1,14 +1,10 @@
-﻿using OfficeOpenXml;
-using Rotativa;
+﻿using Rotativa;
 using SafriSoftv1._3.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace SafriSoft.Controllers
@@ -44,7 +40,7 @@ namespace SafriSoft.Controllers
         {
             return View();
         }
-        
+
         public ActionResult CustomerInvoice(string Id)
         {
             ViewBag.Title = Id;
@@ -64,7 +60,7 @@ namespace SafriSoft.Controllers
                     cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations]", conn.Database);
 
                     var orderCmd = conn.CreateCommand();
-                    orderCmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerId],[OrderWorth],[ShippingCost],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrderId = '{1}'", conn.Database, "#"+ Id);
+                    orderCmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerId],[OrderWorth],[ShippingCost],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrderId = '{1}'", conn.Database, "#" + Id);
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -134,11 +130,11 @@ namespace SafriSoft.Controllers
 
                     InvoiceViewModel.Add(InvoiceDetails);
                 }
-                
+
             }
             catch (Exception Ex)
             {
-                
+
             }
 
             return View(InvoiceDetails);
