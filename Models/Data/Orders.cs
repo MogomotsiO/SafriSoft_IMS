@@ -23,5 +23,6 @@ namespace SafriSoftv1._3.Models.Data
         public decimal? OrderWorth { get; set; }
         public decimal? ShippingCost { get; set; }
         public string UserId { get; set; }
+        public int OrganisationId { get; set; }
     }
 }

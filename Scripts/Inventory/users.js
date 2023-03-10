@@ -109,6 +109,8 @@ $('#final-create').on('click', function () {
 
 });
 
+var globalOrganisationId;
+
 function editOrganisation() {
     $('#img-source').hide();
     $('#img-filename').hide();
@@ -120,21 +122,22 @@ function editOrganisation() {
     }).done(function (data) {
         $('.input-group').addClass('is-filled');
         $('#update-organisation-modal').modal('show');
-        $('#organisation-name').val(data[0].OrganisationName);
-        $('#organisation-email').val(data[0].OrganisationEmail);
-        $('#organisation-cell').val(data[0].OrganisationCell);
-        $('#organisation-street').val(data[0].OrganisationStreet);
-        $('#organisation-suburb').val(data[0].OrganisationSuburb);
-        $('#organisation-city').val(data[0].OrganisationCity);
-        $('#organisation-code').val(data[0].OrganisationCode);
-        $('#account-name').val(data[0].AccountName);
-        $('#account-no').val(data[0].AccountNo);
-        $('#bank-name').val(data[0].BankName);
-        $('#branch-name').val(data[0].BranchName);
-        $('#branch-code').val(data[0].BranchCode);
-        $('#clients-reference').val(data[0].ClientReference);
-        $('#vat-number').val(data[0].VATNumber);
-        $('#logo').attr('src', data[0].OrganisationLogo);
+        $('#organisation-name').val(data.OrganisationName);
+        $('#organisation-email').val(data.OrganisationEmail);
+        $('#organisation-cell').val(data.OrganisationCell);
+        $('#organisation-street').val(data.OrganisationStreet);
+        $('#organisation-suburb').val(data.OrganisationSuburb);
+        $('#organisation-city').val(data.OrganisationCity);
+        $('#organisation-code').val(data.OrganisationCode);
+        $('#account-name').val(data.AccountName);
+        $('#account-no').val(data.AccountNo);
+        $('#bank-name').val(data.BankName);
+        $('#branch-name').val(data.BranchName);
+        $('#branch-code').val(data.BranchCode);
+        $('#clients-reference').val(data.ClientReference);
+        $('#vat-number').val(data.VATNumber);
+        $('#logo').attr('src', data.OrganisationLogo);
+        globalOrganisationId = data.OrganisationId;
     });
 
 }
@@ -158,7 +161,7 @@ function finalUpdateOrganisation() {
     var OrganisationLogo = $('#img-source').val();
     
     var organisation = {
-        'OrganisationId': 1,
+        'OrganisationId': globalOrganisationId,
         'OrganisationName': OrganisationName != "" ? OrganisationName : "Change",
         'OrganisationEmail': OrganisationEmail != "" ? OrganisationEmail : "Change",
         'OrganisationCell': OrganisationCell != "" ? OrganisationCell : "Change",
@@ -176,7 +179,7 @@ function finalUpdateOrganisation() {
         'VATNumber': VATNumber,
         'ImgLogoSource': "Change",
     }
-    
+    debugger;
     $.ajax({
         url: '/api/Inventory/SaveOrganisationDetails',
         method: 'POST',

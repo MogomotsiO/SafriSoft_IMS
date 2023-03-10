@@ -57,7 +57,7 @@ namespace SafriSoftv1._3.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.ReturnUrl = "/Rental/Index";
+            ViewBag.ReturnUrl = "/Inventory/Index";
             return View();
         }
 
@@ -98,7 +98,7 @@ namespace SafriSoftv1._3.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal("/Rental/Index");
+                    return RedirectToLocal("/Inventory/Index");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:

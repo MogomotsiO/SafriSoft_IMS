@@ -17,5 +17,6 @@ namespace SafriSoftv1._3.Models.Data
         public string DateCustomerCreated { get; set; }
         public int NumberOfOrders { get; set; }
         public string Status { get; set; }
+        public int OrganisationId { get; set; }
     }
 }

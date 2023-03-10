@@ -26,6 +26,9 @@ namespace SafriSoftv1._3.Models.Data
         public string ClientReference { get; set; }
         public int VATNumber { get; set; }
         public string ImgLogoSource { get; set; }
+        public int PackageId { get; set; }
+        public string OrganisationProvince { get; set; }
+        public string SelectedSoftwares { get; set; }
 
     }
 }

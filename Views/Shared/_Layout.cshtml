@@ -4,31 +4,37 @@
 @using System.Linq;
 @{
 
+    var username = "";
+    var userRole = "";
+    var organisation = "";
+    var userEmail = "";
+
     string userId = IdentityExtensions.GetUserId(User.Identity);
     if (userId == "" || userId == null)
     {
         Response.Redirect("~/Account/Login");
     }
-    var username = "";
-    var userRole = "";
-    var organisation = "";
-    var userEmail = "";
-    try
+    else
     {
-        ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-        var user = string.IsNullOrEmpty(userId) ? null : userManager.FindByIdAsync(userId).Result ?? null;
-        userEmail = user.Email;
-        var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
-        organisation = organisationClaim.Value;
-        var usernameClaim = userManager.GetClaims(userId).First(x => x.Type == "Username");
-        username = usernameClaim.Value;
-        userRole = userManager.GetRoles(userId).First();
+
+        try
+        {
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var user = string.IsNullOrEmpty(userId) ? null : userManager.FindByIdAsync(userId).Result ?? null;
+            userEmail = user.Email;
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            organisation = organisationClaim.Value;
+            var usernameClaim = userManager.GetClaims(userId).First(x => x.Type == "Username");
+            username = usernameClaim.Value;
+            userRole = userManager.GetRoles(userId).First();
+        }
+        catch (Exception Ex)
+        {
+            Response.Redirect("~/Account/Login");
+        }
     }
-    catch (Exception Ex)
-    {
-        Response.Redirect("~/Account/Login");
-    }
-    
+
+
 }
 <!DOCTYPE html>
 <html class="perfect-scrollbar-on">
@@ -63,7 +69,7 @@
     <link href="../../assets/css/style.css" rel="stylesheet">-->
 
 </head>
-<body class="hold-transition sidebar-mini pace-info">
+<body class="hold-transition sidebar-mini pace-info sidebar-collapse">
     <div class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-info navbar-info bg-light">

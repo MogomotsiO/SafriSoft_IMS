@@ -212,18 +212,20 @@ namespace SafriSoftv1._3.Controllers.API
         public async Task<IHttpActionResult> GetProducts(int Id)
         {
             SafriSoftDbContext SafriSoftDb = new SafriSoftDbContext();
+
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             string userId = IdentityExtensions.GetUserId(User.Identity);
             var ProductViewModel = new List<ProductViewModel>();
             var countUsers = 0;
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Id = {1}", conn.Database,Id);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database,Id, organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -260,12 +262,13 @@ namespace SafriSoftv1._3.Controllers.API
             var countUsers = 0;
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Status = '{1}'", conn.Database, "Active");
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -306,6 +309,12 @@ namespace SafriSoftv1._3.Controllers.API
 
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
 
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            string userId = IdentityExtensions.GetUserId(User.Identity);
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
+
             var product = SafriSoft.Products.FirstOrDefault(x => x.ProductReference == productReference || x.ProductCode == productCode);
 
             if(product != null)
@@ -319,7 +328,9 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}')", conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active",productCategory,productImage, productCode);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[OrganisationId]) " +
+                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}')", 
+                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active",productCategory,productImage, productCode, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                 }
@@ -415,12 +426,13 @@ namespace SafriSoftv1._3.Controllers.API
             var countUsers = 0;
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[CustomerName],[CustomerEmail],[CustomerCell],[CustomerAddress],[DateCustomerCreated],[NumberOfOrders] from [{0}].[dbo].[Customer] where Status = '{1}'", conn.Database, "Active");
+                cmd.CommandText = string.Format("SELECT [Id],[CustomerName],[CustomerEmail],[CustomerCell],[CustomerAddress],[DateCustomerCreated],[NumberOfOrders] from [{0}].[dbo].[Customer] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -496,6 +508,12 @@ namespace SafriSoftv1._3.Controllers.API
         [HttpPost, Route("CustomerCreate")]
         public async Task<IHttpActionResult> CustomerCreate(CustomerViewModel CustomerData)
         {
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            string userId = IdentityExtensions.GetUserId(User.Identity);
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
+
             var customerName = CustomerData.CustomerName;
             var customerEmail = CustomerData.CustomerEmail;
             var customerAddress = CustomerData.CustomerAddress;
@@ -508,7 +526,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Customer] ([CustomerName],[CustomerEmail],[CustomerCell],[CustomerAddress],[DateCustomerCreated],[Status],[NumberOfOrders]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}')", conn.Database, customerName, customerEmail, customerCell, customerAddress, dateCustomerCreated, "Active",1);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Customer] ([CustomerName],[CustomerEmail],[CustomerCell],[CustomerAddress],[DateCustomerCreated],[Status],[NumberOfOrders],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')", conn.Database, customerName, customerEmail, customerCell, customerAddress, dateCustomerCreated, "Active",1, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                 }
@@ -588,12 +606,13 @@ namespace SafriSoftv1._3.Controllers.API
             var countUsers = 0;
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth],[ShippingCost] from [{0}].[dbo].[Orders] where Status = '{1}' ORDER BY OrderProgress ASC", conn.Database, "Active");
+                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth],[ShippingCost] from [{0}].[dbo].[Orders] where Status = '{1}' AND OrganisationId = '{2}' ORDER BY OrderProgress ASC", conn.Database, "Active", organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -667,7 +686,12 @@ namespace SafriSoftv1._3.Controllers.API
         {
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             string userId = IdentityExtensions.GetUserId(User.Identity);
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
+
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
+
             var customerId = OrderData.CustomerId;
             var customerName = OrderData.CustomerName;
             var productName = OrderData.ProductName;
@@ -713,7 +737,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Orders] ([OrderId],[ProductName],[NumberOfItems],[CustomerId],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}')", conn.Database, generateOrderId, productName, numberOfItems, customerId, customerName,"Processed",10,dateOrderCreated, expectedDateOfDelivery);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Orders] ([OrderId],[ProductName],[NumberOfItems],[CustomerId],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')", conn.Database, generateOrderId, productName, numberOfItems, customerId, customerName,"Processed",10,dateOrderCreated, expectedDateOfDelivery, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                     var auditCmd = conn.CreateCommand();
@@ -846,6 +870,12 @@ namespace SafriSoftv1._3.Controllers.API
         [HttpGet, Route("Home")]
         public IHttpActionResult Home()
         {
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            string userId = IdentityExtensions.GetUserId(User.Identity);
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
+
             var customerCount = 0;
             var stockSold = 0;
             var stockAvailable = 0;
@@ -861,7 +891,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var customerCountCmd = conn.CreateCommand();
-                    customerCountCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Customer] WHERE [Status] == 'Active'", conn.Database);
+                    customerCountCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Customer] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         customerCount = (Int32)customerCountCmd.ExecuteScalar();
@@ -873,7 +903,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var stockSoldCmd = conn.CreateCommand();
-                    stockSoldCmd.CommandText = string.Format("SELECT sum([ItemsSold]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active'", conn.Database);
+                    stockSoldCmd.CommandText = string.Format("SELECT sum([ItemsSold]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         stockSold = (Int32)stockSoldCmd.ExecuteScalar();
@@ -885,7 +915,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var stockAvailableCmd = conn.CreateCommand();
-                    stockAvailableCmd.CommandText = string.Format("SELECT sum([ItemsAvailable]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active'", conn.Database);
+                    stockAvailableCmd.CommandText = string.Format("SELECT sum([ItemsAvailable]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         stockAvailable = (Int32)stockAvailableCmd.ExecuteScalar();
@@ -897,7 +927,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var ordersProcessedCmd = conn.CreateCommand();
-                    ordersProcessedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed'", conn.Database);
+                    ordersProcessedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         ordersProcessed = (Int32)ordersProcessedCmd.ExecuteScalar();
@@ -909,7 +939,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var ordersPackagedCmd = conn.CreateCommand();
-                    ordersPackagedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged'", conn.Database);
+                    ordersPackagedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         ordersPackaged = (Int32)ordersPackagedCmd.ExecuteScalar();
@@ -921,7 +951,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var ordersInTransitCmd = conn.CreateCommand();
-                    ordersInTransitCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit'", conn.Database);
+                    ordersInTransitCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         ordersInTransit = (Int32)ordersInTransitCmd.ExecuteScalar();
@@ -933,7 +963,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var ordersDeliveredCmd = conn.CreateCommand();
-                    ordersDeliveredCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered'", conn.Database);
+                    ordersDeliveredCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         ordersDelivered = (Int32)ordersDeliveredCmd.ExecuteScalar();
@@ -945,7 +975,7 @@ namespace SafriSoftv1._3.Controllers.API
                     
 
                     var randValueSoldCmd = conn.CreateCommand();
-                    randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] Where WHERE [OrderStatus] = 'Delivered' && [Status] = 'Active'", conn.Database);
+                    randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] Where WHERE [OrderStatus] = 'Delivered' AND [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         randValueSold = (Decimal)randValueSoldCmd.ExecuteScalar();
@@ -1193,41 +1223,67 @@ namespace SafriSoftv1._3.Controllers.API
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
 
-            using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
-            {
-                conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations]", conn.Database);
+            ApplicationDbContext SafriSoftAppDb = new ApplicationDbContext();
 
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var OrganisationDetails = new OrganisationViewModel();
-                        OrganisationDetails.OrganisationId      = reader.GetInt32(0);
-                        OrganisationDetails.OrganisationName    = reader.GetString(1);
-                        OrganisationDetails.OrganisationEmail   = reader.GetString(2) != null ? reader.GetString(2) : "";
-                        OrganisationDetails.OrganisationCell    = reader.GetString(3) != null ? reader.GetString(3) : "";
-                        OrganisationDetails.OrganisationLogo    = reader.GetString(4);
-                        OrganisationDetails.OrganisationStreet  = reader.GetString(5);
-                        OrganisationDetails.OrganisationSuburb  = reader.GetString(6);
-                        OrganisationDetails.OrganisationCity    = reader.GetString(7);
-                        OrganisationDetails.OrganisationCode    = reader.GetInt32(8);
-                        OrganisationDetails.AccountName         = reader.GetString(9);
-                        OrganisationDetails.AccountNo           = reader.GetInt32(10);
-                        OrganisationDetails.BankName            = reader.GetString(11);
-                        OrganisationDetails.BranchName          = reader.GetString(12);
-                        OrganisationDetails.BranchCode          = reader.GetString(13);
-                        OrganisationDetails.ClientReference     = reader.GetString(14);
-                        OrganisationDetails.VATNumber           = reader.GetInt32(15);
-                        OrganisationViewModel.Add(OrganisationDetails);
-                    }
-                    reader.NextResult();
-                    reader.Close();
-                }
+            var getOrganisation = SafriSoftAppDb.Organisations.FirstOrDefault(x => x.OrganisationName == getOrgClaim);
 
-                return Json(OrganisationViewModel);
-            }
+            //var OrganisationDetails = new OrganisationViewModel();
+
+            //OrganisationDetails.OrganisationId = getOrganisation.OrganisationId;
+            //OrganisationDetails.OrganisationName = getOrganisation.OrganisationName;
+            //OrganisationDetails.OrganisationEmail = getOrganisation.OrganisationEmail;
+            //OrganisationDetails.OrganisationCell = getOrganisation.OrganisationCell;
+            //OrganisationDetails.OrganisationLogo = getOrganisation.OrganisationLogo;
+            //OrganisationDetails.OrganisationStreet = getOrganisation.OrganisationStreet;
+            //OrganisationDetails.OrganisationSuburb = getOrganisation.OrganisationSuburb;
+            //OrganisationDetails.OrganisationCity = getOrganisation.OrganisationCity;
+            //OrganisationDetails.OrganisationCode = getOrganisation.OrganisationCode;
+            //OrganisationDetails.AccountName = "";
+            //OrganisationDetails.AccountNo = 0;
+            //OrganisationDetails.BankName = "";
+            //OrganisationDetails.BranchName = "";
+            //OrganisationDetails.BranchCode = "";
+            //OrganisationDetails.ClientReference = "";
+            //OrganisationDetails.VATNumber = 0;
+            //OrganisationViewModel.Add(OrganisationDetails);
+
+            return Json(getOrganisation);
+
+            //using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString()))
+            //{
+            //    conn.Open();
+            //    var cmd = conn.CreateCommand();
+            //    cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations] WHERE [OrganisationName] = '{1}'", conn.Database, getOrgClaim);
+
+            //    using (var reader = cmd.ExecuteReader())
+            //    {
+            //        while (reader.Read())
+            //        {
+            //            var OrganisationDetails = new OrganisationViewModel();
+            //            OrganisationDetails.OrganisationId      = reader.GetInt32(0);
+            //            OrganisationDetails.OrganisationName    = reader.GetString(1);
+            //            OrganisationDetails.OrganisationEmail   = reader.GetString(2) != null ? reader.GetString(2) : "";
+            //            OrganisationDetails.OrganisationCell    = reader.GetString(3) != null ? reader.GetString(3) : "";
+            //            OrganisationDetails.OrganisationLogo    = reader.GetString(4);
+            //            OrganisationDetails.OrganisationStreet  = reader.GetString(5);
+            //            OrganisationDetails.OrganisationSuburb  = reader.GetString(6);
+            //            OrganisationDetails.OrganisationCity    = reader.GetString(7);
+            //            OrganisationDetails.OrganisationCode    = reader.GetInt32(8);
+            //            OrganisationDetails.AccountName         = reader.GetString(9);
+            //            OrganisationDetails.AccountNo           = reader.GetInt32(10);
+            //            OrganisationDetails.BankName            = reader.GetString(11);
+            //            OrganisationDetails.BranchName          = reader.GetString(12);
+            //            OrganisationDetails.BranchCode          = reader.GetString(13);
+            //            OrganisationDetails.ClientReference     = reader.GetString(14);
+            //            OrganisationDetails.VATNumber           = reader.GetInt32(15);
+            //            OrganisationViewModel.Add(OrganisationDetails);
+            //        }
+            //        reader.NextResult();
+            //        reader.Close();
+            //    }
+
+            //    return Json(OrganisationViewModel);
+            //}
         }
 
         [HttpPost, Route("SaveOrganisationDetails")]
@@ -1236,24 +1292,15 @@ namespace SafriSoftv1._3.Controllers.API
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             string userId = IdentityExtensions.GetUserId(User.Identity);
             var OrganisationViewModel = new List<OrganisationViewModel>();
-            var countUsers = 0;
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
-            SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
+            ApplicationDbContext SafriSoft = new ApplicationDbContext();
 
             try
             {
-                try
-                {
-                    SafriSoft.Entry(Organisation).State = EntityState.Modified;
-                    SafriSoft.SaveChanges();
-                }
-                catch (Exception Ex)
-                {
-                    SafriSoft.Organisations.Add(Organisation);
-                    SafriSoft.SaveChanges();
-                }
-                
+                SafriSoft.Entry(Organisation).State = EntityState.Modified;
+                SafriSoft.SaveChanges();
+
                 return Json(new { Success = true });
             }
             catch (Exception Ex)
@@ -1265,6 +1312,11 @@ namespace SafriSoftv1._3.Controllers.API
         [HttpPost, Route("GetInvoiceData")]
         public async Task<IHttpActionResult> GetInvoiceData(OrderViewModel OrderData)
         {
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            string userId = IdentityExtensions.GetUserId(User.Identity);
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
             var InvoiceViewModel = new List<InvoiceViewModel>();
             var OrganisationViewModel = new List<OrganisationViewModel>();
@@ -1277,8 +1329,11 @@ namespace SafriSoftv1._3.Controllers.API
                 using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
                 {
                     conn.Open();
-                    var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations]", conn.Database);
+
+                    var orgConn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString());
+                    var cmd = orgConn.CreateCommand();
+                    cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations] WHERE [OrganisationName] = '{1}'", orgConn.Database, getOrgClaim);
+                    orgConn.Open();
 
                     var orderCmd = conn.CreateCommand();
                     orderCmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerId],[OrderWorth],[ShippingCost],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrderId = '{1}'", conn.Database,OrderData.OrderId);
@@ -1287,7 +1342,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         while (reader.Read())
                         {
-                            InvoiceDetails.OrganisationName = reader.GetString(1);
+                            InvoiceDetails.OrganisationName = reader.GetString(1); 
                             InvoiceDetails.OrganisationEmail = reader.GetString(2) != null ? reader.GetString(2) : "";
                             InvoiceDetails.OrganisationCell = reader.GetString(3) != null ? reader.GetString(3) : "";
                             InvoiceDetails.OrganisationLogo = reader.GetString(4);
@@ -1306,6 +1361,8 @@ namespace SafriSoftv1._3.Controllers.API
                         reader.NextResult();
                         reader.Close();
                     }
+
+                    orgConn.Close();
 
                     using (var reader = orderCmd.ExecuteReader())
                     {
@@ -1340,7 +1397,7 @@ namespace SafriSoftv1._3.Controllers.API
                     }
 
                     // Totals
-                    InvoiceDetails.VatAmount = InvoiceDetails.OrderWorth * decimal.Parse("0.15");
+                    InvoiceDetails.VatAmount = InvoiceDetails.OrderWorth * (decimal)0.15;
                     InvoiceDetails.InvoiceTotal = InvoiceDetails.OrderWorth + InvoiceDetails.VatAmount + InvoiceDetails.ShippingCost;
 
                     InvoiceViewModel.Add(InvoiceDetails);
@@ -1436,6 +1493,21 @@ namespace SafriSoftv1._3.Controllers.API
             byteBuffer = null;
 
             return bmpReturn;
+        }
+
+        public int GetOrganisationId(string organisationName)
+        {
+            int organisationId = 0;
+
+            using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString()))
+            {
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format("SELECT [OrganisationId] from [{0}].[dbo].[Organisations] where OrganisationName = '{1}'", conn.Database, organisationName);
+                organisationId = (int)cmd.ExecuteScalar();
+            }
+
+            return organisationId;
         }
 
     }

@@ -20,13 +20,6 @@ namespace SafriSoftv1._3.Models
         public virtual DbSet<InboxMessages> InboxMessages { get; set; }
         public virtual DbSet<InboxReplies> InboxReplies { get; set; }
         public virtual DbSet<OrderAudit> OrderAudit { get; set; }
-        public virtual DbSet<Organisations> Organisations { get; set; }
-        public virtual DbSet<Tenant> Tenants { get; set; }
-        public virtual DbSet<NOK> NOKs { get; set; }
-        public virtual DbSet<Document> Documents { get; set; }
-        public virtual DbSet<Unit> Units { get; set; }
-        public virtual DbSet<Assigned> Assigned { get; set; }
-        public virtual DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

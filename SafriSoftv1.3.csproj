@@ -203,43 +203,26 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\InventoryController.cs" />
-    <Compile Include="Controllers\API\RentalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\RentalController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202201301132051_safrisoft.cs" />
-    <Compile Include="Migrations\202201301132051_safrisoft.Designer.cs">
-      <DependentUpon>202201301132051_safrisoft.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202202012045028_safriapplication.cs" />
-    <Compile Include="Migrations\202202012045028_safriapplication.Designer.cs">
-      <DependentUpon>202202012045028_safriapplication.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202202012052127_safridbcontext.cs" />
-    <Compile Include="Migrations\202202012052127_safridbcontext.Designer.cs">
-      <DependentUpon>202202012052127_safridbcontext.cs</DependentUpon>
+    <Compile Include="Migrations\202303081652596_SafriSoftDbContext_IMS.cs" />
+    <Compile Include="Migrations\202303081652596_SafriSoftDbContext_IMS.Designer.cs">
+      <DependentUpon>202303081652596_SafriSoftDbContext_IMS.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustomerViewModel.cs" />
-    <Compile Include="Models\Data\Assigned.cs" />
     <Compile Include="Models\Data\Customer.cs" />
-    <Compile Include="Models\Data\Document.cs" />
     <Compile Include="Models\Data\InboxMessages.cs" />
     <Compile Include="Models\Data\InboxReplies.cs" />
-    <Compile Include="Models\Data\NOK.cs" />
     <Compile Include="Models\Data\OrderAudit.cs" />
     <Compile Include="Models\Data\Orders.cs" />
     <Compile Include="Models\Data\Organisations.cs" />
     <Compile Include="Models\Data\Product.cs" />
-    <Compile Include="Models\Data\Statements.cs" />
-    <Compile Include="Models\Data\Tenant.cs" />
-    <Compile Include="Models\Data\Transaction.cs" />
-    <Compile Include="Models\Data\Unit.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InboxViewModel.cs" />
@@ -249,15 +232,6 @@
     <Compile Include="Models\OrderViewModel.cs" />
     <Compile Include="Models\OrganisationViewModel.cs" />
     <Compile Include="Models\ProductViewModel.cs" />
-    <Compile Include="Models\Rental\AssignedTenantViewModel.cs" />
-    <Compile Include="Models\Rental\DocumentViewModel.cs" />
-    <Compile Include="Models\Rental\NOKViewModel.cs" />
-    <Compile Include="Models\Rental\PayFastRequestModel.cs" />
-    <Compile Include="Models\Rental\ProjectionsViewModel.cs" />
-    <Compile Include="Models\Rental\RecordViewModel.cs" />
-    <Compile Include="Models\Rental\TenantViewModel.cs" />
-    <Compile Include="Models\Rental\TransactionViewModel.cs" />
-    <Compile Include="Models\Rental\UnitViewModel.cs" />
     <Compile Include="Models\SafriSoftDbContext.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -734,45 +708,6 @@
     <Content Include="newbiz\lib\waypoints\waypoints.min.js" />
     <Content Include="newbiz\lib\wow\wow.js" />
     <Content Include="newbiz\lib\wow\wow.min.js" />
-    <Content Include="OSCustomStyles\css\aos.css" />
-    <Content Include="OSCustomStyles\css\bootstrap.min.css" />
-    <Content Include="OSCustomStyles\css\bootstrap\bootstrap-grid.css" />
-    <Content Include="OSCustomStyles\css\bootstrap\bootstrap-reboot.css" />
-    <Content Include="OSCustomStyles\css\jquery-ui.css" />
-    <Content Include="OSCustomStyles\css\magnific-popup.css" />
-    <Content Include="OSCustomStyles\css\owl.carousel.min.css" />
-    <Content Include="OSCustomStyles\css\owl.theme.default.min.css" />
-    <Content Include="OSCustomStyles\css\style.css" />
-    <Content Include="OSCustomStyles\fonts\icomoon\demo-files\demo.css" />
-    <Content Include="OSCustomStyles\fonts\icomoon\demo-files\demo.js" />
-    <Content Include="OSCustomStyles\fonts\icomoon\demo.html" />
-    <Content Include="OSCustomStyles\fonts\icomoon\fonts\icomoon.svg" />
-    <Content Include="OSCustomStyles\fonts\icomoon\Read Me.txt" />
-    <Content Include="OSCustomStyles\fonts\icomoon\style.css" />
-    <Content Include="OSCustomStyles\images\blog_1.jpg" />
-    <Content Include="OSCustomStyles\images\children.jpg" />
-    <Content Include="OSCustomStyles\images\cloth_1.jpg" />
-    <Content Include="OSCustomStyles\images\cloth_2.jpg" />
-    <Content Include="OSCustomStyles\images\cloth_3.jpg" />
-    <Content Include="OSCustomStyles\images\hero_1.jpg" />
-    <Content Include="OSCustomStyles\images\hero_1.png" />
-    <Content Include="OSCustomStyles\images\men.jpg" />
-    <Content Include="OSCustomStyles\images\person_1.jpg" />
-    <Content Include="OSCustomStyles\images\person_2.jpg" />
-    <Content Include="OSCustomStyles\images\person_3.jpg" />
-    <Content Include="OSCustomStyles\images\person_4.jpg" />
-    <Content Include="OSCustomStyles\images\shoe.png" />
-    <Content Include="OSCustomStyles\images\shoe_1.jpg" />
-    <Content Include="OSCustomStyles\images\women.jpg" />
-    <Content Include="OSCustomStyles\js\aos.js" />
-    <Content Include="OSCustomStyles\js\bootstrap.min.js" />
-    <Content Include="OSCustomStyles\js\jquery-3.3.1.min.js" />
-    <Content Include="OSCustomStyles\js\jquery-ui.js" />
-    <Content Include="OSCustomStyles\js\jquery.magnific-popup.min.js" />
-    <Content Include="OSCustomStyles\js\main.js" />
-    <Content Include="OSCustomStyles\js\owl.carousel.min.js" />
-    <Content Include="OSCustomStyles\js\popper.min.js" />
-    <Content Include="OSCustomStyles\js\slick.min.js" />
     <Content Include="plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.css" />
     <Content Include="plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.min.css" />
     <Content Include="plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.js" />
@@ -2774,99 +2709,6 @@
     <Content Include="Backload\Client\blueimp\gallery\package.json" />
     <Content Include="Backload\Client\blueimp\loadimage\package.json" />
     <Content Include="Backload\Client\blueimp\templates\package.json" />
-    <Content Include="OSCustomStyles\fonts\icomoon\fonts\icomoon.eot" />
-    <Content Include="OSCustomStyles\fonts\icomoon\fonts\icomoon.ttf" />
-    <Content Include="OSCustomStyles\fonts\icomoon\fonts\icomoon.woff" />
-    <Content Include="OSCustomStyles\fonts\icomoon\selection.json" />
-    <Content Include="OSCustomStyles\scss\.DS_Store" />
-    <Content Include="OSCustomStyles\scss\bootstrap\.DS_Store" />
-    <Content Include="OSCustomStyles\scss\bootstrap\bootstrap-grid.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\bootstrap-reboot.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\bootstrap.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_alert.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_background-variant.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_badge.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_border-radius.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_box-shadow.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_breakpoints.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_buttons.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_caret.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_clearfix.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_float.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_forms.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_gradients.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_grid-framework.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_grid.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_hover.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_image.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_list-group.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_lists.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_nav-divider.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_pagination.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_reset-text.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_resize.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_screen-reader.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_size.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_table-row.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_text-emphasis.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_text-hide.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_text-truncate.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_transition.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\mixins\_visibility.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_align.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_background.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_borders.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_clearfix.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_display.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_embed.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_flex.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_float.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_position.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_screenreaders.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_shadows.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_sizing.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_spacing.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_text.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\utilities\_visibility.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_alert.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_badge.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_breadcrumb.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_button-group.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_buttons.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_card.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_carousel.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_close.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_code.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_custom-forms.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_dropdown.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_forms.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_functions.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_grid.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_images.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_input-group.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_jumbotron.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_list-group.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_media.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_mixins.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_modal.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_nav.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_navbar.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_pagination.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_popover.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_print.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_progress.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_reboot.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_root.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_tables.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_tooltip.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_transitions.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_type.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_utilities.scss" />
-    <Content Include="OSCustomStyles\scss\bootstrap\_variables.scss" />
-    <Content Include="OSCustomStyles\scss\style.scss" />
-    <Content Include="OSCustomStyles\scss\_site-base.scss" />
-    <Content Include="OSCustomStyles\scss\_site-blocks.scss" />
-    <Content Include="OSCustomStyles\scss\_site-navbar.scss" />
     <Content Include="bin\roslyn\csc.exe.config" />
     <Content Include="bin\roslyn\csc.rsp" />
     <Content Include="bin\roslyn\csi.exe.config" />
@@ -2901,11 +2743,6 @@
     <Content Include="Scripts\knockout-3.5.1.js" />
     <Content Include="Scripts\leaflet-heatmap.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\Rental\paynow.js" />
-    <Content Include="Scripts\Rental\projection.js" />
-    <Content Include="Scripts\Rental\statement.js" />
-    <Content Include="Scripts\Rental\tenant.js" />
-    <Content Include="Scripts\Rental\unit.js" />
     <None Include="Views\Home\about.cshtml" />
     <None Include="Views\Home\cart.cshtml" />
     <None Include="Views\Home\checkout.cshtml" />
@@ -2958,21 +2795,7 @@
     <Content Include="Views\Inventory\AttentionReport.cshtml" />
     <Content Include="Views\Home\Home.cshtml" />
     <Content Include="Views\Account\LogOff.cshtml" />
-    <Content Include="Views\Rental\Index.cshtml" />
-    <Content Include="Views\Shared\_LayoutRental.cshtml" />
-    <Content Include="Views\Rental\Tenants.cshtml" />
-    <Content Include="Views\Rental\Units.cshtml" />
-    <Content Include="Views\Rental\Projections.cshtml" />
-    <Content Include="Views\Rental\RentalUsers.cshtml" />
-    <Content Include="Views\Rental\TenantsReport.cshtml" />
-    <Content Include="Views\Rental\UnitsReport.cshtml" />
-    <Content Include="Views\Rental\ExpectedPaymentsReport.cshtml" />
-    <Content Include="Views\Rental\RecievedPaymentsReport.cshtml" />
-    <Content Include="Views\Shared\_LayoutPay.cshtml" />
-    <Content Include="Views\Rental\PayNow.cshtml" />
     <Content Include="Views\Home\ShopOld.cshtml" />
-    <Content Include="Views\Shared\_LayoutShop.cshtml" />
-    <Content Include="Views\Rental\Statements.cshtml" />
     <Content Include="Views\Home\prepros-6.config" />
   </ItemGroup>
   <ItemGroup>
@@ -3004,14 +2827,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202201301132051_safrisoft.resx">
-      <DependentUpon>202201301132051_safrisoft.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202202012045028_safriapplication.resx">
-      <DependentUpon>202202012045028_safriapplication.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202202012052127_safridbcontext.resx">
-      <DependentUpon>202202012052127_safridbcontext.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202303081652596_SafriSoftDbContext_IMS.resx">
+      <DependentUpon>202303081652596_SafriSoftDbContext_IMS.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

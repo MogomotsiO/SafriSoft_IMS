@@ -19,5 +19,6 @@ namespace SafriSoftv1._3.Models.Data
         public int? ItemsSold { get; set; }
         public int ItemsAvailable { get; set; }
         public string Status { get; set; }
+        public int OrganisationId { get; set; }
     }
 }
