@@ -45,8 +45,8 @@
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body justify-content-center">
-                <div class="login-logo"><a href="~/Home/Index"><img src="../../assets/img/iconOnly.png" alt="" class="logo-login"></a></div>
-                <p class="login-box-msg">Safri Inventory</p>
+                <div class="login-logo"><a href="~/Home/Index"><img src="../../assets/img/iconName.png" alt="" class="logo-login" style="height:100px; width:100px;"></a></div>
+                @*<p class="login-box-msg">Safri Inventory</p>*@
 
                 @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {

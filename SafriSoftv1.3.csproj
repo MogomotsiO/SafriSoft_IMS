@@ -254,11 +254,13 @@
     <Content Include="assets\img\counts-img.jpg" />
     <Content Include="assets\img\cta-bg.jpg" />
     <Content Include="assets\img\cta-bgg.jpg" />
+    <Content Include="assets\img\email-pattern.png" />
     <Content Include="assets\img\favicon.PNG" />
     <Content Include="assets\img\features.jpg" />
     <Content Include="assets\img\hero-bg.jpg" />
     <Content Include="assets\img\hero-bgg.jpg" />
     <Content Include="assets\img\iconName.png" />
+    <Content Include="assets\img\iconOnly.png" />
     <Content Include="assets\img\portfolio\portfolio-1.jpg" />
     <Content Include="assets\img\portfolio\portfolio-2.jpg" />
     <Content Include="assets\img\portfolio\portfolio-3.jpg" />
