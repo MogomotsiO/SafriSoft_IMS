@@ -27,6 +27,7 @@ namespace SafriSoftv1._3.Models
         }
 
         public virtual DbSet<Organisations> Organisations { get; set; }
+        public virtual DbSet<Email> Emails { get; set; }
 
         public static ApplicationDbContext Create()
         {

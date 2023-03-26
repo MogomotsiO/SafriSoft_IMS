@@ -9,14 +9,14 @@
             <div class="row">
                 <div class="col-sm-3">
                     @*<div class="small-box bg-white card-outline card-info">
-                        <div class="inner text-info">
-                            <h3>Manage Orders:</h3>
-                            <p>Home / Orders</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-shopping-cart text-info"></i>
-                        </div>
-                    </div>*@
+                            <div class="inner text-info">
+                                <h3>Manage Orders:</h3>
+                                <p>Home / Orders</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-shopping-cart text-info"></i>
+                            </div>
+                        </div>*@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                 </div><!-- /.col -->
@@ -29,7 +29,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    
+
                     <div class="card">
                         <div class="card-header card-header-info">
                             <h4 class="card-title"><i class="fas fa-shopping-cart"></i> Orders</h4>
@@ -71,7 +71,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="view-order-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h3>
+                <h5 id="view-order-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -106,21 +106,21 @@
                 @*<button id="btn-invoice-view" type="button" class="btn btn-light" onclick=""><i class="fas fa-file-invoice text-info"></i> Invoice</button>*@
             </div>
         </div>
-            
-        </div>
-        <!-- /.modal-content -->
+
     </div>
+    <!-- /.modal-content -->
+</div>
 
 <!-- Invoice View Modal -->
 <div class="modal fade" id="invoice-view-modal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="view-order-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h3>
+            <!--<div class="modal-header">
+                <h5 id="view-order-title" class="modal-title">-->@*<i class="fa fa-plus"></i>*@<!--</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-            </div>
+            </div>-->
             <div class="modal-body">
                 <div class="invoice p-3 mb-3">
                     <!-- title row -->
@@ -246,7 +246,60 @@
 
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button id="invoice-pdf" type="button" class="btn btn-light" onclick="window.location.href = '/Inventory/CustomerInvoicePdf?OrderId=' + $('#order-id').text().substr(1, $('#order-id').text().length);"><i class="fa fa-download text-info"></i> Generate PDF</button>
+                <button id="invoice-pdf" type="button" class="btn btn-light" onclick="window.location.href = '/Inventory/CustomerInvoicePdf?OrderId=' + $('#order-id').text().substr(1, $('#order-id').text().length) + '&organisationName=' + $('#organisation-name').text();"><i class="fa fa-download text-info"></i> Generate PDF</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="createOrderEmailViewModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">Create Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+
+                    <div class="card-header card-header-primary">
+                        <h5 class="card-title"><i class="fa fa-envelope"></i> Enter Email Details</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <br />
+                        <div class="row">
+                            <input id="createEmailOrderId" hidden />
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Subject</label>
+                                    <input id="emailSubject" class="form-control" type="text">
+                                    <div class="input-group-append">
+                                        @*<div class="input-group-text  bg-white border-white">
+                                            <span class="fas fa-envelope text-info"></span>
+                                        </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="summernote">Body</label>
+                                <textarea id="summernote" style="display: none;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="btn-send-email" type="button" class="btn btn-light" onclick="sendOrderEmail()"><i class="fa fa-envelope text-purple"></i> Send Email</button>
+                <button id="email-wait" type="button" class="btn btn-light" disabled><i class="fas fa-spinner fa-pulse text-purple"></i> Please wait...</button>
             </div>
         </div>
 

@@ -203,6 +203,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\InventoryController.cs" />
+    <Compile Include="Controllers\API\ReportController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustomerViewModel.cs" />
     <Compile Include="Models\Data\Customer.cs" />
+    <Compile Include="Models\Data\Email.cs" />
     <Compile Include="Models\Data\InboxMessages.cs" />
     <Compile Include="Models\Data\InboxReplies.cs" />
     <Compile Include="Models\Data\OrderAudit.cs" />
@@ -233,8 +235,10 @@
     <Compile Include="Models\OrganisationViewModel.cs" />
     <Compile Include="Models\ProductViewModel.cs" />
     <Compile Include="Models\SafriSoftDbContext.cs" />
+    <Compile Include="Models\SystemNotificationsViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SafriSoftEmailService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2656,6 +2660,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <None Include="Views\Home\about.cshtml" />
     <None Include="Views\Home\contact.cshtml" />
+    <Content Include="Scripts\Report\ReportsDataTables.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

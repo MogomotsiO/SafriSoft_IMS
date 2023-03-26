@@ -1,4 +1,5 @@
 ﻿using Rotativa;
+using SafriSoftv1._3;
 using SafriSoftv1._3.Models;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace SafriSoft.Controllers
             return View();
         }
 
-        public ActionResult CustomerInvoice(string Id)
+        public ActionResult CustomerInvoice(string Id, string orgName)
         {
             ViewBag.Title = Id;
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
@@ -56,8 +57,11 @@ namespace SafriSoft.Controllers
                 using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
                 {
                     conn.Open();
-                    var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations]", conn.Database);
+
+                    var orgConn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString());
+                    var cmd = orgConn.CreateCommand();
+                    cmd.CommandText = string.Format("SELECT [OrganisationId],[OrganisationName],[OrganisationEmail],[OrganisationCell],[OrganisationLogo],[OrganisationStreet],[OrganisationSuburb],[OrganisationCity],[OrganisationCode],[AccountName],[AccountNo],[BankName],[BranchName],[BranchCode],[ClientReference],[VATNumber] from [{0}].[dbo].[Organisations] WHERE [OrganisationName] = '{1}'", orgConn.Database, orgName);
+                    orgConn.Open();
 
                     var orderCmd = conn.CreateCommand();
                     orderCmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerId],[OrderWorth],[ShippingCost],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrderId = '{1}'", conn.Database, "#" + Id);
@@ -85,6 +89,8 @@ namespace SafriSoft.Controllers
                         reader.NextResult();
                         reader.Close();
                     }
+
+                    orgConn.Close();
 
                     using (var reader = orderCmd.ExecuteReader())
                     {
@@ -144,9 +150,9 @@ namespace SafriSoft.Controllers
             //}
         }
 
-        public ActionResult CustomerInvoicePdf(string OrderId)
+        public ActionResult CustomerInvoicePdf(string OrderId, string organisationName)
         {
-            return new ActionAsPdf("CustomerInvoice", new { Id = OrderId })
+            return new ActionAsPdf("CustomerInvoice", new { Id = OrderId, orgName = organisationName })
             {
                 FileName = Server.MapPath("CustomerInvoice.pdf")
             };

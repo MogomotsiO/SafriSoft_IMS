@@ -5,14 +5,30 @@
 @using System.Configuration;
 @using System.Data.SqlClient;
 @{
+    string userId = IdentityExtensions.GetUserId(User.Identity);
+    ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+    var user = string.IsNullOrEmpty(userId) ? null : userManager.FindByIdAsync(userId).Result ?? null;
+    var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+    var organisation = organisationClaim.Value;
+
+    var identityConn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString());
+    identityConn.Open();
+    var identityCmd = identityConn.CreateCommand();
+    identityCmd.CommandText = string.Format("SELECT [OrganisationId] from [{0}].[dbo].[Organisations] where OrganisationName = '{1}'", identityConn.Database, organisation);
+    var identityReader = identityCmd.ExecuteReader();
 
     var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString());
     conn.Open();
     var cmd = conn.CreateCommand();
-    cmd.CommandText = string.Format("SELECT [Id],[CustomerName] from [{0}].[dbo].[Customer] where Status = 'Active'", conn.Database);
-
     var cmdProducts = conn.CreateCommand();
-    cmdProducts.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference] from [{0}].[dbo].[Product] where Status = 'Active'", conn.Database);
+
+    if (identityReader.Read())
+    {
+        cmd.CommandText = string.Format("SELECT [Id],[CustomerName] from [{0}].[dbo].[Customer] where Status = 'Active' AND OrganisationId = {1}", conn.Database, identityReader.GetInt32(0));
+
+        cmdProducts.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference] from [{0}].[dbo].[Product] where Status = 'Active' AND OrganisationId = {1}", conn.Database, identityReader.GetInt32(0));
+    }
+
 
 }
 @{
@@ -89,7 +105,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">@*<i class="fa fa-plus"></i>*@Create Customer</h4>
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Create Customer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -97,7 +113,7 @@
             <div class="modal-body login-card-body">
                 <div class="row">
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Name</label>
                             <input id="customer-name" class="form-control" type="text">
                             <div class="input-group-append">
@@ -108,7 +124,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Email</label>
                             <input id="customer-email" class="form-control" type="text">
                             <div class="input-group-append">
@@ -119,7 +135,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Cell#</label>
                             <input id="customer-cell" class="form-control" type="text">
                             <div class="input-group-append">
@@ -130,7 +146,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Address</label>
                             <input id="customer-address" class="form-control" type="text">
                             <div class="input-group-append">
@@ -157,7 +173,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">@*<i class="fa fa-plus"></i>*@Edit Customer</h4>
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Edit Customer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -165,7 +181,7 @@
             <div class="modal-body login-card-body">
                 <div class="row">
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Name</label>
                             <input id="edit-customer-id" hidden class="form-control" type="text">
                             <input id="edit-customer-name" class="form-control" type="text">
@@ -177,7 +193,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Email</label>
                             <input id="edit-customer-email" class="form-control" type="text">
                             <div class="input-group-append">
@@ -188,7 +204,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Cell#</label>
                             <input id="edit-customer-cell" class="form-control" type="text">
                             <div class="input-group-append">
@@ -199,7 +215,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Customer Address</label>
                             <input id="edit-customer-address" class="form-control" type="text">
                             <div class="input-group-append">
@@ -221,22 +237,22 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div class="modal fade" id="creat-order-modal">
+<div class="modal fade" id="create-order-modal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">@*<i class="fa fa-plus"></i>*@Create Order</h4>
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Create Order</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body login-card-body">
                 <div class="row">
-                    <div class="mb-3 col-md-6">
+                    <div class="mb-3 col-md-12">
                         <div class="input-group form-group bmd-form-group">
                             <div class="input-group-prepend">
                                 <button class="btn btn-light dropdown-toggle" aria-expanded="false" type="button" data-toggle="dropdown">
-                                    Customers
+                                    Choose Customer
                                 </button>
                                 <ul class="dropdown-menu">
                                     @using (var reader = cmd.ExecuteReader())
@@ -256,11 +272,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3 col-md-6">
+                    <div class="mb-3 col-md-12">
                         <div class="input-group form-group bmd-form-group">
                             <div class="input-group-prepend">
                                 <button class="btn btn-light dropdown-toggle" aria-expanded="false" type="button" data-toggle="dropdown">
-                                    Products
+                                    Choose Product
                                 </button>
                                 <ul class="dropdown-menu">
                                     @using (var reader = cmdProducts.ExecuteReader())
@@ -283,7 +299,7 @@
                 </div>
                 <div class="row">
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Quantity</label>
                             <input id="number-of-items" class="form-control" type="text">
                             <div class="input-group-append">
@@ -294,18 +310,18 @@
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
-                            <label class="bmd-label-floating">Number Of Days For Delivery</label>
-                            <input id="number-of-days" class="form-control" type="text">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Delivery Date</label>
+                            <input id="number-of-days" class="form-control" type="date">
                             <div class="input-group-append">
                                 <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-truck text-info"></span>
+                                    <span class="fas fa-calendar text-info"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Shipping Cost</label>
                             <input id="shipping-cost" class="form-control" type="text">
                             <div class="input-group-append">
@@ -334,7 +350,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="customer-orders-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h3>
+                <h5 id="customer-orders-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

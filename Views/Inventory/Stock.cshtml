@@ -44,7 +44,7 @@
                                 <thead>
                                     <tr>
                                         <th># Product</th>
-                                        <th>Product Image</th>
+                                        @*<th>Product Image</th>*@
                                         <th>Product Code</th>
                                         <th>Product Category</th>
                                         <th>Product Name</th>
@@ -74,7 +74,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">@*<i class="fa fa-plus"></i>*@Create Product</h4>
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Create Product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -88,7 +88,7 @@
 
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Code</label>
                             <input id="product-code" class="form-control" type="text">
                             <div class="input-group-append">
@@ -99,7 +99,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group  is-filled">
                             <label class="bmd-label-floating">Product Category</label>
                             <input id="product-category" class="form-control" type="text">
                             <div class="input-group-append">
@@ -110,7 +110,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Name</label>
                             <input id="product-name" class="form-control" type="text">
                             <div class="input-group-append">
@@ -121,7 +121,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Quantity</label>
                             <input id="product-available" class="form-control" type="text">
                             <div class="input-group-append">
@@ -132,7 +132,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Selling Price</label>
                             <input id="product-price" class="form-control" type="text">
                             <div class="input-group-append">
@@ -178,7 +178,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">@*<i class="fa fa-plus"></i>*@Edit Product</h4>
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Edit Product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -192,7 +192,7 @@
 
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Code</label>
                             <input id="edit-product-code" class="form-control" type="text">
                             <div class="input-group-append">
@@ -203,7 +203,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Category</label>
                             <input id="edit-product-category" class="form-control" type="text">
                             <div class="input-group-append">
@@ -214,7 +214,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Name</label>
                             <input id="edit-product-name" data-bind="value: ProductName" class="form-control" type="text">
                             <input id="edit-product-id" hidden class="form-control" type="text">
@@ -226,7 +226,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Quantity</label>
                             <input id="edit-product-available" data-bind="value: ProductAvailable" class="form-control" type="text">
                             <div class="input-group-append">
@@ -237,7 +237,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Selling Price</label>
                             <input id="edit-product-price" data-bind="value: SellingPrice" class="form-control" type="text">
                             <div class="input-group-append">
@@ -259,7 +259,7 @@
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-focused">
+                        <div class="input-group form-group bmd-form-group is-filled">
                             <div class="custom-file">
                                 <input class="custom-file-input text-light" id="input-logo" type="file">
                                 <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
@@ -283,7 +283,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="tenants-documents-title" class="modal-title">@*<i class="fa fa-plus"></i>*@Upload Products</h3>
+                <h5 id="tenants-documents-title" class="modal-title">@*<i class="fa fa-plus"></i>*@Upload Products</h5>
                 <input type="text" id="tenant-id" hidden />
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

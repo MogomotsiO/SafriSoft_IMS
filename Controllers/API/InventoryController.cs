@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json.Linq;
 using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -755,28 +756,15 @@ namespace SafriSoftv1._3.Controllers.API
                 }
                 var customerIdParse = int.Parse(customerId);
                 var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == customerIdParse);
-                var downloadLink = "http://safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1, generateOrderId.Length - 1);
-                var emailBody = "Hi " + customerName + ",<br/><br /> Your order has been created.<br/><br/> You will be notified when your order is Packaged, Intransit or Successfully delivered.<br /><br/> Download invoice here: " + downloadLink;
+                var subject = "SafriSoft - Order Received";
+                var downloadLink = "https://ims.safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1, generateOrderId.Length - 1);
+                var emailBody = "Your order has been received.<br/><br/> You will be notified when your order is Packaged, Intransit or Successfully delivered.<br /><br/> Download invoice here: <a href='" + downloadLink + "'>Invoice</a>";
 
-                using (MailMessage mt = new MailMessage())
-                {
-                    mt.From = new MailAddress("admin@safrisoft.com");
-                    mt.IsBodyHtml = true;
-                    mt.Subject = "SafriSoft - Order Created";
-                    mt.Body = "<span><h1 style='color:#17a2b8;'>SafriSoft.</h1></span></br><div style='font-family:Courier New;'> " + emailBody + "</div></br><br /><p style='font-family:Courier New;'>Regards,</p><div style='height:2px;background-color:#17a2b8;width:40%;margin-bottom:5px;'></div><div><p style='font-family:Courier New;'>Administrator</p><p style='font-family:Courier New;'>Website: www.safrisoft.com</p><p style='font-family:Courier New;'>Email: admin@safrisoft.com</p><p style='font-family:Courier New;'>Cell: 067 272 7320</p></div><div style='height:2px;background-color:#17a2b8;width:40%;margin-bottom:5px;'></div>";
-                    mt.To.Add(customer.CustomerEmail);
-                    mt.IsBodyHtml = true;
-                    SmtpClient smtp2 = new SmtpClient();
-                    smtp2.Host = "mail.safrisoft.com";
-                    smtp2.EnableSsl = false;
-                    smtp2.UseDefaultCredentials = false;
-                    NetworkCredential networkCred2 = new NetworkCredential();
-                    networkCred2.UserName = "admin@safrisoft.com";
-                    networkCred2.Password = "@SafriAdmin&1";
-                    smtp2.Credentials = networkCred2;
-                    smtp2.Port = 25;
-                    await smtp2.SendMailAsync(mt);
-                }
+                var toAddress = new List<string>();
+                var toCCAddress = new List<string>();
+                toAddress.Add(customer.CustomerEmail);
+                var createEmail = new SafriSoftEmailService();
+                createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
 
                 return Json(new { Success = true, CustomerID = customerId });
             }
@@ -814,27 +802,13 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == order.CustomerId);
                 var subject = OrderData.OrderStatus;
-                var emailBody = "Hi " + customer.CustomerName + ",<br/><br /> Your order has been updated.<br/><br/> Order Id: " + OrderData.OrderId + "<br/><br/>" + description;
+                var emailBody = "Your order has been updated.<br/><br/> Order Id: " + OrderData.OrderId + "<br/><br/>" + description;
 
-                using (MailMessage mt = new MailMessage())
-                {
-                    mt.From = new MailAddress("admin@safrisoft.com");
-                    mt.IsBodyHtml = true;
-                    mt.Subject = "SafriSoft - " + subject;
-                    mt.Body = "<span><h1 style='color:#17a2b8;'>SafriSoft.</h1></span></br><div style='font-family:Courier New;'> " + emailBody + "</div></br><br /><p style='font-family:Courier New;'>Regards,</p><div style='height:2px;background-color:#17a2b8;width:40%;margin-bottom:5px;'></div><div><p style='font-family:Courier New;'>Administrator</p><p style='font-family:Courier New;'>Website: www.safrisoft.com</p><p style='font-family:Courier New;'>Email: admin@safrisoft.com</p><p style='font-family:Courier New;'>Cell: 067 272 7320</p></div><div style='height:2px;background-color:#17a2b8;width:40%;margin-bottom:5px;'></div>";
-                    mt.To.Add(customer.CustomerEmail);
-                    mt.IsBodyHtml = true;
-                    SmtpClient smtp2 = new SmtpClient();
-                    smtp2.Host = "mail.safrisoft.com";
-                    smtp2.EnableSsl = false;
-                    smtp2.UseDefaultCredentials = false;
-                    NetworkCredential networkCred2 = new NetworkCredential();
-                    networkCred2.UserName = "admin@safrisoft.com";
-                    networkCred2.Password = "@SafriAdmin&1";
-                    smtp2.Credentials = networkCred2;
-                    smtp2.Port = 25;
-                    await smtp2.SendMailAsync(mt);
-                }
+                var toAddress = new List<string>();
+                var toCCAddress = new List<string>();
+                toAddress.Add(customer.CustomerEmail);
+                var createEmail = new SafriSoftEmailService();
+                createEmail.SaveEmail(subject,emailBody,"support@safrisoft.com",toAddress.ToArray(), toCCAddress.ToArray());
 
                 return Json(new { Success = true });
             }
@@ -975,7 +949,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var randValueSoldCmd = conn.CreateCommand();
-                    randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] Where WHERE [OrderStatus] = 'Delivered' AND [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
                     try
                     {
                         randValueSold = (Decimal)randValueSoldCmd.ExecuteScalar();
@@ -1407,6 +1381,56 @@ namespace SafriSoftv1._3.Controllers.API
             catch (Exception Ex)
             {
                 return Json(new { Success = false, Error = Ex.ToString() });
+            }
+        }
+
+        [HttpPost, Route("SafriOrderRequest")]
+        public async Task<IHttpActionResult> SafriOrderRequest(OrderRequestViewModel orderRequest)
+        {
+            try
+            {
+                var createEmail = new SafriSoftEmailService();
+                var toAddress = new List<string>();
+                var toCCAddress = new List<string>();
+                toAddress.Add("support@safrisoft.com");
+
+                var subject = "Order Request - " + orderRequest.UserOrganisation;
+                var emailBody = "An order has been request for: " + orderRequest.Package + "-Inventory <br/><br/> This email has been sent by: " + orderRequest.UserEmail;
+                createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
+                return Json(new { Success = true, Message = "Order request has been sent"});
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Error = ex.ToString() });
+            }
+        }
+
+        [HttpPost, Route("SendCustomEmail")]
+        public async Task<IHttpActionResult> SendCustomEmail(EmailViewModel email)
+        {
+            try
+            {
+                var safriSoftImsDb = new SafriSoftDbContext();
+                var createEmail = new SafriSoftEmailService();
+                var toAddress = new List<string>();
+                var toCCAddress = new List<string>();
+                
+                var orderDetails = safriSoftImsDb.Orders.FirstOrDefault(x => x.OrderId == email.OrderId);
+
+                var customerDetails = safriSoftImsDb.Customers.FirstOrDefault(x => x.Id == orderDetails.CustomerId);
+
+                toAddress.Add(customerDetails.CustomerEmail);
+
+                var subject = email.EmailSubject;
+                var emailBody = email.EmailBody;
+
+                createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
+
+                return Json(new { Success = true, Message = "Order request has been sent" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Error = ex.ToString() });
             }
         }
 

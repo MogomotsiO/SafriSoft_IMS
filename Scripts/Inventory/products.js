@@ -14,17 +14,17 @@
                 'data': 'Id',
                 'searchable': true
             },
-            {
-                'data': 'ProductImage',
-                'render': function (data, type, full, meta) {
-                    if (data.includes(".jpg") || data.includes(".png") || data.includes(".jpeg")) {
-                        return '<td> <img src="../../assets/img/' + data + '" alt="No Image" height="50" width="50" /></td>'
-                    } else {
-                        return '<td> <img src="' + data + '" height="110" width="150" style="border-radius:2px" /></td>'
-                    }
+            //{
+            //    'data': 'ProductImage',
+            //    'render': function (data, type, full, meta) {
+            //        if (data.includes(".jpg") || data.includes(".png") || data.includes(".jpeg")) {
+            //            return '<td> <img src="../../assets/img/' + data + '" alt="No Image" height="50" width="50" /></td>'
+            //        } else {
+            //            return '<td> <img src="' + data + '" height="110" width="150" style="border-radius:2px" /></td>'
+            //        }
                     
-                }
-            },
+            //    }
+            //},
             {
                 'data': 'ProductCode',
                 'searchable': true

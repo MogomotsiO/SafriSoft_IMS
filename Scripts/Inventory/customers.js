@@ -89,7 +89,8 @@
                     console.log(data);
                     $('#creat-customer-modal').modal('hide');
                     toastr.success('Successfully created customer search customer table for confirmation!');
-                    customerDataTable.ajax.reload();
+                    setTimeout(function () { location.reload() }, 500);
+                    //customerDataTable.ajax.reload();
                 } else {
                     console.log(data);
                     toastr.error('An error occured while trying to save customer contact administrator!');

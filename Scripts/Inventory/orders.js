@@ -107,7 +107,7 @@
         {
             'data': 'OrderId',
             'render': function (data, type, full, meta) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="orderDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
+                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="orderDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a><a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="createOrderEmail(this.id)"><i class="fa fa-envelope text-info"></i></a> </div> </td>'
             }
         }
     ]
@@ -115,12 +115,69 @@
 
 $('#order-create-view').on('click', function () {
     $('#customer-orders').modal('hide');
-    $('#creat-order-modal').modal('show');
+    $('#create-order-modal').modal('show');
 });
+
+function createOrderEmail(orderId) {
+    $('#createEmailOrderId').val(orderId);
+    $('#emailSubject').val('');
+    $('#summernote').summernote("code", "");
+    $('#createOrderEmailViewModal').modal('show');
+}
+
+
+$('#email-wait').hide();
+function sendOrderEmail() {
+    var orderId = $('#createEmailOrderId').val();
+    var subject = $('#emailSubject').val();
+    var body = $('#summernote').val();
+
+    if (subject === '') {
+        toastr.error('Email subject cannot be empty');
+        return;
+    }
+
+    if (body === '') {
+        toastr.error('Email body cannot be empty');
+        return;
+    }
+
+    $('#btn-send-email').hide();
+    $('#email-wait').show();
+
+    var email = {
+        OrderId: orderId,
+        EmailSubject: subject,
+        EmailBody: body
+    }
+
+    $.ajax({
+        url: '/api/Inventory/SendCustomEmail',
+        method: 'POST',
+        dataType: 'json',
+        data: email,
+        contextType: "application/json",
+        traditional: true
+    }).done(function (data) {
+        if (data.Success) {
+            $('#createOrderEmailViewModal').modal('hide');
+            $('#btn-send-email').show();
+            $('#email-wait').hide();
+            $('#emailSubject').val('');
+            $('#summernote').summernote("code", "");
+            toastr.success('Email has been sent successfully');
+        } else {
+            $('#btn-send-email').show();
+            $('#email-wait').hide();
+            toastr.error(data.Error);
+        }
+    });
+
+}
 
 function populateCustomer(value) {
     $("#customer-name-input").val($("#" + value).attr('name'));
-    $("#customer-name-input").attr('name', value.charAt(0, "-"));
+    $("#customer-name-input").attr('name', value.substring(0, value.indexOf("-")));
 }
 
 function populateProduct(value) {
@@ -146,8 +203,9 @@ $('#order-final-create').on('click', function () {
     var shippingCost = $("#shipping-cost").val() != "" ? $("#shipping-cost").val() : 0;
     var dateOrderCreated = new Date();
     var orderCreatedDate = dateOrderCreated.getDate() + "/" + (dateOrderCreated.getMonth() + 1) + "/" + dateOrderCreated.getFullYear();
-    var deliveryDate = addDays(dateOrderCreated, 5);
+    var deliveryDate = new Date(numberOfDays);
     var finalDeliveryDate = deliveryDate.getDate() + "/" + (deliveryDate.getMonth() + 1) + "/" + deliveryDate.getFullYear();
+    //var finalDeliveryDate = new Date(numberOfDays);
 
     if (customerName != "" && productName != "" && numberOfItems != "" && numberOfDays != "") {
 
@@ -173,10 +231,11 @@ $('#order-final-create').on('click', function () {
         }).done(function (data) {
             if (data.Success) {
                 console.log(data);
-                $('#creat-order-modal').modal('hide');
+                $('#create-order-modal').modal('hide');
                 $('#customer-orders').modal('show');
                 customerOrderDataTable.ajax.url('/api/Inventory/GetOrders/' + data.CustomerID).load();
                 orderDataTable.ajax.reload();
+                customerDataTable.ajax.reload();
                 toastr.success('Successfully created order search order table for confirmation!');
             } else {
                 console.log(data);
