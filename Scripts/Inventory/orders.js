@@ -362,6 +362,17 @@ function invoiceViewModal(id) {
         $('#order-total').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].InvoiceTotal));
         $('#invoice-view-modal').modal('show');
     });
-    
 }
 
+
+// Hide premium Buttons
+var packageId = $('#packageId').val();
+
+if (packageId != 2 && packageId != 3) {
+    $('#btn-send-email').hide();
+    $('#invoice-pdf').hide();
+    $('#invoice-pdf-lock').show();
+} else {
+    $('#btn-send-email-lock').hide();
+    $('#invoice-pdf-lock').hide();
+}

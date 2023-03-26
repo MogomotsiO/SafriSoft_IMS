@@ -521,6 +521,13 @@ namespace SafriSoftv1._3.Controllers.API
             var customerCell = CustomerData.CustomerCell;
             var dateCustomerCreated = CustomerData.DateCustomerCreated;
 
+            var result = CheckPackageAccess("Customers", organisationId);
+
+            if (result == true)
+            {
+                return Json(new { Success = false, Error = "You have exceeded the number of customers to add. Please upgrade to Premium" });
+            }
+
             try
             {
                 using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
@@ -702,6 +709,13 @@ namespace SafriSoftv1._3.Controllers.API
             var expectedDateOfDelivery = OrderData.ExpectedDeliveryDate;
             var description = "Inception - This order was created!";
             var changed = "Inception";
+
+            var result = CheckPackageAccess("Orders", organisationId);
+
+            if (result == true)
+            {
+                return Json(new { Success = false, Error = "You have exceeded the number of orders to add. Please upgrade to Premium" });
+            }
 
             Random rnd = new Random();
 
@@ -1532,6 +1546,43 @@ namespace SafriSoftv1._3.Controllers.API
             }
 
             return organisationId;
+        }
+
+        public bool CheckPackageAccess(string feature, int orgnaisationId)
+        {
+            SafriSoftDbContext SafriSoftImsDb = new SafriSoftDbContext();
+            var identityConn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString());
+            identityConn.Open();
+            var identityPackageCmd = identityConn.CreateCommand();
+            identityPackageCmd.CommandText = string.Format("SELECT pf.[Limit] from [dbo].[Organisations] o JOIN [dbo].[OrganisationSoftwares] os on os.[OrganisationId] = o.[OrganisationId] AND os.[SoftwareId] = 1 JOIN [dbo].[PackageFeatures] pf on pf.PackageId = os.[PackageId] AND pf.FeatureName = '{1}' WHERE o.[OrganisationId] = {2}", identityConn.Database, feature, orgnaisationId);
+            var identityPackageReader = identityPackageCmd.ExecuteReader();
+            var packageFeatureLimit = 0;
+            var limitExceeded = false;
+
+            if (identityPackageReader.Read())
+            {
+                packageFeatureLimit = identityPackageReader.GetInt32(0);
+                if (feature == "Customers")
+                {
+                    var numberOfCustomers = SafriSoftImsDb.Customers.ToList().Count();
+                    if (numberOfCustomers >= packageFeatureLimit)
+                    {
+                        limitExceeded = true;
+                    }
+                }
+                else if (feature == "Orders")
+                {
+                    var numberOfOrders = SafriSoftImsDb.Orders.ToList().Count();
+                    if (numberOfOrders >= packageFeatureLimit)
+                    {
+                        limitExceeded = true;
+                    }
+                }                
+            }
+
+            identityConn.Close();
+
+            return limitExceeded;
         }
 
     }

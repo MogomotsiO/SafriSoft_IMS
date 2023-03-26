@@ -11,6 +11,7 @@
     var userRole = "";
     var organisation = "";
     var userEmail = "";
+    var packageId = 0;
 
     NumberFormatInfo cZA = new CultureInfo("en-ZA", false).NumberFormat;
     cZA.CurrencyPositivePattern = 2;
@@ -64,6 +65,16 @@
                 identityReader.Close();
 
             }
+
+            //Company package
+
+            var identityPackageCmd = identityConn.CreateCommand();
+            identityPackageCmd.CommandText = string.Format("SELECT os.[PackageId] from [{0}].[dbo].[Organisations] o JOIN [{0}].[dbo].[OrganisationSoftwares] os on os.[OrganisationId] = o.[OrganisationId] AND os.[SoftwareId] = 1 WHERE o.[OrganisationName] = '{1}'", identityConn.Database, organisation);
+            var identityPackageReader = identityPackageCmd.ExecuteReader();
+
+            if (identityPackageReader.Read()) {
+                packageId = identityPackageReader.GetInt32(0);
+            }
         }
         catch (Exception Ex)
         {
@@ -110,6 +121,7 @@
 
 </head>
 <body class="hold-transition sidebar-mini pace-info sidebar-collapse">
+    <input id="packageId" hidden value="@packageId"/>
     <div class="wrapper">
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-info navbar-info bg-light">
@@ -273,6 +285,7 @@
                                 </li>
                             </ul>
                         </li>
+                        @if (packageId != 3) { 
                         <li class="nav-item">
                             <a id="Stock" href="#" onclick="changePackage()" class="nav-link bg-gradient-purple text-white">
                                 <i class="nav-icon fa fa-crown"></i>
@@ -281,6 +294,8 @@
                                 </p>
                             </a>
                         </li>
+                        }
+                        
                         <li hidden id="viewbag-title">
                             <p>@ViewBag.title</p>
                         </li>
@@ -496,6 +511,7 @@
                     }
                 });
             }
+
         </script>
 
         <script src="~/Scripts/Inventory/users.js"></script>
@@ -510,6 +526,25 @@
         <script src="~/Backload/Client/blueimp/fileupload/js/vendor/jquery.ui.widget.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/jquery.iframe-transport.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/jquery.fileupload.js"></script>
+
+        <script type="text/javascript">
+            // Hide premium Buttons
+            var packageId = $('#packageId').val();
+
+            if (packageId != 2 && packageId != 3) {
+                $('.dt-buttons').hide();
+                $('#excel-download-lock').show();
+                $('#excel-download-lock-2').show();
+                $('#excel-download-lock-3').show();
+                $('#excel-download-lock-4').show();
+            } else {
+                $('.dt-buttons').show();
+                $('#excel-download-lock').hide();
+                $('#excel-download-lock-2').hide();
+                $('#excel-download-lock-3').hide();
+                $('#excel-download-lock-4').hide();
+            }
+        </script>
     </div>
 </body>
 </html>

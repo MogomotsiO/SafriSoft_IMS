@@ -93,7 +93,7 @@
                     //customerDataTable.ajax.reload();
                 } else {
                     console.log(data);
-                    toastr.error('An error occured while trying to save customer contact administrator!');
+                    toastr.error(data.Error);
                 }
     
             });

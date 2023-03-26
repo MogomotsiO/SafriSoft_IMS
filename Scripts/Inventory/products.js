@@ -320,3 +320,14 @@ function readURL(input) {
         reader.readAsDataURL(input.files[0]); // convert to base64 string
     }
 }
+
+
+// Hide premium Buttons
+var packageId = $('#packageId').val();
+
+if (packageId != 2 && packageId != 3) {
+    $('#ImportProduct').hide();
+    $('#ImportProduct-lock').show();
+} else {
+    $('#ImportProduct-lock').hide();
+}

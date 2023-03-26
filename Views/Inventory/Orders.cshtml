@@ -247,6 +247,7 @@
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                 <button id="invoice-pdf" type="button" class="btn btn-light" onclick="window.location.href = '/Inventory/CustomerInvoicePdf?OrderId=' + $('#order-id').text().substr(1, $('#order-id').text().length) + '&organisationName=' + $('#organisation-name').text();"><i class="fa fa-download text-info"></i> Generate PDF</button>
+                <button id="invoice-pdf-lock" type="button" class="btn btn-light" disabled><i class="fa fa-lock text-purple"></i> Download PDF - Upgrade To Standard</button>
             </div>
         </div>
 
@@ -299,6 +300,7 @@
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                 <button id="btn-send-email" type="button" class="btn btn-light" onclick="sendOrderEmail()"><i class="fa fa-envelope text-purple"></i> Send Email</button>
+                <button id="btn-send-email-lock" type="button" class="btn btn-light" disabled><i class="fa fa-lock text-purple"></i> Send Email - Upgrade To Standard</button>
                 <button id="email-wait" type="button" class="btn btn-light" disabled><i class="fas fa-spinner fa-pulse text-purple"></i> Please wait...</button>
             </div>
         </div>
