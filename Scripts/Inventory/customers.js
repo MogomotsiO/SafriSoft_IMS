@@ -10,10 +10,10 @@
             "dataSrc": ""
         },
         'columns': [
-            {
-                'data': 'Id',
-                'searchable': true
-            },
+            //{
+            //    'data': 'Id',
+            //    'searchable': true
+            //},
             {
                 'data': 'CustomerName',
                 'searchable': true,

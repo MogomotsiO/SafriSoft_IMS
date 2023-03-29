@@ -148,6 +148,14 @@ namespace SafriSoftv1._3.Controllers.API
                 Claim UsernameClaim = new Claim("Username", UserData.Username);
                 var saveUsernameClaim = await userManager.AddClaimAsync(user.Id, UsernameClaim);
                 var saveRole = userManager.AddToRole(user.Id, UserData.Role);
+                var subject = "SafriSoft - Access";
+                var emailBody = $"You have been granted access to the SafriSoft Inventory Management Software by your Organisation Admin. <br/><br/> Please use the below details to access the software: <br/> Username: {user.UserName} <br/> Password: {UserData.Password}";
+
+                var toAddress = new List<string>();
+                var toCCAddress = new List<string>();
+                toAddress.Add(user.Email);
+                var createEmail = new SafriSoftEmailService();
+                createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
                 //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -383,10 +391,10 @@ namespace SafriSoftv1._3.Controllers.API
                     dbProduct.ProductCategory = ProductData.ProductCategory;
                 }
 
-                if (dbProduct.ProductImage != ProductData.ProductImage)
-                {
-                    dbProduct.ProductImage = ProductData.ProductImage;
-                }
+                //if (dbProduct.ProductImage != ProductData.ProductImage)
+                //{
+                //    dbProduct.ProductImage = ProductData.ProductImage;
+                //}
 
                 SafriSoft.SaveChanges();
                 return Json(new { Success = true });
@@ -752,7 +760,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Orders] ([OrderId],[ProductName],[NumberOfItems],[CustomerId],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')", conn.Database, generateOrderId, productName, numberOfItems, customerId, customerName, "Processed", 10, dateOrderCreated, expectedDateOfDelivery, organisationId);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Orders] ([OrderId],[ProductName],[NumberOfItems],[CustomerId],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[UserId],[OrganisationId]) VALUES('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')", conn.Database, generateOrderId, productName, numberOfItems, customerId, customerName, "Processed", 10, dateOrderCreated, expectedDateOfDelivery, userId, organisationId);
                     await cmd.ExecuteNonQueryAsync();
 
                     var auditCmd = conn.CreateCommand();
@@ -772,7 +780,7 @@ namespace SafriSoftv1._3.Controllers.API
                 var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == customerIdParse);
                 var subject = "SafriSoft - Order Received";
                 var downloadLink = "https://ims.safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1, generateOrderId.Length - 1);
-                var emailBody = "Your order has been received.<br/><br/> You will be notified when your order is Packaged, Intransit or Successfully delivered.<br /><br/> Download invoice here: <a href='" + downloadLink + "'>Invoice</a>";
+                var emailBody = "Your order has been received.<br/><br/> We will communicate further updates about your order through email.<br /><br/> Download invoice here: <a href='" + downloadLink + "'>Invoice</a>";
 
                 var toAddress = new List<string>();
                 var toCCAddress = new List<string>();
@@ -814,15 +822,15 @@ namespace SafriSoftv1._3.Controllers.API
 
                 }
 
-                var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == order.CustomerId);
-                var subject = OrderData.OrderStatus;
-                var emailBody = "Your order has been updated.<br/><br/> Order Id: " + OrderData.OrderId + "<br/><br/>" + description;
+                //var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == order.CustomerId);
+                //var subject = OrderData.OrderStatus;
+                //var emailBody = "Your order has been updated.<br/><br/> Order Id: " + OrderData.OrderId + "<br/><br/>" + description;
 
-                var toAddress = new List<string>();
-                var toCCAddress = new List<string>();
-                toAddress.Add(customer.CustomerEmail);
-                var createEmail = new SafriSoftEmailService();
-                createEmail.SaveEmail(subject,emailBody,"support@safrisoft.com",toAddress.ToArray(), toCCAddress.ToArray());
+                //var toAddress = new List<string>();
+                //var toCCAddress = new List<string>();
+                //toAddress.Add(customer.CustomerEmail);
+                //var createEmail = new SafriSoftEmailService();
+                //createEmail.SaveEmail(subject,emailBody,"support@safrisoft.com",toAddress.ToArray(), toCCAddress.ToArray());
 
                 return Json(new { Success = true });
             }
@@ -1424,11 +1432,16 @@ namespace SafriSoftv1._3.Controllers.API
         {
             try
             {
+                ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                string userId = IdentityExtensions.GetUserId(User.Identity);
                 var safriSoftImsDb = new SafriSoftDbContext();
                 var createEmail = new SafriSoftEmailService();
                 var toAddress = new List<string>();
                 var toCCAddress = new List<string>();
                 
+                var changed = "Email Client";
+                var description = $"Email Client - ({email.EmailSubject}): {email.EmailBody}";
+
                 var orderDetails = safriSoftImsDb.Orders.FirstOrDefault(x => x.OrderId == email.OrderId);
 
                 var customerDetails = safriSoftImsDb.Customers.FirstOrDefault(x => x.Id == orderDetails.CustomerId);
@@ -1440,7 +1453,16 @@ namespace SafriSoftv1._3.Controllers.API
 
                 createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
 
-                return Json(new { Success = true, Message = "Order request has been sent" });
+                using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
+                {
+                    conn.Open();
+                    var auditCmd = conn.CreateCommand();
+                    auditCmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[OrderAudit] ([Description],[Changed],[CreatedDate],[UserId],[OrderId]) VALUES('{1}','{2}','{3}','{4}','{5}')", conn.Database, description, changed, DateTime.Now, userId, orderDetails.OrderId);
+                    await auditCmd.ExecuteNonQueryAsync();
+                    conn.Close();
+                }
+
+                return Json(new { Success = true, Message = "Email has been sent" });
             }
             catch (Exception ex)
             {
@@ -1451,6 +1473,12 @@ namespace SafriSoftv1._3.Controllers.API
         [HttpPost, Route("UploadExcelData/{Id}")]
         public async Task<IHttpActionResult> UploadExcelData(HttpRequestMessage request, string Id)
         {
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            string userId = IdentityExtensions.GetUserId(User.Identity);
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+            var organisationId = GetOrganisationId(getOrgClaim);
+
             HttpContext context = HttpContext.Current;
             HttpPostedFile postedFile = context.Request.Files["files[]"];
 
@@ -1488,7 +1516,6 @@ namespace SafriSoftv1._3.Controllers.API
                 string productName = excelReader.GetString(2);
                 string NOIA = excelReader.GetDouble(3).ToString();
                 string productPrice = excelReader.GetDouble(4).ToString();
-                string productImage = excelReader.GetString(5);
                 string productReference = productCode + "-" + DateTime.Now.ToString("yyyy/MM/dd");
 
                 SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
@@ -1501,13 +1528,13 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         conn.Open();
                         var cmd = conn.CreateCommand();
-                        cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCode],[ProductCategory],[ProductImage]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}')", conn.Database, productName, productReference, productPrice, 0, NOIA, "Active", productCode, productCategory, productImage);
+                        cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCode],[ProductCategory],[ProductImage], [OrganisationId]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}')", conn.Database, productName, productReference, productPrice, 0, NOIA, "Active", productCode, productCategory, "None", organisationId);
                         await cmd.ExecuteNonQueryAsync();
                         conn.Close();
                     }
                 }
 
-
+                excelReader.NextResult();
             }
 
             excelReader.Close();
@@ -1554,7 +1581,7 @@ namespace SafriSoftv1._3.Controllers.API
             var identityConn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString());
             identityConn.Open();
             var identityPackageCmd = identityConn.CreateCommand();
-            identityPackageCmd.CommandText = string.Format("SELECT pf.[Limit] from [dbo].[Organisations] o JOIN [dbo].[OrganisationSoftwares] os on os.[OrganisationId] = o.[OrganisationId] AND os.[SoftwareId] = 1 JOIN [dbo].[PackageFeatures] pf on pf.PackageId = os.[PackageId] AND pf.FeatureName = '{1}' WHERE o.[OrganisationId] = {2}", identityConn.Database, feature, orgnaisationId);
+            identityPackageCmd.CommandText = string.Format("SELECT pf.[Limit], os.[PackageId] from [dbo].[Organisations] o JOIN [dbo].[OrganisationSoftwares] os on os.[OrganisationId] = o.[OrganisationId] AND os.[SoftwareId] = 1 JOIN [dbo].[PackageFeatures] pf on pf.PackageId = os.[PackageId] AND pf.FeatureName = '{1}' WHERE o.[OrganisationId] = {2}", identityConn.Database, feature, orgnaisationId);
             var identityPackageReader = identityPackageCmd.ExecuteReader();
             var packageFeatureLimit = 0;
             var limitExceeded = false;
@@ -1562,10 +1589,11 @@ namespace SafriSoftv1._3.Controllers.API
             if (identityPackageReader.Read())
             {
                 packageFeatureLimit = identityPackageReader.GetInt32(0);
+                var package = identityPackageReader.GetInt32(1);
                 if (feature == "Customers")
                 {
                     var numberOfCustomers = SafriSoftImsDb.Customers.ToList().Count();
-                    if (numberOfCustomers >= packageFeatureLimit)
+                    if (numberOfCustomers >= packageFeatureLimit && package != 3)
                     {
                         limitExceeded = true;
                     }
@@ -1573,7 +1601,7 @@ namespace SafriSoftv1._3.Controllers.API
                 else if (feature == "Orders")
                 {
                     var numberOfOrders = SafriSoftImsDb.Orders.ToList().Count();
-                    if (numberOfOrders >= packageFeatureLimit)
+                    if (numberOfOrders >= packageFeatureLimit && package != 3)
                     {
                         limitExceeded = true;
                     }

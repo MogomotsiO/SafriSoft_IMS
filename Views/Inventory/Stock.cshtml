@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.title = "Stock";
+    ViewBag.title = "Products";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -32,7 +32,7 @@
 
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-truck"></i> Stock</h4>
+                            <h4 class="card-title"><i class="fas fa-truck"></i> Products</h4>
                         </div>
                         <div class="card-body">
                             <span class="text-right mr-1"><button id="CreateProduct" type="submit" class="btn btn-light"><i class="fa fa-truck text-info"></i> Create product</button></span>
@@ -45,7 +45,7 @@
                             <table id="products-table" class="table">
                                 <thead>
                                     <tr>
-                                        <th># Product</th>
+                                        @*<th># Product</th>*@
                                         @*<th>Product Image</th>*@
                                         <th>Product Code</th>
                                         <th>Product Category</th>
@@ -83,12 +83,12 @@
             </div>
             <div class="modal-body login-card-body">
                 <div class="row">
-                    <div class="mb-5 col-lg-12">
+                    @*<div class="mb-5 col-lg-12">
                         <input id="img-source" type="text" />
                         <input id="img-filename" type="text" />
                         <img id="logo" src="" alt="" style="height:120px;" />
 
-                    </div>
+                    </div>*@
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Code</label>
@@ -155,14 +155,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3 col-lg-12">
+                    @*<div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group">
                             <div class="custom-file">
                                 <input class="custom-file-input text-light" id="input-logo" type="file">
                                 <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
                             </div>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
@@ -187,12 +187,12 @@
             </div>
             <div class="modal-body login-card-body">
                 <div class="row">
-                    <div class="mb-5 col-lg-12">
+                    @*<div class="mb-5 col-lg-12">
                         <input id="edit-img-source" type="text" />
                         <input id="edit-img-filename" type="text" />
                         <img id="edit-logo" src="" alt="" style="height:120px;" />
 
-                    </div>
+                    </div>*@
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Product Code</label>
@@ -260,14 +260,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3 col-lg-12">
+                    @*<div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <div class="custom-file">
                                 <input class="custom-file-input text-light" id="input-logo" type="file">
                                 <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
                             </div>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
@@ -298,6 +298,8 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <p>Example Format:</p>
+                        <img src="~/Content/images/excelProductFormat.png" style="width: 100%; box-shadow:10px;"/>
                         <div id="dropzone" class="fade">
                             <h3>Drag & Drop File</h3>
                         </div>

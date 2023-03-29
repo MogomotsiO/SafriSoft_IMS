@@ -9,10 +9,10 @@
         "dataSrc": ""
     },
     'columns': [
-        {
-            'data': 'Id',
-            'searchable': true
-        },
+        //{
+        //    'data': 'Id',
+        //    'searchable': true
+        //},
         {
             'data': 'Username',
             'searchable': true
@@ -53,7 +53,7 @@
 var organisationValue = $('#organisation-value').text();
 $('#CreateUser').on('click', function () {
     $('#creat-user-modal').modal('show');
-    $('#user-role').val('Captain');
+    $('#user-role').val('OrganisationUser');
     $('#organisation').val(organisationValue);
     $('#password').val(organisationValue + '&1');
 });

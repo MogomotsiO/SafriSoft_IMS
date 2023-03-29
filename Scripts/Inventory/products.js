@@ -10,10 +10,10 @@
             "dataSrc": ""
         },
         'columns': [
-            {
-                'data': 'Id',
-                'searchable': true
-            },
+            //{
+            //    'data': 'Id',
+            //    'searchable': true
+            //},
             //{
             //    'data': 'ProductImage',
             //    'render': function (data, type, full, meta) {
@@ -85,7 +85,7 @@
         var productReference = $("#product-reference").val();
         var sellingPriceInput = $("#product-price").val();
         var itemsAvailable = $("#product-available").val();
-        var productImage = $('#img-source').val();
+        var productImage = "none";
         var itemsSold = "0";
         var sellingPrice = 0;
 
@@ -93,7 +93,7 @@
             sellingPrice = sellingPriceInput;
         }       
 
-        if (productName != "" && itemsAvailable != 0 && productCode != "" && productImage != "") {
+        if (productName != "" && itemsAvailable != 0 && productCode != "") {
 
             var product = {
                 'ProductCode': productCode,
@@ -134,8 +134,6 @@
                 toastr.error('Items available cannot be empty!');
             }else if (productCode == "") {
                 toastr.error('Product Code cannot be empty!');
-            } else if (productImage == "") {
-                toastr.error('Please select an image for your product!');
             }
         }
 
@@ -155,14 +153,14 @@
         var itemsAvailable = $("#edit-product-available").val();
         var productCode = $("#edit-product-code").val();
         var productCategory = $("#edit-product-category").val();
-        var productImage = $("#edit-logo").attr('src');
+        var productImage = "none";
         var sellingPrice = 0;
 
         if (sellingPriceInput != 0) {
             sellingPrice = sellingPriceInput;
         }
 
-        if (productName != "" && itemsAvailable != 0 && productCode != "" && productImage != "") {
+        if (productName != "" && itemsAvailable != 0 && productCode != "") {
 
             var product = {
                 'Id': productId,
@@ -203,8 +201,6 @@
                 toastr.error('Items available cannot be empty!');
             } else if (productCode == "") {
                 toastr.error('Product Code cannot be empty!');
-            } else if (productImage == "") {
-                toastr.error('Please select an image for your product!');
             }
         }
 
@@ -279,6 +275,8 @@ $('#ImportProduct').on('click', function () {
     }).on('fileuploadalways', function (e, data) {
         console.log(data);
         productDataTable.ajax.reload();
+        $('#upload-excel').modal('hide');
+        toastr.success("Your data has been uploaded successfully");
         var dropZone = $('#dropzone');
         dropZone.removeClass('hover');
     });

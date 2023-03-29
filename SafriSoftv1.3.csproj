@@ -244,9 +244,13 @@
   <ItemGroup>
     <Content Include="assets\css\style.css" />
     <Content Include="assets\css\styleshop.css" />
+    <Content Include="assets\img\93252.jpg" />
+    <Content Include="assets\img\about-extra-1.svg" />
+    <Content Include="assets\img\about-extra-2.svg" />
     <Content Include="assets\img\about.jpg" />
     <Content Include="assets\img\aboutg.jpg" />
     <Content Include="assets\img\apple-touch-icon.PNG" />
+    <Content Include="assets\img\cbak.jpg" />
     <Content Include="assets\img\clients\client-1.png" />
     <Content Include="assets\img\clients\client-2.png" />
     <Content Include="assets\img\clients\client-3.png" />
@@ -258,13 +262,25 @@
     <Content Include="assets\img\counts-img.jpg" />
     <Content Include="assets\img\cta-bg.jpg" />
     <Content Include="assets\img\cta-bgg.jpg" />
+    <Content Include="assets\img\dark-grey-terrazzo.png" />
+    <Content Include="assets\img\dark-honeycomb.png" />
+    <Content Include="assets\img\Dashboard.PNG" />
+    <Content Include="assets\img\dynamic-style.png" />
+    <Content Include="assets\img\dynamic-styleC.png" />
+    <Content Include="assets\img\dynamic-styleD.png" />
     <Content Include="assets\img\email-pattern.png" />
     <Content Include="assets\img\favicon.PNG" />
     <Content Include="assets\img\features.jpg" />
+    <Content Include="assets\img\features.jpg.PNG" />
     <Content Include="assets\img\hero-bg.jpg" />
     <Content Include="assets\img\hero-bgg.jpg" />
+    <Content Include="assets\img\hero-bggg.jpg" />
     <Content Include="assets\img\iconName.png" />
     <Content Include="assets\img\iconOnly.png" />
+    <Content Include="assets\img\intro-bg.jpg" />
+    <Content Include="assets\img\intro-img.svg" />
+    <Content Include="assets\img\InventoryScreenShot.png" />
+    <Content Include="assets\img\name.png" />
     <Content Include="assets\img\portfolio\portfolio-1.jpg" />
     <Content Include="assets\img\portfolio\portfolio-2.jpg" />
     <Content Include="assets\img\portfolio\portfolio-3.jpg" />
@@ -464,6 +480,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\excelProductFormat.png" />
     <Content Include="Content\images\Instant EFT by Payfast.png" />
     <Content Include="creativetim\css\material-dashboard-rtl.css" />
     <Content Include="creativetim\css\material-dashboard.css" />

@@ -171,6 +171,9 @@
         if (changed == "Delivered") {
             self.Theme = ko.observable('bg-success');
         }
+        if (changed == "Email Client") {
+            self.Theme = ko.observable('bg-purple');
+        }
         
     }
 
