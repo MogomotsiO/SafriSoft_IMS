@@ -70,13 +70,21 @@ namespace SafriSoftv1._3.Controllers
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             var username = "";
+            ApplicationDbContext applicationDb = new ApplicationDbContext();
 
             if (!ModelState.IsValid)
             {
+                ModelState.AddModelError("", "Please sign up on safrisoft.com to use this software");
                 return View(model);
             }
 
             var userData = UserManager.FindByEmail(model.Email);
+
+            if (userData == null)
+            {
+                ModelState.AddModelError("", "Please sign up on safrisoft.com to use this software");
+                return View(model);
+            }
 
             try
             {
@@ -90,9 +98,29 @@ namespace SafriSoftv1._3.Controllers
 
             if (username == "Locked")
             {
-                ModelState.AddModelError("", "This email has been locked by your Organisation");
+                ModelState.AddModelError("", "This account has been locked by your Organisation");
                 return View(model);
             }
+
+            var organisationName = userData.Claims.FirstOrDefault(x => x.ClaimType == "Organisation").ClaimValue;
+            var organisationId = applicationDb.Organisations.FirstOrDefault(x => x.OrganisationName == organisationName).OrganisationId;
+            var checkSoftware = applicationDb.OrganisationSoftwares.FirstOrDefault(x => x.OrganisationId == organisationId && x.SoftwareId == 1);
+
+            if (checkSoftware != null)
+            {
+                if (!checkSoftware.Granted)
+                {
+                    ModelState.AddModelError("", "This account does not have access to this software");
+                    return View(model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "This account does not have access to this software");
+                return View(model);
+            }
+            
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: true);

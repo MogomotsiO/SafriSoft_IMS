@@ -59,21 +59,21 @@
             $('#order-total').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].InvoiceTotal));
         });
     </script>
-    <div class="p-3 mb-3" style="border: 1px solid gray;">
+    <div class="p-3 mb-3">
         <!-- title row -->
         <div class="row">
             <div class="col-lg-12">
                 <h4>
-                    <input type="text" id="view-order-id" hidden value="@ViewBag.Title" />
                     <img id="logo" src="@Model.OrganisationLogo" alt="" style="height:150px;" />
                 </h4>
             </div>
             <!-- /.col -->
         </div>
         <!-- info row -->
-        <div class="row">
+        <div class="row" style="font-family: 'Century Gothic' !important;">
             <div class="col-lg-12 table-responsive">
-                <table class="table">
+                <input type="text" id="view-order-id" hidden value="@ViewBag.Title" />
+                <table class="table table-bordered">
                     <tbody>
                         <tr>
                             <td>
@@ -110,8 +110,8 @@
         <!-- Table row -->
         <div class="row">
             <div class="col-12 table-responsive">
-                <table class="table table-borderless">
-                    <thead style="background-color: #17a2b8;color:#fff;font-family: 'Times New Roman', Times, serif;">
+                <table class="table table-bordered" style="font-family: 'Century Gothic' !important;">
+                    <thead style="background-color: #17a2b8;color:#fff;">
                         <tr>
                             <th>Order Id</th>
                             <th>Product</th>
@@ -158,20 +158,48 @@
         <!-- /.row -->
         <div class="row">
             <div class="col-lg-12 table-responsive">
-                <table class="table">
+                <table class="table" style="font-family: 'Century Gothic' !important;">
                     <tbody>
                         <tr>
                             <td>
                                 <p class="lead">Banking Details:</p>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td><b>Account Name:</b></td>
+                                        <td><span id="account-name">@Model.AccountName</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Bank:</b></td>
+                                        <td><span id="bank-name">@Model.BankName</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Account Number:</b></td>
+                                        <td><span id="account-no">@Model.AccountNo</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Branch:</b></td>
+                                        <td><span id="bank-branch">@Model.BranchName</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Branch Code:</b></td>
+                                        <td><span id="branch-code">@Model.BranchCode</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Reference:</b></td>
+                                        <td><span id="client-reference">@(Model.ClientReference.ToUpper() + "/" + Model.OrderId.Substring(1,Model.OrderId.Length - 1))</span></td>
+                                    </tr>
+
+                                </table>
+                                @*<p class="lead">Banking Details:</p>
                                 <b>Account Name:</b> @Model.AccountName<br>
                                 <b>Bank:</b> @Model.BankName<br>
                                 <b>Account Number:</b> @Model.AccountNo<br>
                                 <b>Branch:</b> @Model.BranchName<br>
-                                <b>Branch Code:</b> @Model.BranchCode<br>
+                                <b>Branch Code:</b> @Model.BranchCode<br>*@
                                 @*<b>Reference:</b> @(Model.ClientReference.ToUpper() + "/" + Model.OrderId.Substring(1,Model.OrderId.Length - 1))*@
                             </td>
                             <td>
-                                <p class="lead" style="margin-top:50px !important;">Tax Invoice</p>
+                                <p class="lead" style="padding-top:200px !important;">Tax Invoice</p>
                             </td>
                         </tr>
                     </tbody>

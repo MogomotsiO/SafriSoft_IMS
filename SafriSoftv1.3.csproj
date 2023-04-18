@@ -210,9 +210,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202303081652596_SafriSoftDbContext_IMS.cs" />
-    <Compile Include="Migrations\202303081652596_SafriSoftDbContext_IMS.Designer.cs">
-      <DependentUpon>202303081652596_SafriSoftDbContext_IMS.cs</DependentUpon>
+    <Compile Include="Migrations\202303292200127_safrisoftIms.cs" />
+    <Compile Include="Migrations\202303292200127_safrisoftIms.Designer.cs">
+      <DependentUpon>202303292200127_safrisoftIms.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -224,6 +224,7 @@
     <Compile Include="Models\Data\OrderAudit.cs" />
     <Compile Include="Models\Data\Orders.cs" />
     <Compile Include="Models\Data\Organisations.cs" />
+    <Compile Include="Models\Data\OrganisationSoftware.cs" />
     <Compile Include="Models\Data\Product.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -553,6 +554,7 @@
     <Content Include="dist\img\credit\visa.png" />
     <Content Include="dist\img\default-150x150.png" />
     <Content Include="dist\img\icons.png" />
+    <Content Include="dist\img\new.png" />
     <Content Include="dist\img\photo1.png" />
     <Content Include="dist\img\photo2.png" />
     <Content Include="dist\img\photo3.jpg" />
@@ -2752,8 +2754,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202303081652596_SafriSoftDbContext_IMS.resx">
-      <DependentUpon>202303081652596_SafriSoftDbContext_IMS.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202303292200127_safrisoftIms.resx">
+      <DependentUpon>202303292200127_safrisoftIms.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

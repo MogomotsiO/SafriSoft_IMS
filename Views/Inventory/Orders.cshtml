@@ -122,7 +122,7 @@
                 </button>
             </div>-->
             <div class="modal-body">
-                <div class="invoice p-3 mb-3">
+                <div class="p-3 mb-3">
                     <!-- title row -->
                     <div class="row">
                         <div class="col-lg-12">
@@ -133,9 +133,9 @@
                         <!-- /.col -->
                     </div>
                     <!-- info row -->
-                    <div class="row">
+                    <div class="row" style="font-family: 'Century Gothic' !important;">
                         <div class="col-lg-12 table-responsive">
-                            <table class="table">
+                            <table class="table table-bordered">
                                 <tbody>
                                     <tr>
                                         <td>
@@ -172,8 +172,8 @@
                     <!-- Table row -->
                     <div class="row">
                         <div class="col-12 table-responsive">
-                            <table class="table table-borderless">
-                                <thead style="background-color: #17a2b8;color:#fff;font-family: 'Times New Roman', Times, serif;">
+                            <table class="table table-bordered">
+                                <thead style="background-color: #17a2b8;color:#fff;">
                                     <tr>
                                         <th>Order Id</th>
                                         <th>Product</th>
@@ -225,12 +225,33 @@
                                     <tr>
                                         <td>
                                             <p class="lead">Banking Details:</p>
-                                            <b>Account Name:</b> <span id="account-name"></span><br>
-                                            <b>Bank:</b> <span id="bank-name"></span><br>
-                                            <b>Account Number:</b> <span id="account-no"></span><br>
-                                            <b>Branch:</b> <span id="bank-branch"></span><br>
-                                            <b>Branch Code:</b> <span id="branch-code"></span><br>
-                                            <b>Reference:</b> <span id="client-reference"></span>
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <td><b>Account Name:</b></td>
+                                                    <td><span id="account-name"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Bank:</b></td>
+                                                    <td><span id="bank-name"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Account Number:</b></td>
+                                                    <td><span id="account-no"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Branch:</b></td>
+                                                    <td><span id="bank-branch"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Branch Code:</b></td>
+                                                    <td><span id="branch-code"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Reference:</b></td>
+                                                    <td><span id="client-reference"></span></td>
+                                                </tr>
+
+                                            </table>
                                         </td>
                                         <td>
                                             <p class="lead"><b>Tax Invoice</b></p>

@@ -7,13 +7,13 @@ namespace SafriSoftv1._3.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class SafriSoftDbContext_IMS : IMigrationMetadata
+    public sealed partial class safrisoftIms : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(SafriSoftDbContext_IMS));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(safrisoftIms));
         
         string IMigrationMetadata.Id
         {
-            get { return "202303081652596_SafriSoftDbContext_IMS"; }
+            get { return "202303292200127_safrisoftIms"; }
         }
         
         string IMigrationMetadata.Source
