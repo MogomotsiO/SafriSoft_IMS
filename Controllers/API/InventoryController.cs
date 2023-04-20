@@ -779,7 +779,7 @@ namespace SafriSoftv1._3.Controllers.API
                 var customerIdParse = int.Parse(customerId);
                 var customer = SafriSoft.Customers.FirstOrDefault(x => x.Id == customerIdParse);
                 var subject = "SafriSoft - Order Received";
-                var downloadLink = "https://ims.safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1, generateOrderId.Length - 1);
+                var downloadLink = "https://ims.safrisoft.com/Inventory/CustomerInvoicePdf?OrderId=" + generateOrderId.Substring(1, generateOrderId.Length - 1) + "&organisationName=" + getOrgClaim;
                 var emailBody = "Your order has been received.<br/><br/> We will communicate further updates about your order through email.<br /><br/> Download invoice here: <a href='" + downloadLink + "'>Invoice</a>";
 
                 var toAddress = new List<string>();

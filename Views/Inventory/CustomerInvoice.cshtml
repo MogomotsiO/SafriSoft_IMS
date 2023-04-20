@@ -16,7 +16,7 @@
 
 </head>
 <body>
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         console.log($('#view-order-id').val());
         var orderData = {
             'OrderId': $('#view-order-id').val()
@@ -58,7 +58,7 @@
             $('#shipping-amount').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].ShippingCost));
             $('#order-total').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].InvoiceTotal));
         });
-    </script>
+    </script>*@
     <div class="p-3 mb-3">
         <!-- title row -->
         <div class="row">
@@ -138,12 +138,14 @@
                             <td style="text-align:right;"><b>VAT (15%):</b></td>
                             <td>@(string.Format(cZA, "{0:C}", Model.VatAmount))</td>
                         </tr>
+                        @if (Model.ShippingCost > 0) { 
                         <tr>
                             <td></td>
                             <td></td>
                             <td style="text-align:right;"><b>Shipping:</b></td>
                             <td>@(string.Format(cZA, "{0:C}", Model.ShippingCost))</td>
                         </tr>
+                        }
                         <tr>
                             <td></td>
                             <td></td>
@@ -186,7 +188,15 @@
                                     </tr>
                                     <tr>
                                         <td><b>Reference:</b></td>
-                                        <td><span id="client-reference">@(Model.ClientReference.ToUpper() + "/" + Model.OrderId.Substring(1,Model.OrderId.Length - 1))</span></td>
+                                        @if (Model.ClientReference != "" && Model.ClientReference != null)
+                                        {
+                                            <td><span id="client-reference">@(Model.ClientReference.ToUpper() + "/" + Model.OrderId.Substring(1,Model.OrderId.Length - 1))</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td><span id="client-reference">@(Model.OrderId.Substring(1,Model.OrderId.Length - 1))</span></td>
+                                        }
+
                                     </tr>
 
                                 </table>
