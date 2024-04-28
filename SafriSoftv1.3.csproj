@@ -202,11 +202,18 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AccountingController.cs" />
+    <Compile Include="Controllers\API\AccountingController.cs" />
+    <Compile Include="Controllers\API\BaseApiController.cs" />
     <Compile Include="Controllers\API\InventoryController.cs" />
+    <Compile Include="Controllers\API\InvoicingController.cs" />
     <Compile Include="Controllers\API\ReportController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
+    <Compile Include="Controllers\InvoicingController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -214,31 +221,47 @@
     <Compile Include="Migrations\202303292200127_safrisoftIms.Designer.cs">
       <DependentUpon>202303292200127_safrisoftIms.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202404162053203_safrisoftaccounting.cs" />
+    <Compile Include="Migrations\202404162053203_safrisoftaccounting.Designer.cs">
+      <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountingViewModel.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CustomerViewModel.cs" />
+    <Compile Include="Models\Data\BaseModel.cs" />
     <Compile Include="Models\Data\Customer.cs" />
     <Compile Include="Models\Data\Email.cs" />
+    <Compile Include="Models\Data\GeneralLedger.cs" />
     <Compile Include="Models\Data\InboxMessages.cs" />
     <Compile Include="Models\Data\InboxReplies.cs" />
+    <Compile Include="Models\Data\Invoice.cs" />
+    <Compile Include="Models\Data\InvoiceItem.cs" />
     <Compile Include="Models\Data\OrderAudit.cs" />
     <Compile Include="Models\Data\Orders.cs" />
     <Compile Include="Models\Data\Organisations.cs" />
     <Compile Include="Models\Data\OrganisationSoftware.cs" />
     <Compile Include="Models\Data\Product.cs" />
+    <Compile Include="Models\Data\TrialBalanceAccount.cs" />
+    <Compile Include="Models\Data\TrialBalanceGeneralLedgerMapping.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\InboxViewModel.cs" />
     <Compile Include="Models\InvoiceViewModel.cs" />
+    <Compile Include="Models\InvoicingViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\OrderAuditViewModel.cs" />
     <Compile Include="Models\OrderViewModel.cs" />
     <Compile Include="Models\OrganisationViewModel.cs" />
     <Compile Include="Models\ProductViewModel.cs" />
+    <Compile Include="Models\Result.cs" />
     <Compile Include="Models\SafriSoftDbContext.cs" />
     <Compile Include="Models\SystemNotificationsViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountingService.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\InvoicingService.cs" />
     <Compile Include="Services\SafriSoftEmailService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -2285,6 +2308,9 @@
     <Content Include="Rotativa\help-wkhtmltopdf.txt" />
     <Content Include="Rotativa\wkhtmltoimage.exe" />
     <Content Include="Rotativa\wkhtmltopdf.exe" />
+    <Content Include="Scripts\Accounting\generallegder.js" />
+    <Content Include="Scripts\Accounting\trialbalance.js" />
+    <Content Include="Scripts\Accounting\trialbalancereport.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="assets\vendor\bootstrap\css\bootstrap-grid.css.map" />
@@ -2664,6 +2690,7 @@
     <Content Include="Scripts\Inventory\orders.js" />
     <Content Include="Scripts\Inventory\products.js" />
     <Content Include="Scripts\Inventory\users.js" />
+    <Content Include="Scripts\Invoicing\app.invoicing.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -2677,6 +2704,9 @@
     <Content Include="Scripts\knockout-3.5.1.js" />
     <Content Include="Scripts\leaflet-heatmap.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Views\Accounting\TrialBalanceAccounts.cshtml" />
+    <Content Include="Views\Accounting\GeneralLedger.cshtml" />
+    <Content Include="Views\Accounting\TrialBalanceReport.cshtml" />
     <None Include="Views\Home\about.cshtml" />
     <None Include="Views\Home\contact.cshtml" />
     <Content Include="Scripts\Report\ReportsDataTables.js" />
@@ -2725,10 +2755,14 @@
     <Content Include="Views\Inventory\AttentionReport.cshtml" />
     <Content Include="Views\Home\Home.cshtml" />
     <Content Include="Views\Account\LogOff.cshtml" />
+    <Content Include="Views\Reporting\Inventory.cshtml" />
+    <Content Include="Views\Invoicing\Create.cshtml" />
+    <Content Include="Views\Invoicing\Invoices.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Backload\Client\blueimp\bundles\css\debug\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -2756,6 +2790,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202303292200127_safrisoftIms.resx">
       <DependentUpon>202303292200127_safrisoftIms.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202404162053203_safrisoftaccounting.resx">
+      <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

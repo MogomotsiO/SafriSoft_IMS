@@ -102,6 +102,7 @@
     <link href="~/creativetim/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
     <link rel="stylesheet" href="../../plugins/summernote/summernote-bs4.min.css">
+    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet" />
     <!-- Toastr -->
     <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
     <!-- Google Font: Source Sans Pro -->
@@ -133,13 +134,16 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars text-info"></i></a>
                 </li>
                 <li class="nav-item">
-                    @if (packageId == 1) {
+                    @if (packageId == 1)
+                    {
                         <button class="btn btn-outline-success"><i class="fas fa-crown"></i> SafriSoft - Free</button>
                     }
-                    else if (packageId == 2) {
+                    else if (packageId == 2)
+                    {
                         <button class="btn btn-outline-warning"><i class="fas fa-crown"></i> SafriSoft - Standard</button>
                     }
-                    else if (packageId == 3) { 
+                    else if (packageId == 3)
+                    {
                         <button class="btn btn-outline-dark"><i class="fas fa-crown text-warning"></i> SafriSoft - Premium</button>
                     }
                 </li>
@@ -220,20 +224,12 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-                    with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
                         <li class="nav-item">
                             <a id="Dashboard" href="~/Inventory/Index" class="nav-link">
                                 <i class="nav-icon fas fa-home text-white"></i>
                                 <p class="text-white">
                                     Dashboard
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="Orders" href="~/Inventory/Orders" class="nav-link">
-                                <i class="nav-icon fas fa-shopping-cart text-white"></i>
-                                <p class="text-white">
-                                    Orders
                                 </p>
                             </a>
                         </li>
@@ -246,14 +242,83 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a id="Stock" href="~/Inventory/Stock" class="nav-link">
-                                <i class="nav-icon fas fa-truck text-white"></i>
+                            <a id="Products" href="~/Inventory/Stock" class="nav-link">
+                                <i class="nav-icon fas fa-dolly text-white"></i>
                                 <p class="text-white">
                                     Products
                                 </p>
                             </a>
                         </li>
-                        @if(userRole == "OrganisationAdmin")
+                        <li class="nav-item">
+                            <a id="Orders" href="~/Inventory/Orders" class="nav-link">
+                                <i class="nav-icon fas fa-shopping-cart text-white"></i>
+                                <p class="text-white">
+                                    Orders
+                                </p>
+                            </a>
+                        </li>
+                        <li id="Invoicing-Menu" class="nav-item has-treeview">
+                            <a id="Invoicing" href="#" class="nav-link">
+                                <i class="nav-icon fas fas fa-file-invoice text-white"></i>
+                                <p class="text-white">
+                                    Invoicing
+                                    <i class="right fas fa-angle-left  text-white"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a id="Create" href="~/Invoicing/Create" class="nav-link">
+                                        <i class="far fa-circle text-white nav-icon"></i>
+                                        <p class="text-white">Create</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="Invoices" href="~/Invoicing/Invoices" class="nav-link">
+                                        <i class="far fa-circle text-white nav-icon"></i>
+                                        <p class="text-white">Invoices</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a id="InventoryReporting" href="~/Reporting/Inventory" class="nav-link">
+                                <i class="nav-icon fas fa-file-excel text-white"></i>
+                                <p class="text-white">
+                                    Reports
+                                </p>
+                            </a>
+                        </li>
+                        <li id="Accounting-Menu" class="nav-item has-treeview">
+                            <a id="Accounting" href="#" class="nav-link">
+                                <i class="nav-icon fas fa-coins text-white"></i>
+                                <p class="text-white">
+                                    Accounting
+                                    <i class="right fas fa-angle-left  text-white"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
+                                        <i class="far fa-circle text-white nav-icon"></i>
+                                        <p class="text-white">Trial Balance Accounts</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
+                                        <i class="far fa-circle text-white nav-icon"></i>
+                                        <p class="text-white">General Ledger</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
+                                        <i class="far fa-circle text-white nav-icon"></i>
+                                        <p class="text-white">Trial Balance Report</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        @if (userRole == "OrganisationAdmin")
                         {
                             <li id="menu-open" class="nav-item has-treeview">
                                 <a id="main-users" href="#" class="nav-link">
@@ -271,11 +336,11 @@
                                         </a>
                                     </li>
                                     @*<li class="nav-item">
-                                        <a id="Inbox" href="~/Inventory/Inbox" class="nav-link">
-                                            <i class="fa fa-circle text-info nav-icon"></i>
-                                            <p>Inbox</p>
-                                        </a>
-                                    </li>*@
+                        <a id="Inbox" href="~/Inventory/Inbox" class="nav-link">
+                            <i class="fa fa-circle text-info nav-icon"></i>
+                            <p>Inbox</p>
+                        </a>
+                    </li>*@
                                 </ul>
                             </li>
                         }
@@ -302,17 +367,18 @@
                                 </li>
                             </ul>
                         </li>
-                        @if (packageId != 3) { 
-                        <li class="nav-item">
-                            <a id="Stock" href="#" onclick="changePackage()" class="nav-link bg-gradient-purple text-white">
-                                <i class="nav-icon fa fa-crown"></i>
-                                <p class="text-white">
-                                    Try SafriSoft Premium
-                                </p>
-                            </a>
-                        </li>
+                        @if (packageId != 3)
+                        {
+                            <li class="nav-item">
+                                <a id="Stock" href="#" onclick="changePackage()" class="nav-link bg-gradient-purple text-white">
+                                    <i class="nav-icon fa fa-crown"></i>
+                                    <p class="text-white">
+                                        Try SafriSoft Premium
+                                    </p>
+                                </a>
+                            </li>
                         }
-                        
+
                         <li hidden id="viewbag-title">
                             <p>@ViewBag.title</p>
                         </li>
@@ -458,9 +524,9 @@
         <!-- Bootstrap 4 -->
         <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="~/creativetim/js/core/popper.min.js"></script>
-        @*<script src="~/creativetim/js/core/bootstrap-material-design.min.js"></script>*@
+        <script src="~/creativetim/js/core/bootstrap-material-design.min.js"></script>
         <script src="~/creativetim/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-        <script src="~/creativetim/js/material-dashboard.js"></script>
+        @*<script src="~/creativetim/js/material-dashboard.js"></script>*@
         <!-- DataTables -->
         <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
         <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -484,20 +550,38 @@
         <script src="~/Scripts/knockout-3.5.1.js"></script>
 
         <script src="../../plugins/summernote/summernote-bs4.min.js"></script>
-
+        <script src="~/plugins/select2/js/select2.min.js"></script>
         <!-- Handle active tab and other layout js stuff -->
         <script>
             $('#summernote').summernote();
+            $(document).ready(function () {
+                $('.safriSelect2').select2();
+            });
+           
 
-            var tabActive = $("#viewbag-title").text();
-            $("#" + tabActive.trim()).addClass("active");
-            if (tabActive.trim() != "Users" && tabActive.trim() != "Inbox") {
-                $("#" + tabActive.trim() + " .nav-icon").addClass("text-white");
+            var tabActive = $("#viewbag-title").text().trim();
+            $("#" + tabActive).addClass("active");
+            if (tabActive != "Users" && tabActive != "Inbox") {
+                $("#" + tabActive + " .nav-icon").addClass("text-white");
             }
-            if (tabActive.trim() == "Users" || tabActive.trim() == "Inbox") {
+            if (tabActive == "Users" || tabActive == "Inbox") {
                 $("#main-users").addClass("active");
                 $("#main-users .nav-icon").addClass("text-white");
                 $("#menu-open").addClass("menu-open");
+            }
+
+            if (tabActive == "TrialBalanceAccounts" || tabActive == "GeneralLedger" || tabActive == "TrialBalanceReport") {
+                /*$("#main-users").addClass("active");*/
+                $("#" + tabActive).addClass("active");
+                $("#" + tabActive + " .nav-icon").addClass("text-white");
+                $("#Accounting-Menu").addClass("menu-open");
+            }
+
+            if (tabActive == "Create" || tabActive == "Invoices") {
+                /*$("#main-users").addClass("active");*/
+                $("#" + tabActive).addClass("active");
+                $("#" + tabActive + " .nav-icon").addClass("text-white");
+                $("#Invoicing-Menu").addClass("menu-open");
             }
 
             function changePackage() {
@@ -531,18 +615,21 @@
 
         </script>
 
+        <script src="~/Backload/Client/blueimp/fileupload/js/vendor/jquery.ui.widget.js"></script>
+        <script src="~/Backload/Client/blueimp/fileupload/js/jquery.iframe-transport.js"></script>
+        <script src="~/Backload/Client/blueimp/fileupload/js/jquery.fileupload.js"></script>
+
+        @RenderSection("Scripts", false)
+
         <script src="~/Scripts/Inventory/users.js"></script>
         <script src="~/Scripts/Inventory/products.js"></script>
         <script src="~/Scripts/Inventory/customers.js"></script>
         <script src="~/Scripts/Inventory/orders.js"></script>
         <script src="~/Scripts/Inventory/inbox.js"></script>
         @*<script src="~/Scripts/Inventory/app.orders.js"></script>*@
-        <script src="~/Scripts/Inventory/app.inbox.js"></script>
-        <script src="~/Scripts/Report/ReportsDataTables.js"></script>
+        @*<script src="~/Scripts/Inventory/app.inbox.js"></script>*@
 
-        <script src="~/Backload/Client/blueimp/fileupload/js/vendor/jquery.ui.widget.js"></script>
-        <script src="~/Backload/Client/blueimp/fileupload/js/jquery.iframe-transport.js"></script>
-        <script src="~/Backload/Client/blueimp/fileupload/js/jquery.fileupload.js"></script>
+
 
         <script type="text/javascript">
             // Hide premium Buttons
@@ -561,6 +648,12 @@
                 $('#excel-download-lock-3').hide();
                 $('#excel-download-lock-4').hide();
             }
+
+            //$(".buttons-csv").addClass("btn-outline-info");
+            //$(".buttons-csv").removeClass("btn-secondary");
+            //$(".buttons-excel").addClass("btn-outline-info");
+            //$(".buttons-excel").removeClass("btn-secondary");
+
         </script>
     </div>
 </body>

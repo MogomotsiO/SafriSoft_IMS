@@ -68,17 +68,22 @@
 }
 
 .btn-secondary {
-    background-color: #17a2b8 !important;
+    background-color: transparent !important;
     border-color: #17a2b8 !important;
+    color: #17a2b8 !important;
     /*height:40px !important;
     width:40px !important;*/
-    font-size:12px !important;
 }
 
-body {
-    font-family: 'Century Gothic' !important;
-    font-size:13px !important;
-}
+    .btn-secondary:hover {
+        background-color: #17a2b8 !important;
+        color: white !important;
+    }
+
+    body {
+        font-family: 'Century Gothic' !important;
+        font-size: 13px !important;
+    }
 
 .note-insert{
     display:none;
@@ -86,4 +91,17 @@ body {
 
 .note-editing-area{
     height: 300px;
+}
+
+.dt-buttons {
+    background-color: transparent !important;
+    border-color: #17a2b8 !important;
+}
+
+.modal-xl {
+    max-width: 85% !important;
+}
+
+.select2-selection--single{
+    height:40px !important;
 }

@@ -16,6 +16,11 @@ namespace SafriSoftv1._3.Models
         public virtual DbSet<InboxReplies> InboxReplies { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
         public virtual DbSet<OrderAudit> OrderAudit { get; set; }
+        public virtual DbSet<TrialBalanceAccount> TrialBalanceAccounts { get; set; }
+        public virtual DbSet<GeneralLedger> GeneralLedgers { get; set; }
+        public virtual DbSet<TrialBalanceGeneralLedgerMapping> TrialBalanceGeneralLedgerMappings { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<InvoiceItem> InvoiceItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

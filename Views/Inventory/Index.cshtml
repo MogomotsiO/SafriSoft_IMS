@@ -59,14 +59,14 @@
                     <div class="card card-stats">
                         <div class="card-header card-header-info card-header-icon">
                             <div class="card-icon">
-                                <i class="fas fa-truck"></i>
+                                <i class="fas fa-dolly"></i>
                             </div>
                             <p class="card-category">Products Available</p>
                             <h1 id="stock-available-count" class="card-titlec"></h1>
                         </div>
                         <div class="card-footer">
                             <div class="stats">
-                                <i class="fas fa-truck"></i>
+                                <i class="fas fa-dolly"></i>
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                                 <p>Stock Available</p>
                             </div>
                             <div class="icon">
-                                <i class="fas fa-truck"></i>
+                                <i class="fas fa-dolly"></i>
                             </div>
                         </div>*@
                 </div>
@@ -174,14 +174,14 @@
                     <div class="card card-stats">
                         <div class="card-header card-header-info card-header-icon">
                             <div class="card-icon">
-                                <i class="fas fa-truck-moving"></i>
+                                <i class="fas fa-dolly-moving"></i>
                             </div>
                             <p class="card-category">Orders InTransit</p>
                             <h1 id="orders-intransit" class="card-titlec"></h1>
                         </div>
                         <div class="card-footer">
                             <div class="stats">
-                                <i class="fas fa-truck-moving"></i>
+                                <i class="fas fa-dolly-moving"></i>
                             </div>
                         </div>
                     </div>
@@ -236,79 +236,7 @@
                     </div>-->
                     <!-- /.card -->
                 </div>
-                <div class="col-xs-12 col-md-6">
-                    <div class="card">
-                        <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-chart-pie"></i> Generate Reports</h4>
-                        </div>
-                        <div class="card-body table-responsive">
-                            <a href="#" onclick="generateCustomerReport()">
-                                <div class="info-box bg-gradient-white cursor-pointer">
-                                    <span class="info-box-icon bg-info"><i class="fas fa-user-friends"></i></span>
-
-                                    <div class="info-box-content">
-                                        <span class="info-box-number">Customer Report</span>
-                                        <span class="info-box-text">Generate customer report.</span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </a>
-                            <a href="#" onclick="generateProductReport()">
-                                <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                    <span class="info-box-icon bg-info"><i class="fa fa-truck"></i></span>
-
-                                    <div class="info-box-content">
-                                        <span class="info-box-number">Inventory Report</span>
-                                        <span class="info-box-text">Generate report to see how many items you have available and how many you've sold.</span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </a>
-                            <a href="#" onclick="generateOrderReport()">
-                                <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                    <span class="info-box-icon bg-info"><i class="fas fa-shopping-cart"></i></span>
-
-                                    <div class="info-box-content">
-                                        <span class="info-box-number">Orders Report</span>
-                                        <span class="info-box-text">Generate report to see the number of orders and their statuses.</span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </a>
-                            <a href="#" onclick="generateSystemReport()">
-                                <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                    <span class="info-box-icon bg-info"><i class="fa fa-exclamation"></i></span>
-
-                                    <div class="info-box-content">
-                                        <span class="info-box-number">Attention</span>
-                                        <span class="info-box-text">Generate report to view system notifications.</span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                            </a>
-                            @*<div class="card-header">
-                                    <h3 class="card-title"><i class="fas fa-map-marker-alt"></i> Clients Location</h3>
-
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                                    </div>
-                                </div>
-                                <div id="networkGeoLocationHeatmap" style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;">
-                                </div>*@
-
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-            <div class="row">
-
-
-                <!-- /.card -->
+                
             </div>
         </div>
     </div><!-- /.container-fluid -->
@@ -317,202 +245,7 @@
 <!-- /.content-wrapper -->
 <!-- ./wrapper -->
 <!-- Modal -->
-<div class="modal fade" id="customer-reports">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="customer-report-title" class="modal-title">Customers Report</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h5 class="card-title"><i class="fas fa-user-friends"></i> Download Report In csv/excel</h5>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <button id="excel-download-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="customer-reports-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Address</th>
-                                    <th>Date Created</th>
-                                    <th>Orders</th>
-                                </tr>
-                            </thead>
 
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-            </div>
-            <div class="modal-footer justify-content-right">
-                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-<div class="modal fade" id="product-reports">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="product-report-title" class="modal-title">Products Report</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h5 class="card-title"><i class="fa fa-truck"></i> Download Report In csv/excel</h5>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <button id="excel-download-lock-2" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="products-reports-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Category</th>
-                                    <th>Name</th>
-                                    <th>Reference</th>
-                                    <th>Selling Price</th>
-                                    <th>Sold</th>
-                                    <th>Available</th>
-                                </tr>
-                            </thead>
-
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-            </div>
-            <div class="modal-footer justify-content-right">
-                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-<div class="modal fade" id="order-reports">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="order-report-title" class="modal-title">Orders Report</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Download Report In csv/excel</h5>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <button id="excel-download-lock-3" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="orders-reports-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Order #</th>
-                                    <th>Product</th>
-                                    <th>Qty</th>
-                                    <th>Customer Name</th>
-                                    <th>Date Created</th>
-                                    <th>Delivery Date</th>
-                                    <th>Invoice Amount</th>
-                                    <th>Status</th>
-                                    <th>Progress</th>
-                                </tr>
-                            </thead>
-
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-            </div>
-            <div class="modal-footer justify-content-right">
-                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-<div class="modal fade" id="system-reports">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="system-report-title" class="modal-title">These Orders Should've Been Delivered</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h5 class="card-title"><i class="fa fa-exclamation-circle"></i> Download Report In csv/excel</h5>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <button id="excel-download-lock-4" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="system-reports-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Order #</th>
-                                    <th>Product</th>
-                                    <th>Qty</th>
-                                    <th>Customer Name</th>
-                                    <th>Status</th>
-                                    <th>Selling Price</th>
-                                    <th>Date Created</th>
-                                    <th>Delivery Date</th>
-                                </tr>
-                            </thead>
-
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-            </div>
-            <div class="modal-footer justify-content-right">
-                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-<script type="text/javascript">
-    function generateCustomerReport() {
-        $('#customer-reports').modal('show');
-    }
-
-    function generateProductReport() {
-        $('#product-reports').modal('show');
-    }
-
-    function generateOrderReport() {
-        $('#order-reports').modal('show');
-    }
-
-    function generateSystemReport() {
-        $('#system-reports').modal('show');
-    }
-    
-</script>
 
 <!-- Open Street Map-->
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -597,24 +330,24 @@
             //-------------
             //- BAR CHART -
             //-------------
-            var barChartCanvas = $('#barChart').get(0).getContext('2d')
-            var barChartData = jQuery.extend(true, {}, areaChartData)
-            var temp0 = areaChartData.datasets[0]
-            var temp1 = areaChartData.datasets[1]
-            barChartData.datasets[0] = temp1
-            barChartData.datasets[1] = temp0
+            //var barChartCanvas = $('#barChart').get(0).getContext('2d')
+            //var barChartData = jQuery.extend(true, {}, areaChartData)
+            //var temp0 = areaChartData.datasets[0]
+            //var temp1 = areaChartData.datasets[1]
+            //barChartData.datasets[0] = temp1
+            //barChartData.datasets[1] = temp0
 
-            var barChartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                datasetFill: false
-            }
+            //var barChartOptions = {
+            //    responsive: true,
+            //    maintainAspectRatio: false,
+            //    datasetFill: false
+            //}
 
-            var barChart = new Chart(barChartCanvas, {
-                type: 'bar',
-                data: barChartData,
-                options: barChartOptions
-            })
+            //var barChart = new Chart(barChartCanvas, {
+            //    type: 'bar',
+            //    data: barChartData,
+            //    options: barChartOptions
+            //})
 
         });
         var donutData;

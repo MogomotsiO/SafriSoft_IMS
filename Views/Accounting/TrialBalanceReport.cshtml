@@ -1,0 +1,148 @@
+﻿
+@{
+    ViewBag.Title = "TrialBalanceReport";
+}
+
+<style>
+    .amountWidth {
+        width: 200px;
+    }
+
+    a:hover {
+        color: blue !important;
+    }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                    @*<div class="small-box bg-white border-left border-info safri-input-style">
+                            <div class="inner">
+                                <h3>Products:</h3>
+                                <p>Home / Stock</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-dolly text-dark"></i>
+                            </div>
+                        </div>*@
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    @*<div class="mb-3 col-md-3">
+                            <div class="input-group form-group bmd-form-group is-filled">
+                                <label class="bmd-label-floating">Period</label>
+                                <input id="period" class="form-control" type="month">
+                                <div class="input-group-append" style="cursor:pointer;" onclick="refreshTrialBalanceReportDT()">
+                                    <div class="input-group-text bg-info border-white">
+                                        <span class="fa fa-spinner"></span> <span style="margin-left:5px;"> Refresh Report</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                    <div class="col-md-6" style="padding:0px !important;">
+                        <div class="card">
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title"><i class="fa fa-file"></i> Filter Trial Balance</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-5">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">From</label>
+                                            <input id="start" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-5">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">To</label>
+                                            <input id="end" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-2">
+                                        <button id="" type="submit" class="btn btn-outline-info" onclick="refreshTrialBalanceReportDT()">Refresh Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fa fa-file"></i> Trial Balance Report</h4>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            
+
+                            <table id="trialBalanceReportTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Account Number</th>
+                                        <th>Account Name</th>
+                                        <th>Balance</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<!-- Modal -->
+<div class="modal fade" id="trialBalanceItems">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Gl Accounts</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-card-body">
+                <table id="trialBalanceItemsTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Gl Account Number</th>
+                            <th>Gl Account Name</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts{
+    <script src="~/Scripts/Accounting/trialbalancereport.js"></script>
+}

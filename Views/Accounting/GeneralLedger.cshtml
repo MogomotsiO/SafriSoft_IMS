@@ -1,0 +1,173 @@
+﻿
+@{
+    ViewBag.Title = "GeneralLedger";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                    @*<div class="small-box bg-white border-left border-info safri-input-style">
+                            <div class="inner">
+                                <h3>Products:</h3>
+                                <p>Home / Stock</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-dolly-flatbed text-dark"></i>
+                            </div>
+                        </div>*@
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6" style="padding:0px !important;">
+                        <div class="card">
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title"><i class="fa fa-file"></i> Filter General Ledger</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-5">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Gl From</label>
+                                            <input id="start" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-5">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Gl To</label>
+                                            <input id="end" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-2">
+                                        <button id="" type="submit" class="btn btn-outline-info" onclick="refreshGeneralLedgerDT()">Refresh GLs</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fas fa-coins"></i> General Ledger</h4>
+                        </div>
+                        <div class="card-body">
+                            @*<span class="text-right mr-1"><button id="CreateGeneralLedger" type="submit" class="btn btn-light"><i class="fa fa-edit text-info"></i> Create</button></span>*@
+                            <span class="text-right">
+                                <button id="ImportGeneralLedger" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import</button>
+                            </span>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="generalLedgerTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Account Number</th>
+                                        <th>Account Name</th>
+                                        <th>Description</th>
+                                        @*<th>Period</th>*@
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+
+<!-- Upload Data -->
+<div class="modal fade" id="upload-excel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="tenants-documents-title" class="modal-title">@*<i class="fa fa-plus"></i>*@Import General Ledger</h5>
+                <input type="text" id="tenant-id" hidden />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-paste"></i> Import Excel Data</h4>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="alert alert-info" style="border:none !important;">
+                            <strong>NB!</strong> Please provide us with the Account Number, Account Name, Month, Year, Amount columns in your excel.
+                        </div>
+                        <div id="dropzone" class="fade">
+                            <h3>Drag & Drop File</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="generalLedgerResultsModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Import Results</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-card-body">
+                <table id="generalLedgerResultsTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts{
+    <script src="~/Scripts/Accounting/generallegder.js"></script>
+}

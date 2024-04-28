@@ -11,6 +11,7 @@ namespace SafriSoftv1._3.Models.Data
         public string ProductCode { get; set; }
         public string ProductCategory { get; set; }
         public string ProductImage { get; set; }
+        public double Cost { get; set; }
         public double SellingPrice { get; set; }
         public int? ItemsSold { get; set; }
         public int ItemsAvailable { get; set; }

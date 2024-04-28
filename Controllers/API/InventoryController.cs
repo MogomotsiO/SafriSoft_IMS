@@ -234,7 +234,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database, Id, organisationId);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database, Id, organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -245,6 +245,7 @@ namespace SafriSoftv1._3.Controllers.API
                         Products.Id = reader.GetInt32(0);
                         Products.ProductName = reader.GetString(1);
                         Products.ProductReference = reader.GetString(2);
+                        Products.Cost = reader.GetDouble(10);
                         Products.SellingPrice = reader.GetDouble(3);
                         Products.ItemsSold = reader.GetInt32(4);
                         Products.ItemsAvailable = reader.GetInt32(5);
@@ -277,7 +278,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -288,12 +289,20 @@ namespace SafriSoftv1._3.Controllers.API
                         Products.Id = reader.GetInt32(0);
                         Products.ProductName = reader.GetString(1);
                         Products.ProductReference = reader.GetString(2);
+                        Products.Cost = reader.GetDouble(10);
                         Products.SellingPrice = reader.GetDouble(3);
                         Products.ItemsSold = reader.GetInt32(4);
                         Products.ItemsAvailable = reader.GetInt32(5);
                         Products.ProductCategory = reader.GetString(7);
                         Products.ProductImage = reader.GetString(8);
                         Products.ProductCode = reader.GetString(9);
+
+                        // calculations very serious stuff
+                        Products.TotalItems = Products.ItemsSold + Products.ItemsAvailable;
+                        Products.TotalItemsCost = Products.TotalItems * Products.Cost;
+                        Products.ExpectedProfit = (Products.TotalItems * Products.SellingPrice) - (Products.TotalItemsCost);
+                        Products.CurrProfit = Products.ItemsSold * Products.SellingPrice - (Products.ItemsSold * Products.Cost);
+
                         ProductViewModel.Add(Products);
                     }
                     reader.NextResult();
@@ -311,6 +320,7 @@ namespace SafriSoftv1._3.Controllers.API
             var productCategory = ProductData.Value<string>("ProductCategory");
             var productName = ProductData.Value<string>("ProductName");
             var productReference = ProductData.Value<string>("ProductReference");
+            var cost = ProductData.Value<string>("Cost");
             var sellingPrice = ProductData.Value<string>("SellingPrice");
             var itemsSold = ProductData.Value<string>("ItemsSold");
             var itemsAvailable = ProductData.Value<string>("ItemsAvailable");
@@ -337,9 +347,9 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[OrganisationId]) " +
-                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}')",
-                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active", productCategory, productImage, productCode, organisationId);
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[OrganisationId],[Cost]) " +
+                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')",
+                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active", productCategory, productImage, productCode, organisationId, cost);
                     await cmd.ExecuteNonQueryAsync();
 
                 }
@@ -389,6 +399,11 @@ namespace SafriSoftv1._3.Controllers.API
                 if (dbProduct.ProductCategory != ProductData.ProductCategory)
                 {
                     dbProduct.ProductCategory = ProductData.ProductCategory;
+                }
+
+                if (dbProduct.Cost != ProductData.Cost)
+                {
+                    dbProduct.Cost = ProductData.Cost;
                 }
 
                 //if (dbProduct.ProductImage != ProductData.ProductImage)
@@ -1515,7 +1530,8 @@ namespace SafriSoftv1._3.Controllers.API
                 string productCategory = excelReader.GetString(1);
                 string productName = excelReader.GetString(2);
                 string NOIA = excelReader.GetDouble(3).ToString();
-                string productPrice = excelReader.GetDouble(4).ToString();
+                string productPrice = excelReader.GetDouble(5).ToString();
+                string cost = excelReader.GetDouble(4).ToString();
                 string productReference = productCode + "-" + DateTime.Now.ToString("yyyy/MM/dd");
 
                 SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
@@ -1528,7 +1544,7 @@ namespace SafriSoftv1._3.Controllers.API
                     {
                         conn.Open();
                         var cmd = conn.CreateCommand();
-                        cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCode],[ProductCategory],[ProductImage], [OrganisationId]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}')", conn.Database, productName, productReference, productPrice, 0, NOIA, "Active", productCode, productCategory, "None", organisationId);
+                        cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCode],[ProductCategory],[ProductImage], [OrganisationId], [Cost]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}', '{11}')", conn.Database, productName, productReference, productPrice, 0, NOIA, "Active", productCode, productCategory, "None", organisationId, cost);
                         await cmd.ExecuteNonQueryAsync();
                         conn.Close();
                     }

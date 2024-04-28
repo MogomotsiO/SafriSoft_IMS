@@ -1,0 +1,413 @@
+﻿@model SafriSoftv1._3.Models.InvoicingViewModel
+
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h5 class="card-title"><i class="fa fa-edit"></i> Complete Invoice Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedOption" class="safriSelect2 form-control" data-bind="value: customerId, event: {change: selectedCustomerChange}" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT CUSTOMER</option>
+                                        @foreach (var cust in Model.Customers)
+                                        {
+                                            <option value="@cust.Id">@cust.CustomerName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="padding-left:15px;padding-right:20px;">
+                                <div class="mb-4 mt-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Invoice Number:</label>
+                                        <input id="invoiceNumber" data-bind="textInput: invoiceNumber" class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="mb-4 mt-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Invoice Name:</label>
+                                        <input id="invoiceName" data-bind="textInput: invoiceName" class="form-control" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Date Issued:</label>
+                                        <input id="dateIssued" data-bind="textInput: dateIssued" class="form-control" type="date">
+                                    </div>
+                                </div>
+                                <div class="mb-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Date Due:</label>
+                                        <input id="dateDue" data-bind="textInput: dateDue" class="form-control" type="date">
+                                    </div>
+                                </div>
+                                <div class="mb-4 mt-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Reference:</label>
+                                        <input id="reference" data-bind="textInput: reference" class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="mb-4 mt-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Shipping:</label>
+                                        <input id="shipping" data-bind="textInput: shipping" class="form-control" type="text">
+                                    </div>
+                                </div>
+                                <div class="mb-4 mt-4 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">VAT(%):</label>
+                                        <input id="vatPercent" data-bind="textInput: vatPercent" class="form-control" type="number">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="card">
+                                <div class="card-header card-header-info text-center">
+                                    <h5 class="card-title"><i class="fa fa-edit"></i> Complete Line Items</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mt-4 mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Product Description:</label>
+                                            <input id="productDescription" data-bind="textInput: description" class="form-control" type="text">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Qty:</label>
+                                            <input id="qty" data-bind="textInput: qty" class="form-control" type="number">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Amount:</label>
+                                            <input id="amount" data-bind="textInput: amount" class="form-control" type="number">
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-plus text-info"></span> Add Line</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-save text-info"></span> Save Invoice</button>
+                                    <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-envelope text-info"></span> Save & Send Invoice</button>
+                                </div>
+
+                            </div>
+                                                      
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="background-color:#fff;">
+                    <div class="row" >
+                        <div class="col-lg-12">
+                            <h4>
+                                <img id="logo" src="@Model.Organisation.OrganisationLogo" alt="" style="height:150px;" />
+                            </h4>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- info row -->
+                    <div class="row" style="font-family: 'Century Gothic' !important;">
+                        <div class="col-lg-12 table-responsive">
+                            <input type="text" id="view-order-id" hidden value="@ViewBag.Title" />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <b>Date Issued:</b> <span data-bind="text: dateIssued"></span>  <br>
+                                            <b>Date Due: </b> <span data-bind="text: dateDue"></span><br>
+                                            <b>Invoice Number: </b> <span data-bind="text: invoiceNumber"></span><br>
+                                            <b>VAT Number:</b> @Model.Organisation.VATNumber
+                                        </td>
+                                        <td>
+                                            From:
+                                            <address>
+                                                <strong>@Model.Organisation.OrganisationName</strong><br>
+                                                @Model.Organisation.OrganisationStreet<br>
+                                                @Model.Organisation.OrganisationSuburb, @Model.Organisation.OrganisationCity @Model.Organisation.OrganisationCode<br>
+                                                Phone: @Model.Organisation.OrganisationCell<br>
+                                                Email: @Model.Organisation.OrganisationEmail
+                                            </address>
+                                        </td>
+                                        <td>
+                                            To:
+                                            <address data-bind="selectedCustomer != null">
+                                                <strong data-bind="text: selectedCustomer().name"></strong><br>
+                                                <span data-bind="text: selectedCustomer().address"></span><br>
+                                                Phone: <span data-bind="text: selectedCustomer().cell"></span><br>
+                                                Email: <span data-bind="text: selectedCustomer().email"></span>
+                                            </address>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                    <!-- Table row -->
+                    <div class="row">
+                        <div class="col-12 table-responsive">
+                            <table class="table table-bordered" style="font-family: 'Century Gothic' !important;">
+                                <thead style="background-color: #17a2b8;color:#fff;">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th style="width:150px;text-align:right;">Amount</th>
+                                        <th style="width:50px;text-align:center;">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: lineItems">
+                                    <tr>
+                                        <td data-bind="text: description"></td>
+                                        <td data-bind="text: qty"></td>
+                                        <td data-bind="text: amountStr" style="width:150px;text-align:right;"></td>
+                                        <td data-bind="" style="width:50px;text-align:center;"><button class="btn btn-light" data-bind="click: $parent.removeItem"><span class="fas fa-trash text-danger"></span></button></td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td style="text-align:right;font-weight:bold;">SUBTOTAL:</td>
+                                        <td style="width:150px;text-align:right;" data-bind="text: subtotalStr"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="text-align:right;font-weight:bold;">VAT(<span data-bind="text: vatPercent"></span>%):</td>
+                                        <td style="width:150px;text-align:right;" data-bind="text: vatStr"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="text-align:right;font-weight:bold;">SHIPPING:</td>
+                                        <td style="width:150px;text-align:right;" data-bind="text: shippingStr"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td style="text-align:right;font-weight:bold;">TOTAL:</td>
+                                        <td style="width:150px;text-align:right;" data-bind="text: totalStr"></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                    <div class="row">
+                        <div class="col-lg-12 table-responsive">
+                            <table class="table" style="font-family: 'Century Gothic' !important;">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <p class="lead">Banking Details:</p>
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <td><b>Account Name:</b></td>
+                                                    <td><span id="account-name">@Model.Organisation.AccountName</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Bank:</b></td>
+                                                    <td><span id="bank-name">@Model.Organisation.BankName</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Account Number:</b></td>
+                                                    <td><span id="account-no">@Model.Organisation.AccountNo</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Branch:</b></td>
+                                                    <td><span id="bank-branch">@Model.Organisation.BranchName</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Branch Code:</b></td>
+                                                    <td><span id="branch-code">@Model.Organisation.BranchCode</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Reference:</b></td>
+                                                    <td><span id="client-reference" data-bind="text: reference"></span></td>
+
+                                                </tr>
+
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <p class="lead" style="padding-top:200px !important;">Tax Invoice</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        var customers = JSON.parse('@Html.Raw(Json.Encode(Model.Customers))');
+
+        function customer(id, name, address, cell, email) {
+            this.name = name;
+            this.id = id;
+            this.address = address;
+            this.cell = cell;
+            this.email = email;
+        }
+
+        function item(description, qty, amount) {
+            this.description = description;
+            this.qty = qty;
+            this.amount = amount;
+            this.amountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(amount);
+        }
+
+        var InvoiceViewModel = function () {
+            var self = this;
+
+            self.invoiceNumber = ko.observable('');
+            self.invoiceName = ko.observable('');
+            self.dateIssued = ko.observable('');
+            self.dateDue = ko.observable('');
+            self.customer = ko.observable('');
+            self.reference = ko.observable('');
+            self.description = ko.observable('');
+            self.qty = ko.observable();
+            self.amount = ko.observable();
+            self.vat = ko.observable(0);
+            
+            self.vatPercent = ko.observable(0);
+            self.shipping = ko.observable(0);
+            self.total = ko.observable(0);
+            self.subtotal = ko.observable(0);
+            self.lineItems = ko.observableArray([]);
+            self.customers = ko.observableArray(customers);
+            self.customerId = ko.observable(0);
+            self.selectedCustomer = ko.observable({});
+            self.totalStr = ko.computed(function () {
+
+                var total = parseFloat(self.subtotal()) + parseFloat(self.shipping()) + parseFloat(self.vat());
+
+                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(total));
+
+            });
+
+            self.shippingStr = ko.computed(function () {
+
+                var shipping = parseFloat(self.shipping());
+
+                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(shipping));
+
+            });
+
+            self.vatStr = ko.computed(function () {
+
+                var vat = parseFloat(self.subtotal()) * (self.vatPercent() / 100);
+
+                self.vat(vat);
+
+                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(vat));
+
+            });
+
+            self.subtotalStr = ko.computed(function () {
+
+                var subtotal = self.subtotal();
+
+                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(subtotal);
+
+            });
+
+
+            self.selectedCustomerChange = function (e) {
+                var custId = $("#selectedOption").val();
+
+                if (custId == -100) {
+                    self.selectedCustomer({});
+                    return;
+                }
+
+                var findCustomer = self.customers().find(x => x.Id == parseInt(custId));
+
+                self.selectedCustomer(new customer(findCustomer.Id, findCustomer.CustomerName, findCustomer.CustomerAddress, findCustomer.CustomerCell, findCustomer.CustomerEmail));
+
+            }
+
+            self.addLineItem = function () {
+                var itemVm = new item(self.description(), self.qty(), self.amount());
+
+                self.lineItems.push(itemVm);
+
+                var tot = parseFloat(self.subtotal()) + parseFloat(self.amount());
+
+                self.subtotal(tot);
+
+                //self.subtotalStr(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(tot));
+
+                self.description('');
+                self.qty('');
+                self.amount('');
+            }
+
+            self.removeItem = function (e) {
+                var subtotal = parseFloat(self.subtotal()) - parseFloat(e.amount);
+                self.subtotal(subtotal);
+                self.lineItems.remove(e);
+            }
+
+
+        }
+
+        var vm = new InvoiceViewModel();
+        
+        ko.applyBindings(vm);
+
+
+
+    </script>    
+    
+}

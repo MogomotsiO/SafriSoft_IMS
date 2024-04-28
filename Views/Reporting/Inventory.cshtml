@@ -1,0 +1,288 @@
+﻿
+@{
+    ViewBag.Title = "InventoryReporting";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="#" onclick="generateCustomerReport()">
+                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                            <span class="info-box-icon bg-info"><i class="fas fa-user-friends"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-number">Customer Report</span>
+                                <span class="info-box-text text-wrap">Generate customer report.</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" onclick="generateProductReport()">
+                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                            <span class="info-box-icon bg-info"><i class="fas fa-dolly"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-number">Inventory Report</span>
+                                <span class="info-box-text text-wrap">Generate report to see how many items you have available and how many you've sold.</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" onclick="generateOrderReport()">
+                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                            <span class="info-box-icon bg-info"><i class="fas fa-shopping-cart"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-number">Orders Report</span>
+                                <span class="info-box-text text-wrap">Generate report to see the number of orders and their statuses.</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" onclick="generateSystemReport()">
+                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                            <span class="info-box-icon bg-info"><i class="fa fa-exclamation"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-number">Attention</span>
+                                <span class="info-box-text text-wrap">Generate report to view system notifications.</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+
+<div class="modal fade" id="customer-reports">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="customer-report-title" class="modal-title">Customers Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h5 class="card-title"><i class="fas fa-user-friends"></i> Download Report In csv/excel</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <button id="excel-download-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
+                        <table id="customer-reports-table" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                    <th>Date Created</th>
+                                    <th>Orders</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="product-reports">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="product-report-title" class="modal-title">Products Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h5 class="card-title"><i class="fa fa-dolly"></i> Download Report In csv/excel</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <button id="excel-download-lock-2" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
+                        <table id="products-reports-table" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Reference</th>
+                                    <th>Qty Sold</th>
+                                    <th>Qty Available</th>
+                                    <th>Cost</th>
+                                    <th>Selling Price</th>
+                                    <th>Total Qty</th>
+                                    <th>Total Qty Cost</th>
+                                    <th>Expected Profit</th>
+                                    <th>Current Profit</th>
+
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="order-reports">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="order-report-title" class="modal-title">Orders Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Download Report In csv/excel</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <button id="excel-download-lock-3" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
+                        <table id="orders-reports-table" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Customer Name</th>
+                                    <th>Date Created</th>
+                                    <th>Delivery Date</th>
+                                    <th>Invoice Amount</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="system-reports">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="system-report-title" class="modal-title">These Orders Should've Been Delivered</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h5 class="card-title"><i class="fa fa-exclamation-circle"></i> Download Report In csv/excel</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <button id="excel-download-lock-4" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
+                        <table id="system-reports-table" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Customer Name</th>
+                                    <th>Status</th>
+                                    <th>Selling Price</th>
+                                    <th>Date Created</th>
+                                    <th>Delivery Date</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script type="text/javascript">
+    function generateCustomerReport() {
+        $('#customer-reports').modal('show');
+    }
+
+    function generateProductReport() {
+        $('#product-reports').modal('show');
+    }
+
+    function generateOrderReport() {
+        $('#order-reports').modal('show');
+    }
+
+    function generateSystemReport() {
+        $('#system-reports').modal('show');
+    }
+
+</script>
+
+@section scripts{
+    <script src="~/Scripts/Report/ReportsDataTables.js"></script>
+}

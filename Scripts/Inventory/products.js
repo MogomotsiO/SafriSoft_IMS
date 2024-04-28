@@ -30,23 +30,16 @@
                 'searchable': true
             },
             {
-                'data': 'ProductCategory',
+                'data': 'ProductName',
                 'searchable': true
             },
             {
-                'data': 'ProductName',
+                'data': 'ProductCategory',
                 'searchable': true
             },
             {
                 'data': 'ProductReference',
                 'searchable': true
-            },
-            {
-                'data': 'SellingPrice',
-                'searchable': true,
-                'render': function (data, type, full, meta) {
-                    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data);
-                }
             },
             {
                 'data': 'ItemsSold',
@@ -55,6 +48,26 @@
             {
                 'data': 'ItemsAvailable',
                 'searchable': true
+            },
+            {
+                'data': 'Cost',
+                'searchable': true,
+                'render': function (data, type, full, meta) {
+                    if (type === 'display')
+                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    else
+                        return data;
+                }
+            },
+            {
+                'data': 'SellingPrice',
+                'searchable': true,
+                'render': function (data, type, full, meta) {
+                    if (type === 'display')
+                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    else
+                        return data;
+                }
             },
             {
                 'data': 'Id',
@@ -84,14 +97,20 @@
         var productName = $("#product-name").val();
         var productReference = $("#product-reference").val();
         var sellingPriceInput = $("#product-price").val();
+        var costInput = $("#cost").val();
         var itemsAvailable = $("#product-available").val();
         var productImage = "none";
         var itemsSold = "0";
         var sellingPrice = 0;
+        var cost = 0;
 
         if (sellingPriceInput != 0) {
             sellingPrice = sellingPriceInput;
-        }       
+        }
+
+        if (costInput != 0) {
+            cost = costInput;
+        }
 
         if (productName != "" && itemsAvailable != 0 && productCode != "") {
 
@@ -101,6 +120,7 @@
                 'ProductName': productName,
                 'ProductReference': productReference,
                 'SellingPrice': sellingPrice,
+                'Cost': cost,
                 'ItemsAvailable': itemsAvailable,
                 'ItemsSold': itemsSold,
                 'ProductImage': productImage
@@ -150,14 +170,20 @@
         var productName = $("#edit-product-name").val();
         var productReference = $("#edit-product-reference").val();
         var sellingPriceInput = $("#edit-product-price").val();
+        var costInput = $("#edit-cost").val();
         var itemsAvailable = $("#edit-product-available").val();
         var productCode = $("#edit-product-code").val();
         var productCategory = $("#edit-product-category").val();
         var productImage = "none";
         var sellingPrice = 0;
+        var cost = 0;
 
         if (sellingPriceInput != 0) {
             sellingPrice = sellingPriceInput;
+        }
+
+        if (costInput != 0) {
+            cost = costInput;
         }
 
         if (productName != "" && itemsAvailable != 0 && productCode != "") {
@@ -167,6 +193,7 @@
                 'ProductName': productName,
                 'ProductReference': productReference,
                 'SellingPrice': sellingPrice,
+                'Cost': cost,
                 'ItemsAvailable': itemsAvailable,
                 'ProductCode': productCode,
                 'ProductCategory': productCategory,
@@ -246,6 +273,7 @@ function editProductDetails(id) {
         $('#edit-product-name').val(data[0].ProductName);
         $('#edit-product-available').val(data[0].ItemsAvailable);
         $('#edit-product-price').val(data[0].SellingPrice);
+        $('#edit-cost').val(data[0].Cost);
         $('#edit-product-reference').val(data[0].ProductReference);
         $('#edit-product-code').val(data[0].ProductCode);
         $('#edit-product-category').val(data[0].ProductCategory);

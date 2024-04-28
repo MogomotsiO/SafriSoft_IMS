@@ -17,7 +17,7 @@ namespace SafriSoft.Controllers
             return View();
         }
 
-        public ActionResult User()
+        public new ActionResult User()
         {
             return View();
         }

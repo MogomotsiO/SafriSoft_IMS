@@ -1,7 +1,7 @@
 ﻿$("#customer-reports-table").DataTable({
     "responsive": true, "lengthChange": false, "autoWidth": false,
     dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
-    "buttons": ["csv", "excel"],
+    "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
     //lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
     ajax: {
         url: '/api/Report/GetCustomers/',
@@ -45,7 +45,7 @@
 $("#products-reports-table").DataTable({
     "responsive": true, "lengthChange": false, "autoWidth": false,
     dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
-    "buttons": ["csv", "excel"],
+    "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
     ajax: {
         url: '/api/Report/GetProducts/',
         method: 'GET',
@@ -57,24 +57,19 @@ $("#products-reports-table").DataTable({
             'searchable': true
         },
         {
-            'data': 'ProductCategory',
-            'searchable': true
-        },
-        {
             'data': 'ProductName',
             'searchable': true
         },
         {
+            'data': 'ProductCategory',
+            'searchable': true
+        },
+        
+        {
             'data': 'ProductReference',
             'searchable': true
         },
-        {
-            'data': 'SellingPrice',
-            'searchable': true,
-            'render': function (data, type, full, meta) {
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data);
-            }
-        },
+        
         {
             'data': 'ItemsSold',
             'searchable': true
@@ -82,14 +77,69 @@ $("#products-reports-table").DataTable({
         {
             'data': 'ItemsAvailable',
             'searchable': true
+        },
+        {
+            'data': 'Cost',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
+        },
+        {
+            'data': 'SellingPrice',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
+        },
+        {
+            'data': 'TotalItems',
+            'searchable': true
+        },
+        {
+            'data': 'TotalItemsCost',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
+        },        
+        {
+            'data': 'ExpectedProfit',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
+        },
+        {
+            'data': 'CurrProfit',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
         }
+
     ]
 });
 
 $("#orders-reports-table").DataTable({
     "responsive": true, "lengthChange": false, "autoWidth": false,
     dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
-    "buttons": ["csv", "excel"],
+    "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
     ajax: {
         url: '/api/Report/GetOrders/',
         method: 'GET',
@@ -124,7 +174,10 @@ $("#orders-reports-table").DataTable({
             'data': 'OrderWorth',
             'searchable': true,
             'render': function (data, type, full, meta) {
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data);
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
             }
         },
         {
@@ -171,7 +224,7 @@ $("#orders-reports-table").DataTable({
 $("#system-reports-table").DataTable({
     "responsive": true, "lengthChange": false, "autoWidth": false,
     dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
-    "buttons": ["csv", "excel"],
+    "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
     //lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
     ajax: {
         url: '/api/Report/GetSystemNotifications/',
@@ -217,7 +270,10 @@ $("#system-reports-table").DataTable({
             'data': 'OrderWorth',
             'searchable': true,
             'render': function (data, type, full, meta) {
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data);
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
             }
         },
         {

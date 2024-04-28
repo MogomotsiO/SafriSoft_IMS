@@ -106,7 +106,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductCode] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -117,11 +117,20 @@ namespace SafriSoftv1._3.Controllers.API
                         Products.Id = reader.GetInt32(0);
                         Products.ProductName = reader.GetString(1);
                         Products.ProductReference = reader.GetString(2);
+                        Products.Cost = reader.GetDouble(10);
                         Products.SellingPrice = reader.GetDouble(3);
                         Products.ItemsSold = reader.GetInt32(4);
                         Products.ItemsAvailable = reader.GetInt32(5);
                         Products.ProductCategory = reader.GetString(7);
-                        Products.ProductCode = reader.GetString(8);
+                        Products.ProductImage = reader.GetString(8);
+                        Products.ProductCode = reader.GetString(9);
+
+                        // calculations very serious stuff
+                        Products.TotalItems = Products.ItemsSold + Products.ItemsAvailable;
+                        Products.TotalItemsCost = Products.TotalItems * Products.Cost;
+                        Products.ExpectedProfit = (Products.TotalItems * Products.SellingPrice) - (Products.TotalItemsCost);
+                        Products.CurrProfit = Products.ItemsSold * Products.SellingPrice - (Products.ItemsSold * Products.Cost);
+
                         ProductViewModel.Add(Products);
                     }
                     reader.NextResult();

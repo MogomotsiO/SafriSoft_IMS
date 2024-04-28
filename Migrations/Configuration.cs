@@ -9,7 +9,7 @@ namespace SafriSoftv1._3.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(SafriSoftv1._3.Models.SafriSoftDbContext context)
