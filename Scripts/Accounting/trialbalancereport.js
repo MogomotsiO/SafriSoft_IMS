@@ -1,7 +1,14 @@
 ﻿$(document).ready(function () {
-    //var today = new Date();
+    var today = new Date();
+    var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-    //document.getElementById("period").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2);
+    var startDay = '01';
+    var endDay = monthEnd.getDate();
+
+    document.getElementById("start").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + startDay;
+    document.getElementById("end").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + endDay;
+
+    refreshTrialBalanceReportDT();
 });
 
 let exportFormatter = {
@@ -52,7 +59,7 @@ var trialBalanceReportTable = $("#trialBalanceReportTable").DataTable({
             'searchable': true
         },
         {
-            className: "dt-control",
+            className: "dt-control text-right",
             'data': 'Total',
             'searchable': true,
             'render': function (data, type, full, meta) {
@@ -95,6 +102,7 @@ var trialBalanceItemsTable = $("#trialBalanceItemsTable").DataTable({
         },
         {
             'searchable': true,
+            className: "text-right",
             render: function (data, type, full, meta) {
                 if (type == 'display') {
                     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(full.Debit);
@@ -106,6 +114,7 @@ var trialBalanceItemsTable = $("#trialBalanceItemsTable").DataTable({
         },
         {
             'searchable': true,
+            className: "text-right",
             render: function (data, type, full, meta) {
                 if (type == 'display') {
                     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(full.Credit);
@@ -160,14 +169,9 @@ function refreshTrialBalanceReportDT() {
         'End': end
     };
 
-    $.ajax({
-        url: '/api/Accounting/GetTrialBalanceReport',
-        method: 'POST',
-        dataType: 'json',
-        data: vm,
-        contextType: "application/json",
-        traditional: true
-    }).done(function (data) {
+    var url = '/api/Accounting/GetTrialBalanceReport';
+
+    SafriSoftPostRequest(url, vm, (data) => {
         if (data.Success) {
             trialBalanceReportTable.clear();
             trialBalanceReportTable.rows.add(data.Obj);

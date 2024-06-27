@@ -1,6 +1,7 @@
 ﻿using ExcelDataReader;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
@@ -24,7 +25,7 @@ using System.Web.Http;
 namespace SafriSoftv1._3.Controllers.API
 {
     [RoutePrefix("api/Inventory")]
-    public class InventoryController : ApiController
+    public class InventoryController : BaseApiController
     {
 
         // GET: api/Inventory
@@ -740,14 +741,20 @@ namespace SafriSoftv1._3.Controllers.API
                 return Json(new { Success = false, Error = "You have exceeded the number of orders to add. Please upgrade to Premium" });
             }
 
-            Random rnd = new Random();
+            //Random rnd = new Random();
 
-            string generateOrderId = "#0";
+            //string generateOrderId = "#0";
 
-            for (int i = 0; i <= 9; i++)
-            {
-                generateOrderId = generateOrderId + rnd.Next(1, 9).ToString();
-            }
+            //for (int i = 0; i <= 9; i++)
+            //{
+            //    generateOrderId = generateOrderId + rnd.Next(1, 9).ToString();
+            //}
+
+            var service = new InvoicingService();
+
+            var invoiceNumber = service.GetNextInvoiceNumber(organisationId);
+
+            string generateOrderId = $"#{invoiceNumber}";
 
             var product = SafriSoft.Products.Where(x => x.ProductReference == productReference).FirstOrDefault();
 
@@ -771,6 +778,8 @@ namespace SafriSoftv1._3.Controllers.API
 
             try
             {
+                var vat = orderWorth * (OrderData.VatPercentage / 100);
+
                 using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
                 {
                     conn.Open();
@@ -786,7 +795,7 @@ namespace SafriSoftv1._3.Controllers.API
                 if (orderWorth > 0)
                 {
                     var order = SafriSoft.Orders.First(x => x.OrderId == generateOrderId);
-                    order.OrderWorth = Decimal.Parse(orderWorth.ToString());
+                    order.OrderWorth = Decimal.Parse(orderWorth.ToString()) + OrderData.ShippingCost + Decimal.Parse(vat.ToString());
                     order.ShippingCost = Decimal.Parse(OrderData.ShippingCost.ToString());
                     order.Status = "Active";
                     SafriSoft.SaveChanges();
@@ -803,7 +812,35 @@ namespace SafriSoftv1._3.Controllers.API
                 var createEmail = new SafriSoftEmailService();
                 createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
 
-                return Json(new { Success = true, CustomerID = customerId });
+                
+
+                var invoiceVm = new InvoicingViewModel
+                {
+                    CustomerId = Convert.ToInt32(customerId),
+                    InvoiceDetails = new Invoice
+                    {
+                        InvoiceNumber = $"INV-{invoiceNumber}",
+                        InvoiceDescription = generateOrderId,
+                        InvoiceDate = DateTime.Now,
+                        InvoiceDueDate = OrderData.InvoiceDueDate,
+                        Shipping = Convert.ToDouble(OrderData.ShippingCost),
+                        Amount = Convert.ToDouble(orderWorth + Double.Parse(OrderData.ShippingCost.ToString()) + vat),
+                        CustomerId = Convert.ToInt32(customerId),
+                        VatPercentage = OrderData.VatPercentage,
+                        Reference = generateOrderId
+                    },
+                    InvoiceItems = new List<InvoiceItem>() { new InvoiceItem()
+                    {
+                        Description = product.ProductName,
+                        Amount = orderWorth,
+                        Qty = numberOfItems,                        
+                    }},
+                    
+                };
+
+                service.SaveInvoice(invoiceVm,organisationId);
+
+                return Json(new { Success = true, CustomerID = customerId, CustomerName = customer.CustomerName });
             }
             catch (Exception Ex)
             {
@@ -894,7 +931,7 @@ namespace SafriSoftv1._3.Controllers.API
             var ordersPackaged = 0;
             var ordersInTransit = 0;
             var ordersDelivered = 0;
-            decimal randValueSold = 0;
+            double randValueSold = 0;
 
             try
             {
@@ -902,7 +939,7 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var customerCountCmd = conn.CreateCommand();
-                    customerCountCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Customer] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    customerCountCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Customer] WHERE [Status] = 'Active' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         customerCount = (Int32)customerCountCmd.ExecuteScalar();
@@ -914,7 +951,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var stockSoldCmd = conn.CreateCommand();
-                    stockSoldCmd.CommandText = string.Format("SELECT sum([ItemsSold]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    stockSoldCmd.CommandText = string.Format("SELECT sum([ItemsSold]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         stockSold = (Int32)stockSoldCmd.ExecuteScalar();
@@ -926,7 +963,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var stockAvailableCmd = conn.CreateCommand();
-                    stockAvailableCmd.CommandText = string.Format("SELECT sum([ItemsAvailable]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    stockAvailableCmd.CommandText = string.Format("SELECT sum([ItemsAvailable]) from [{0}].[dbo].[Product] WHERE [Status] = 'Active' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         stockAvailable = (Int32)stockAvailableCmd.ExecuteScalar();
@@ -938,7 +975,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersProcessedCmd = conn.CreateCommand();
-                    ordersProcessedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    ordersProcessedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         ordersProcessed = (Int32)ordersProcessedCmd.ExecuteScalar();
@@ -950,7 +987,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersPackagedCmd = conn.CreateCommand();
-                    ordersPackagedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    ordersPackagedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         ordersPackaged = (Int32)ordersPackagedCmd.ExecuteScalar();
@@ -962,7 +999,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersInTransitCmd = conn.CreateCommand();
-                    ordersInTransitCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    ordersInTransitCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         ordersInTransit = (Int32)ordersInTransitCmd.ExecuteScalar();
@@ -974,7 +1011,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersDeliveredCmd = conn.CreateCommand();
-                    ordersDeliveredCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    ordersDeliveredCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         ordersDelivered = (Int32)ordersDeliveredCmd.ExecuteScalar();
@@ -986,14 +1023,14 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var randValueSoldCmd = conn.CreateCommand();
-                    randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [Status] = 'Active' AND [OrganisationId] = '{1}'", conn.Database, organisationId);
+                    randValueSoldCmd.CommandText = string.Format("SELECT sum([Amount]) from [{0}].[dbo].[Invoice] WHERE [Paid] = 1 AND [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
-                        randValueSold = (Decimal)randValueSoldCmd.ExecuteScalar();
+                        randValueSold = (double)randValueSoldCmd.ExecuteScalar();
                     }
                     catch (Exception Ex)
                     {
-                        randValueSold = decimal.Parse("0");
+                        randValueSold = 0.0;
                     }
 
 
@@ -1558,6 +1595,200 @@ namespace SafriSoftv1._3.Controllers.API
             return Json(new { Success = true });
         }
 
+        [HttpGet, Route("GetSuppliers")]
+        public async Task<IHttpActionResult> GetSuppliers()
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var svc = new InventoryService();
+
+                result.obj = svc.GetSuppliers(organisationId);
+
+                result.Message = "Successfully retrieved suppliers";
+                result.Success = true;
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Success = false;
+
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("GetSupplier/{Id}")]
+        public async Task<IHttpActionResult> GetSupplier(int Id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var svc = new InventoryService();
+
+                result.obj = svc.GetSupplier(Id, organisationId);
+
+                result.Message = "Successfully retrieved supplier";
+                result.Success = true;
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Success = false;
+
+                return Json(result);
+            }
+        }
+
+        [HttpPost, Route("SaveSupplierDetails")]
+        public async Task<IHttpActionResult> SaveSupplierDetails(BaseViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var supplierVm = JsonConvert.DeserializeObject<SupplierViewModel>(vm.JsonString);
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var svc = new InventoryService();
+
+                result = svc.SaveSupplierDetails(supplierVm, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Success = false;
+
+                return Json(result);
+            }
+        }
+
+        [HttpPost, Route("UpdateSupplierDetails")]
+        public async Task<IHttpActionResult> UpdateSupplierDetails(BaseViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var supplierVm = JsonConvert.DeserializeObject<SupplierViewModel>(vm.JsonString);
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var svc = new InventoryService();
+
+                result = svc.UpdateSupplierDetails(supplierVm, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Success = false;
+
+                return Json(result);
+            }
+        }
+
+        [HttpPost, Route("UploadSupplierInvoices/{Id}")]
+        public async Task<IHttpActionResult> UploadSupplierInvoices(int Id)
+        {
+            var result = new Result();
+            SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
+            HttpContext context = HttpContext.Current;
+            HttpPostedFile postedFile = context.Request.Files["files[]"];
+
+            var qty = Convert.ToInt32(context.Request.Headers["qty"]);
+            var vatAmount = Convert.ToDouble(context.Request.Headers["vatAmount"]);
+            var amount = Convert.ToDouble(context.Request.Headers["amount"]);
+
+            if(postedFile == null)
+            {
+                result.Success = false;
+                result.Message = "File could not be processed";
+                return Json(result);
+            }
+
+            string fileName = postedFile.FileName;
+            string fileContentType = postedFile.ContentType;
+
+            var saveFileDir = $"{AppDomain.CurrentDomain.BaseDirectory}/Documents/SupplierInvoices";
+
+            if(Directory.Exists(saveFileDir) == false)
+            {
+                Directory.CreateDirectory(saveFileDir);
+            }
+
+            var fullFileName = $"{saveFileDir}/{fileName}";
+            
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                postedFile.SaveAs(fullFileName);
+
+                var iSvc = new InventoryService();
+
+                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, qty, vatAmount, amount, organisationId, Id);
+
+                if (result.Success == false)
+                    return Json(result);
+
+                result.Success = true;
+                result.Message = "File processed";
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("GetSupplierInvoices/{Id}")]
+        public async Task<IHttpActionResult> GetSupplierInvoices(int Id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var iSvc = new InventoryService();
+
+                result.obj = iSvc.GetSupplierInvoices(Id, organisationId);
+
+                result.Success = true;
+                result.Message = "File processed";
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        
+
+        // functions
         public static Bitmap Base64StringToBitmap(string base64String)
         {
             Bitmap bmpReturn = null;

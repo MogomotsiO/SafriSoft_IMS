@@ -33,7 +33,11 @@
             'data': 'RandValueSold',
             'searchable': true,
             'render': function (data, type, full, meta) {
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data);
+
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
             }
         },
         {

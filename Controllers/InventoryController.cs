@@ -1,6 +1,7 @@
 ﻿using Rotativa;
 using SafriSoftv1._3;
 using SafriSoftv1._3.Models;
+using SafriSoftv1._3.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,6 +19,11 @@ namespace SafriSoft.Controllers
         }
 
         public new ActionResult User()
+        {
+            return View();
+        }
+
+        public ActionResult Suppliers()
         {
             return View();
         }
@@ -212,6 +218,19 @@ namespace SafriSoft.Controllers
             {
                 FileName = Server.MapPath("~/Content/AttentionReport.pdf")
             };
+        }
+
+        public ActionResult DownloadFile(int Id)
+        {
+            var Isvc = new InventoryService();
+
+            var supplierInvoice = Isvc.GetSupplierInvoice(Id);
+
+            var saveFileDir = $"{AppDomain.CurrentDomain.BaseDirectory}/Documents/SupplierInvoices";
+
+            var fullFileName = $"{saveFileDir}/{supplierInvoice.FileName}";
+
+            return File(fullFileName, supplierInvoice.FileContentType);
         }
     }
 }

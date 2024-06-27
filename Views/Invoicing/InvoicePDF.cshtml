@@ -1,0 +1,175 @@
+﻿@using System.Globalization;
+@model SafriSoftv1._3.Models.InvoicingViewModel
+
+@{
+    Layout = null;
+    NumberFormatInfo cZA = new CultureInfo("en-ZA", false).NumberFormat;
+    cZA.CurrencyPositivePattern = 2;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>CustomerInvoice</title>
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+</head>
+<body>
+    <div class="col-md-6" style="background-color:#fff;padding:20px;">
+        <div class="row">
+            <div class="col-lg-12">
+                <h4>
+                    <img id="logo" src="@Model.Organisation.OrganisationLogo" alt="" style="height:150px;" />
+                </h4>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- info row -->
+        <div class="row" style="font-family: 'Century Gothic' !important;">
+            <div class="col-lg-12 table-responsive">
+                <input type="text" id="view-order-id" hidden value="@ViewBag.Title" />
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <b>Date Issued:</b> <span>@Model.InvoiceDetails.InvoiceDate.ToString("dd-MM-yyyy")</span>  <br>
+                                <b>Date Due: </b> <span>@Model.InvoiceDetails.InvoiceDueDate.ToString("dd-MM-yyyy")</span><br>
+                                <b>Invoice Number: </b> <span>@Model.InvoiceDetails.InvoiceNumber</span><br>
+                                <b>VAT Number:</b> @Model.Organisation.VATNumber
+                            </td>
+                            <td>
+                                From:
+                                <address>
+                                    <strong>@Model.Organisation.OrganisationName</strong><br>
+                                    @Model.Organisation.OrganisationStreet<br>
+                                    @Model.Organisation.OrganisationSuburb, @Model.Organisation.OrganisationCity @Model.Organisation.OrganisationCode<br>
+                                    Phone: @Model.Organisation.OrganisationCell<br>
+                                    Email: @Model.Organisation.OrganisationEmail
+                                </address>
+                            </td>
+                            <td>
+                                To:
+                                <address>
+                                    <strong>@Model.Customers[0].CustomerName</strong><br>
+                                    <span>@Model.Customers[0].CustomerAddress</span><br>
+                                    Phone: <span>@Model.Customers[0].CustomerCell</span><br>
+                                    Email: <span>@Model.Customers[0].CustomerEmail</span>
+                                </address>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        <!-- Table row -->
+        <div class="row">
+            <div class="col-12 table-responsive">
+                <table class="table table-bordered" style="font-family: 'Century Gothic' !important;">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th style="width:150px;text-align:right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var subtotal = 0.0;
+                        }
+                        @foreach (var item in Model.InvoiceItems)
+                        {
+                            {
+                                subtotal = subtotal + item.Amount;
+                            }
+                            <tr>
+                                <td>@item.Description</td>
+                                <td>@item.Qty</td>
+                                <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", item.Amount))</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td style="text-align:right;font-weight:bold;">SUBTOTAL:</td>
+                            <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", subtotal))</td>
+                        </tr>
+                        <tr>
+                            @{
+                                var vatAmount = subtotal * (Model.InvoiceDetails.VatPercentage / 100);
+                            }
+                            <td></td>
+                            <td style="text-align:right;font-weight:bold;">VAT(<span>@Model.InvoiceDetails.VatPercentage</span>%):</td>
+                            <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", vatAmount))</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align:right;font-weight:bold;">SHIPPING:</td>
+                            <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", Model.InvoiceDetails.Shipping))</td>
+                        </tr>
+                        <tr>
+                            @{
+                                var total = subtotal + vatAmount + Model.InvoiceDetails.Shipping;
+                            }
+                            <td></td>
+                            <td style="text-align:right;font-weight:bold;">TOTAL:</td>
+                            <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", total))</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12 table-responsive">
+                <table class="table" style="font-family: 'Century Gothic' !important;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p class="lead">Banking Details:</p>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td><b>Account Name:</b></td>
+                                        <td><span id="account-name">@Model.Organisation.AccountName</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Bank:</b></td>
+                                        <td><span id="bank-name">@Model.Organisation.BankName</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Account Number:</b></td>
+                                        <td><span id="account-no">@Model.Organisation.AccountNo</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Branch:</b></td>
+                                        <td><span id="bank-branch">@Model.Organisation.BranchName</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Branch Code:</b></td>
+                                        <td><span id="branch-code">@Model.Organisation.BranchCode</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Reference:</b></td>
+                                        <td><span id="client-Reference">@Model.InvoiceDetails.Reference</span></td>
+
+                                    </tr>
+
+                                </table>
+                            </td>
+                            <td>
+                                <p class="lead" style="padding-top:200px !important;">Tax Invoice</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.col -->
+        </div>
+    </div>
+</body>
+</html>

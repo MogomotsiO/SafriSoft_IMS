@@ -43,35 +43,35 @@
                                 </div>
                             </div>
                             <div class="col-md-12" style="padding-left:15px;padding-right:20px;">
-                                <div class="mb-4 mt-4 col-md-12">
+                                @*<div class="mb-4 mt-4 col-md-12">
                                     <div class="input-group form-group bmd-form-group is-filled">
                                         <label class="bmd-label-floating">Invoice Number:</label>
-                                        <input id="invoiceNumber" data-bind="textInput: invoiceNumber" class="form-control" type="text">
+                                        <input id="invoiceNumber" data-bind="textInput: InvoiceNumber" class="form-control" type="text">
                                     </div>
-                                </div>
+                                </div>*@
                                 <div class="mb-4 mt-4 col-md-12">
                                     <div class="input-group form-group bmd-form-group is-filled">
                                         <label class="bmd-label-floating">Invoice Name:</label>
-                                        <input id="invoiceName" data-bind="textInput: invoiceName" class="form-control" type="text">
+                                        <input id="invoiceName" data-bind="textInput: InvoiceName" class="form-control" type="text">
                                     </div>
                                 </div>
 
                                 <div class="mb-4 col-md-12">
                                     <div class="input-group form-group bmd-form-group is-filled">
                                         <label class="bmd-label-floating">Date Issued:</label>
-                                        <input id="dateIssued" data-bind="textInput: dateIssued" class="form-control" type="date">
+                                        <input id="dateIssued" data-bind="textInput: DateIssued" class="form-control" type="date">
                                     </div>
                                 </div>
                                 <div class="mb-4 col-md-12">
                                     <div class="input-group form-group bmd-form-group is-filled">
                                         <label class="bmd-label-floating">Date Due:</label>
-                                        <input id="dateDue" data-bind="textInput: dateDue" class="form-control" type="date">
+                                        <input id="dateDue" data-bind="textInput: DateDue" class="form-control" type="date">
                                     </div>
                                 </div>
                                 <div class="mb-4 mt-4 col-md-12">
                                     <div class="input-group form-group bmd-form-group is-filled">
                                         <label class="bmd-label-floating">Reference:</label>
-                                        <input id="reference" data-bind="textInput: reference" class="form-control" type="text">
+                                        <input id="reference" data-bind="textInput: Reference" class="form-control" type="text">
                                     </div>
                                 </div>
                                 <div class="mb-4 mt-4 col-md-12">
@@ -83,7 +83,7 @@
                                 <div class="mb-4 mt-4 col-md-12">
                                     <div class="input-group form-group bmd-form-group is-filled">
                                         <label class="bmd-label-floating">VAT(%):</label>
-                                        <input id="vatPercent" data-bind="textInput: vatPercent" class="form-control" type="number">
+                                        <input id="vatPercent" data-bind="textInput: VatPercent" class="form-control" type="number">
                                     </div>
                                 </div>
                             </div>
@@ -123,17 +123,16 @@
 
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-save text-info"></span> Save Invoice</button>
-                                    <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-envelope text-info"></span> Save & Send Invoice</button>
+                                    <button class="btn btn-light" data-bind="click: saveInvoice"><span class="fa fa-save text-info"></span> Save Invoice</button>
                                 </div>
 
                             </div>
-                                                      
+
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" style="background-color:#fff;">
-                    <div class="row" >
+                <div class="col-md-6" style="background-color:#fff;padding:20px;">
+                    <div class="row">
                         <div class="col-lg-12">
                             <h4>
                                 <img id="logo" src="@Model.Organisation.OrganisationLogo" alt="" style="height:150px;" />
@@ -149,9 +148,8 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <b>Date Issued:</b> <span data-bind="text: dateIssued"></span>  <br>
-                                            <b>Date Due: </b> <span data-bind="text: dateDue"></span><br>
-                                            <b>Invoice Number: </b> <span data-bind="text: invoiceNumber"></span><br>
+                                            <b>Date Issued:</b> <span data-bind="text: DateIssued"></span>  <br>
+                                            <b>Date Due: </b> <span data-bind="text: DateDue"></span><br>
                                             <b>VAT Number:</b> @Model.Organisation.VATNumber
                                         </td>
                                         <td>
@@ -184,7 +182,7 @@
                     <div class="row">
                         <div class="col-12 table-responsive">
                             <table class="table table-bordered" style="font-family: 'Century Gothic' !important;">
-                                <thead style="background-color: #17a2b8;color:#fff;">
+                                <thead>
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
@@ -194,8 +192,8 @@
                                 </thead>
                                 <tbody data-bind="foreach: lineItems">
                                     <tr>
-                                        <td data-bind="text: description"></td>
-                                        <td data-bind="text: qty"></td>
+                                        <td data-bind="text: Description"></td>
+                                        <td data-bind="text: Qty"></td>
                                         <td data-bind="text: amountStr" style="width:150px;text-align:right;"></td>
                                         <td data-bind="" style="width:50px;text-align:center;"><button class="btn btn-light" data-bind="click: $parent.removeItem"><span class="fas fa-trash text-danger"></span></button></td>
                                     </tr>
@@ -209,7 +207,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td style="text-align:right;font-weight:bold;">VAT(<span data-bind="text: vatPercent"></span>%):</td>
+                                        <td style="text-align:right;font-weight:bold;">VAT(<span data-bind="text: VatPercent"></span>%):</td>
                                         <td style="width:150px;text-align:right;" data-bind="text: vatStr"></td>
                                         <td></td>
                                     </tr>
@@ -261,7 +259,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td><b>Reference:</b></td>
-                                                    <td><span id="client-reference" data-bind="text: reference"></span></td>
+                                                    <td><span id="client-Reference" data-bind="text: Reference"></span></td>
 
                                                 </tr>
 
@@ -277,13 +275,14 @@
                         <!-- /.col -->
                     </div>
                 </div>
-                
+
             </div>
 
         </div>
     </div><!-- /.container-fluid -->
 </div>
 <!-- /.content -->
+
 
 @section scripts{
 
@@ -300,27 +299,26 @@
         }
 
         function item(description, qty, amount) {
-            this.description = description;
-            this.qty = qty;
-            this.amount = amount;
+            this.Description = description;
+            this.Qty = qty;
+            this.Amount = amount;
             this.amountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(amount);
         }
 
         var InvoiceViewModel = function () {
             var self = this;
 
-            self.invoiceNumber = ko.observable('');
-            self.invoiceName = ko.observable('');
-            self.dateIssued = ko.observable('');
-            self.dateDue = ko.observable('');
+            self.InvoiceName = ko.observable('');
+            self.DateIssued = ko.observable('');
+            self.DateDue = ko.observable('');
             self.customer = ko.observable('');
-            self.reference = ko.observable('');
+            self.Reference = ko.observable('');
             self.description = ko.observable('');
             self.qty = ko.observable();
             self.amount = ko.observable();
             self.vat = ko.observable(0);
-            
-            self.vatPercent = ko.observable(0);
+
+            self.VatPercent = ko.observable(0);
             self.shipping = ko.observable(0);
             self.total = ko.observable(0);
             self.subtotal = ko.observable(0);
@@ -328,9 +326,13 @@
             self.customers = ko.observableArray(customers);
             self.customerId = ko.observable(0);
             self.selectedCustomer = ko.observable({});
+            self.emailSubject = ko.observable('');
+            self.emailBody = ko.observable('');
             self.totalStr = ko.computed(function () {
 
                 var total = parseFloat(self.subtotal()) + parseFloat(self.shipping()) + parseFloat(self.vat());
+
+                self.total(total);
 
                 return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(total));
 
@@ -346,7 +348,7 @@
 
             self.vatStr = ko.computed(function () {
 
-                var vat = parseFloat(self.subtotal()) * (self.vatPercent() / 100);
+                var vat = parseFloat(self.subtotal()) * (self.VatPercent() / 100);
 
                 self.vat(vat);
 
@@ -399,15 +401,93 @@
                 self.lineItems.remove(e);
             }
 
+            self.saveInvoice = function () {
+                self.validations();
+
+                var invoiceDetails = {
+                    InvoiceDate: self.DateIssued(),
+                    InvoiceDueDate: self.DateDue(),
+                    InvoiceDescription: self.InvoiceName(),
+                    Amount: self.total(),
+                    Reference: self.Reference(),
+                    Shipping: self.shipping(),
+                    VatPercentage: self.VatPercent(),
+                    CustomerId: self.customerId(),
+                }
+
+                var invoiceDetailsVm = {
+                    InvoiceDetails: invoiceDetails,
+                    CustomerId: self.customerId(),
+                    InvoiceItems: self.lineItems(),
+                }
+                console.log(invoiceDetailsVm);
+
+                var url = "/api/Invoicing/SaveInvoice";
+
+                SafriSoftPostJsonRequest(url, invoiceDetailsVm, (response) => {
+                    if (response.Success == true) {
+                        toastr.success('Invoice saved and you will be redirected shortly');
+                        setTimeout(function () {
+                            window.location = '@Url.Action("Invoices", "Invoicing")';
+                        }, 3000);
+                    } else {
+                        toastr.error(response.Message);
+                    }
+                });
+
+                
+            }
+
+            self.saveAndEmailInvoice = function () {
+                self.validations();
+
+            }
+
+            self.validations = function (e) {
+                var custId = $("#selectedOption").val();
+                if (custId == -100) {
+                    toastr.error('Please select a Customer');
+                    return;
+                }
+
+                //if (self.InvoiceNumber() == '') {
+                //    toastr.error('Please complete Invoice Number');
+                //    return;
+                //}
+
+                if (self.InvoiceName() == '') {
+                    toastr.error('Please complete Invoice Name');
+                    return;
+                }                
+
+                if (self.DateIssued() == '') {
+                    toastr.error('Please complete Date Issued');
+                    return;
+                }
+
+                if (self.DateDue() == '') {
+                    toastr.error('Please complete Date Due');
+                    return;
+                }
+
+                if (self.lineItems().length == 0) {
+                    toastr.error('Please add at least 1 line item');
+                    return;
+                }
+
+
+
+            }
+
 
         }
 
         var vm = new InvoiceViewModel();
-        
+
         ko.applyBindings(vm);
 
 
 
-    </script>    
-    
+    </script>
+
 }

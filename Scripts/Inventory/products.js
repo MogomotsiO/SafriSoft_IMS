@@ -52,6 +52,7 @@
             {
                 'data': 'Cost',
                 'searchable': true,
+                'className': 'text-right',
                 'render': function (data, type, full, meta) {
                     if (type === 'display')
                         return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -62,6 +63,7 @@
             {
                 'data': 'SellingPrice',
                 'searchable': true,
+                'className': 'text-right',
                 'render': function (data, type, full, meta) {
                     if (type === 'display')
                         return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';

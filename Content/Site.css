@@ -38,7 +38,7 @@
 }
 
 #dropzone {
-    border: 3px dashed #28a745;
+    border: 3px dashed #17a2b8;
     color: #28a745;
     padding: 50px;
     width: 100%;
@@ -53,7 +53,7 @@
 }
 
 #dropzone.hover {
-    background: #28a745;
+    background: #17a2b8;
     color: #fff;
     border: 3px dashed #fff;
 }
@@ -102,6 +102,14 @@
     max-width: 85% !important;
 }
 
-.select2-selection--single{
-    height:40px !important;
+.modal-lg{
+    max-width:55% !important;
+}
+
+.select2-selection--single {
+    height: 40px !important;
+}
+
+th {
+    max-width: 100px;
 }

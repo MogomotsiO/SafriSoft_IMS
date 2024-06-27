@@ -98,6 +98,9 @@
     <!-- pace-progress -->
     <link rel="stylesheet" href="../../plugins/pace-progress/themes/black/pace-theme-flat-top.css">
 
+    <!-- icheck -->
+    <link href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" />
+
     <!-- Theme style -->
     <link href="~/creativetim/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
     <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
@@ -176,10 +179,10 @@
                 </li>*@
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <img class="" style="height:100%;border-radius:50%;" src="../dist/img/new.png">
+                        <img style="height:100%;border-radius:50%;" src="~/dist/img/new.png" />
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header"><img class="" style="height:75px;border-radius:50%;" src="../dist/img/new.png"></span>
+                        <span class="dropdown-item dropdown-header"><img class="" style="height:75px;border-radius:50%;" src="~/dist/img/new.png"></span>
                         <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item">
                             <i class="fas fa-user mr-2 text-info"></i> @(username)
@@ -242,6 +245,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a id="Suppliers" href="~/Inventory/Suppliers" class="nav-link">
+                                <i class="nav-icon fas fa-pallet text-white"></i>
+                                <p class="text-white">
+                                    Suppliers
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a id="Products" href="~/Inventory/Stock" class="nav-link">
                                 <i class="nav-icon fas fa-dolly text-white"></i>
                                 <p class="text-white">
@@ -259,34 +270,47 @@
                         </li>
                         <li id="Invoicing-Menu" class="nav-item has-treeview">
                             <a id="Invoicing" href="#" class="nav-link">
-                                <i class="nav-icon fas fas fa-file-invoice text-white"></i>
+                                <i class="nav-icon fas fa-file-invoice text-white"></i>
                                 <p class="text-white">
                                     Invoicing
                                     <i class="right fas fa-angle-left  text-white"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a id="Create" href="~/Invoicing/Create" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">Create</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="Invoices" href="~/Invoicing/Invoices" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">Invoices</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a id="InventoryReporting" href="~/Reporting/Inventory" class="nav-link">
-                                <i class="nav-icon fas fa-file-excel text-white"></i>
-                                <p class="text-white">
-                                    Reports
-                                </p>
-                            </a>
+                            @if (packageId == 3)
+                            {
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a id="Create" href="~/Invoicing/Create" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Create</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="Invoices" href="~/Invoicing/Invoices" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Invoices</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a id="Create" href="#" class="nav-link">
+                                            <i class="fa fa-crown text-primary text-white nav-icon"></i>
+                                            <p class="text-white">Create</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="Invoices" href="#" class="nav-link">
+                                            <i class="fa fa-crown text-primary text-white nav-icon"></i>
+                                            <p class="text-white">Invoices</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
+
                         </li>
                         <li id="Accounting-Menu" class="nav-item has-treeview">
                             <a id="Accounting" href="#" class="nav-link">
@@ -296,28 +320,70 @@
                                     <i class="right fas fa-angle-left  text-white"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">Trial Balance Accounts</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">General Ledger</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">Trial Balance Report</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                            @if (packageId == 3)
+                            {
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Trial Balance Accounts</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">General Ledger</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Trial Balance Report</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceAccounts" href="#" class="nav-link">
+                                            <i class="fa fa-crown text-primary nav-icon"></i>
+                                            <p class="text-white">Trial Balance Accounts</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="GeneralLedger" href="#" class="nav-link">
+                                            <i class="fa fa-crown text-primary nav-icon"></i>
+                                            <p class="text-white">General Ledger</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceReport" href="#" class="nav-link">
+                                            <i class="fa fa-crown text-primary nav-icon"></i>
+                                            <p class="text-white">Trial Balance Report</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
 
+                        </li>
+                        <li class="nav-item">
+                            <a id="InventoryReporting" href="~/Reporting/Inventory" class="nav-link">
+                                <i class="nav-icon fas fa-file-excel text-white"></i>
+                                <p class="text-white">
+                                    Reports
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="Settings" href="~/Setting/Settings" class="nav-link">
+                                <i class="nav-icon fas fa-cog text-white"></i>
+                                <p class="text-white">
+                                    Settings
+                                </p>
+                            </a>
+                        </li>
                         @if (userRole == "OrganisationAdmin")
                         {
                             <li id="menu-open" class="nav-item has-treeview">
@@ -524,7 +590,7 @@
         <!-- Bootstrap 4 -->
         <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="~/creativetim/js/core/popper.min.js"></script>
-        <script src="~/creativetim/js/core/bootstrap-material-design.min.js"></script>
+        @*<script src="~/creativetim/js/core/bootstrap-material-design.min.js"></script>*@
         <script src="~/creativetim/js/plugins/perfect-scrollbar.jquery.min.js"></script>
         @*<script src="~/creativetim/js/material-dashboard.js"></script>*@
         <!-- DataTables -->
@@ -575,6 +641,7 @@
                 $("#" + tabActive).addClass("active");
                 $("#" + tabActive + " .nav-icon").addClass("text-white");
                 $("#Accounting-Menu").addClass("menu-open");
+                $("#Accounting").addClass("active");
             }
 
             if (tabActive == "Create" || tabActive == "Invoices") {
@@ -582,6 +649,7 @@
                 $("#" + tabActive).addClass("active");
                 $("#" + tabActive + " .nav-icon").addClass("text-white");
                 $("#Invoicing-Menu").addClass("menu-open");
+                $("#Invoicing").addClass("active");
             }
 
             function changePackage() {
@@ -618,19 +686,11 @@
         <script src="~/Backload/Client/blueimp/fileupload/js/vendor/jquery.ui.widget.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/jquery.iframe-transport.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/jquery.fileupload.js"></script>
+        <script src="~/Scripts/app.js"></script>
 
         @RenderSection("Scripts", false)
 
-        <script src="~/Scripts/Inventory/users.js"></script>
-        <script src="~/Scripts/Inventory/products.js"></script>
-        <script src="~/Scripts/Inventory/customers.js"></script>
-        <script src="~/Scripts/Inventory/orders.js"></script>
-        <script src="~/Scripts/Inventory/inbox.js"></script>
-        @*<script src="~/Scripts/Inventory/app.orders.js"></script>*@
-        @*<script src="~/Scripts/Inventory/app.inbox.js"></script>*@
-
-
-
+        
         <script type="text/javascript">
             // Hide premium Buttons
             var packageId = $('#packageId').val();

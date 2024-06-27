@@ -1,4 +1,6 @@
-﻿namespace SafriSoftv1._3.Models
+﻿using System;
+
+namespace SafriSoftv1._3.Models
 {
     public class OrderViewModel
     {
@@ -14,6 +16,8 @@
         public string ExpectedDeliveryDate { get; set; }
         public decimal OrderWorth { get; set; }
         public decimal ShippingCost { get; set; }
+        public double VatPercentage { get; set; }
+        public DateTime InvoiceDueDate { get; set; }
     }
 
     public class OrderRequestViewModel

@@ -2,3 +2,337 @@
 @{
     ViewBag.Title = "Invoices";
 }
+
+<style>
+    .buttonWidth {
+        width: 100px;
+    }
+
+    .alignRight {
+        text-align: right !important;
+    }
+
+    .markAsPaidCol {
+        text-align: center;
+        width: 150px;
+    }
+</style>
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fa fa-file"></i> Invoices</h4>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <table id="invoicesDt" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Mark As Paid</th>
+                                        <th>Date Issued</th>
+                                        <th>Date Due</th>
+                                        <th>Invoice Number</th>
+                                        <th>Invoice Name</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<!-- Modal -->
+<div class="modal fade" id="emailInvoiceModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">Create Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+
+                    <div class="card-header card-header-primary">
+                        <h5 class="card-title"><i class="fa fa-envelope"></i> Enter Email Details</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <input type="text" id="invoiceId" hidden />
+                            <div class="mb-3 col-md-12">
+                                <label>To: <span id="customerName"></span></label>
+                                <br />
+                                <label>Invoice Number: <span id="invoiceNumber"></span></label>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Subject</label>
+                                    <input id="emailSubject" class="form-control" type="text">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="summernote">Body</label>
+                                <textarea id="summernote" style="display: none;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="btn-send-email" type="button" class="btn btn-light" onclick="sendEmail()"><i class="fa fa-envelope text-purple"></i> Send Invoice</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="proofOfPaymentModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Proof Of Payment</h5>
+                <input type="text" id="tenant-id" hidden />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-paste"></i> Add Proof Of Payment</h4>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div id="dropzone" class="fade">
+                            <h3 style="color: #17a2b8;">Drag & Drop File</h3>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        var invoicesDt = $("#invoicesDt").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[-1], ["All"]],
+            ajax: {
+                url: '/api/Invoicing/GetInvoices/',
+                method: 'GET',
+                "dataSrc": "Obj"
+            },
+            columns: [
+                {
+                    data: 'Paid',
+                    searchable: true,
+                    className: 'markAsPaidCol',
+                    'render': function (data, type, full, meta) {
+
+                        if (data === true)
+                            return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                        else
+                            return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                    }
+                },
+                {
+                    data: 'DateIssuedStr',
+                    searchable: true
+                },
+                {
+                    data: 'DateDueStr',
+                    searchable: true
+                },
+                {
+                    data: 'InvoiceNumber',
+                    searchable: true
+                },
+                {
+                    data: 'InvoiceName',
+                    searchable: true,
+                },
+                {
+                    data: 'Customer',
+                    searchable: true,
+                },
+                {
+                    data: 'Amount',
+                    searchable: true,
+                    className: 'text-right',
+                    'render': function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="viewInvoice(this.id)"><i class="fas fa-file-invoice text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-file-pdf text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="sendInvoiceEmail(this.id,\'' + full.InvoiceNumber + '\',\'' + full.Customer + '\')"><i class="fas fa-envelope text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+        function viewInvoice(id) {
+            window.location.href = '@Url.Action("Invoice","Invoicing")' + '/' + id;
+        }
+
+        function downloadInvoice(id, orgId) {
+            window.location.href = '@Url.Action("CustomerInvoicePdf", "Invoicing")' + '?id=' + id + '&organisationId=' + orgId;
+        }
+
+        function sendInvoiceEmail(id, number, customerName) {
+            $('#invoiceId').val(id);
+            $("#invoiceNumber").text(number);
+            $("#customerName").text(customerName);
+            $("#emailInvoiceModal").modal('show');
+        }
+
+        function sendEmail() {
+            var invoiceId = $('#invoiceId').val();
+            var subject = $('#emailSubject').val();
+            var body = $('#summernote').val();
+
+            if (subject === '') {
+                toastr.error('Email subject cannot be empty');
+                return;
+            }
+
+            if (body === '') {
+                toastr.error('Email body cannot be empty');
+                return;
+            }
+
+            var data = {
+                InvoiceId: invoiceId,
+                EmailSubject: subject,
+                EmailBody: body
+            }
+
+            var url = "/api/Invoicing/SendInvoiceEmail";
+
+            SafriSoftPostRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    $("#emailInvoiceModal").modal('hide');
+                    toastr.success(response.Message);
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+        //function paid(id, paid) {
+        //    var url = `/api/Invoicing/PayInvoice/${id}/${paid}`;
+
+        //    SafriSoftGetRequest(url, (response) => {
+        //        if (response.Success == true) {
+        //            invoicesDt.ajax.reload();
+        //            toastr.success(response.Message);
+        //        } else {
+        //            toastr.error(response.Message);
+        //        }
+        //    });
+        //}
+
+        function paid(id, paid) {
+            var url = `/api/Invoicing/PayInvoice/${id}/${paid}`;
+
+            $('#proofOfPaymentModal').modal('show');
+
+            $('#dropzone').fileupload({
+                dropZone: $('#dropzone'),
+                dataType: "application/json",
+                url: url,
+                autoUpload: false,
+            }).on('fileuploadadd', function (e, data) {
+
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+                data.submit();
+
+            }).on('fileuploadalways', function (e, data) {
+
+                invoicesDt.ajax.reload();
+
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+
+                $('#proofOfPaymentModal').modal('hide');
+            });
+
+            $(document).bind('dragover', function (e) {
+                var dropZone = $('#dropzone');
+                dropZone.addClass('hover');
+            });
+
+            $(document).bind('dragleave', function (e) {
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+            });
+
+            $(document).bind('drop dragover', function (e) {
+                e.preventDefault();
+            });
+        }
+
+    </script>
+}

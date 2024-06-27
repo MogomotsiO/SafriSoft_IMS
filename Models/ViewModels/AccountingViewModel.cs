@@ -16,6 +16,7 @@ namespace SafriSoftv1._3.Models
     public class GlAccountViewModel
     {
         public int Id { get; set; }
+        public string DateStr { get; set; }
         public string AccountNumber { get; set; }
         public string AccountName { get; set; }
         public string Description { get; set; }
@@ -69,4 +70,11 @@ namespace SafriSoftv1._3.Models
         public List<GeneralLedger> TrialBalanceItems { get; set; } = new List<GeneralLedger>();
     }
 
+    public class SafriSoftAccounts
+    {
+        public string Date { get; set; }
+        public int AccountNumber { get; set; }
+        public string AccountName { get; set; }
+        public double Amount { get; set; }
+    }
 }

@@ -116,7 +116,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <!--<div class="modal-header">
-                <h5 id="view-order-title" class="modal-title">-->@*<i class="fa fa-plus"></i>*@<!--</h5>
+                <h5 id="view-order-title" class="modal-title">-->
+            @*<i class="fa fa-plus"></i>*@
+            <!--</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -173,7 +175,7 @@
                     <div class="row">
                         <div class="col-12 table-responsive">
                             <table class="table table-bordered">
-                                <thead style="background-color: #17a2b8;color:#fff;">
+                                <thead>
                                     <tr>
                                         <th>Order Id</th>
                                         <th>Product</th>
@@ -220,7 +222,7 @@
                     <!-- /.row -->
                     <div class="row">
                         <div class="col-lg-12 table-responsive">
-                            <table class="table table-bordered table-striped">
+                            <table class="table table-bordered">
                                 <tbody>
                                     <tr>
                                         <td>
@@ -304,8 +306,8 @@
                                     <input id="emailSubject" class="form-control" type="text">
                                     <div class="input-group-append">
                                         @*<div class="input-group-text  bg-white border-white">
-                                            <span class="fas fa-envelope text-info"></span>
-                                        </div>*@
+                                                <span class="fas fa-envelope text-info"></span>
+                                            </div>*@
                                     </div>
                                 </div>
                             </div>
@@ -329,3 +331,8 @@
     </div>
     <!-- /.modal-content -->
 </div>
+
+@section scripts{
+    <script src="~/Scripts/Inventory/orders.js"></script>
+    <script src="~/Scripts/Inventory/app.inbox.js"></script>
+}

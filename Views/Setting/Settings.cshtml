@@ -1,0 +1,233 @@
+﻿
+@{
+    ViewBag.Title = "Settings";
+}
+
+
+<style>
+    .dropdown-item {
+        cursor: pointer;
+    }
+</style>
+
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Add Settings
+                    </button>
+                    <ul class="dropdown-menu" style="">
+                        <li class="dropdown-item" onclick="vatSettings()">VAT Options</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fa fa-file"></i> VAT Options</h4>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <table id="vatOptionsDt" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Amount (%)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<!-- Modal -->
+<div class="modal fade" id="addVatOptionModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">Add VAT Option</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+
+                    <div class="card-header card-header-info">
+                        <h5 class="card-title"><i class="fa fa-pencil-square"></i> Add VAT Option</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Name</label>
+                                    <input id="name" class="form-control" type="text">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Description</label>
+                                    <input id="description" class="form-control" type="text">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Percentage</label>
+                                    <input id="percentage" class="form-control" type="number">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="" type="button" class="btn btn-light" onclick="addVatOption()"><i class="fa fa-plus text-info"></i> Add Option</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        function vatSettings() {
+            $("#addVatOptionModal").modal('show');
+        }
+
+        var vatOptionsDt = $("#vatOptionsDt").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[-1], ["All"]],
+            ajax: {
+                url: '/api/Setting/GetVatOptions/',
+                method: 'GET',
+                "dataSrc": "Obj"
+            },
+            columns: [
+                {
+                    data: 'Name',
+                    searchable: true
+                },
+                {
+                    data: 'Description',
+                    searchable: true
+                },
+                {
+                    data: 'Percentage',
+                    searchable: true
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="deleteVatOption(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+
+        function addVatOption() {
+
+            var name = $('#name').val();
+            var description = $('#description').val();
+            var percentage = $('#percentage').val();
+
+            if (name === '') {
+                toastr.error('Name cannot be empty');
+                return;
+            }
+
+            if (description === '') {
+                toastr.error('Description cannot be empty');
+                return;
+            }
+
+            if (percentage === '') {
+                toastr.error('VAT Amount cannot be empty');
+                return;
+            }
+
+            var data = {
+                Name: name,
+                Description: description,
+                Percentage: percentage
+            }
+
+            var url = "/api/Setting/SaveVatOption";
+
+            SafriSoftPostRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    $("#addVatOptionModal").modal('hide');
+                    toastr.success(response.Message);
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+        function removeVatOption(id) {
+
+            var url = `/api/Setting/RemoveVatOption/${id}`;
+
+            SafriSoftGetRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+    </script>
+}
+

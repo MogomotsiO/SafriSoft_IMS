@@ -14,7 +14,7 @@
             'data': 'OrderId',
             'searchable': true,
             'render': function (data, type, full, meta) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" href="#" onclick="viewOrder(this.id)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="invoiceViewModal(this.id)"><i class="fas fa-file-invoice text-info"></i></a></div> </td>';
+                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" href="#" onclick="viewOrder(this.id)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a id="' + full.OrderId + '" style="display:none;" class="btn btn-white" href="#" onclick="invoiceViewModal(this.id)"><i class="fas fa-file-invoice text-info"></i></a></div> </td>';
             }
         },
         {
@@ -44,8 +44,13 @@
         {
             'data': 'OrderWorth',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data);
+
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
             }
         },
         {
@@ -205,6 +210,8 @@ $('#order-final-create').on('click', function () {
     var orderCreatedDate = dateOrderCreated.getDate() + "/" + (dateOrderCreated.getMonth() + 1) + "/" + dateOrderCreated.getFullYear();
     var deliveryDate = new Date(numberOfDays);
     var finalDeliveryDate = deliveryDate.getDate() + "/" + (deliveryDate.getMonth() + 1) + "/" + deliveryDate.getFullYear();
+    var vatPercentage = $("#vatPercentage").val();
+    var invoiceDueDate = $("#invoiceDueDate").val();
     //var finalDeliveryDate = new Date(numberOfDays);
 
     if (customerName != "" && productName != "" && numberOfItems != "" && numberOfDays != "") {
@@ -217,7 +224,9 @@ $('#order-final-create').on('click', function () {
             'NumberOfItems': numberOfItems,
             'DateOrderCreated': orderCreatedDate,
             'ExpectedDeliveryDate': finalDeliveryDate,
-            'ShippingCost': shippingCost
+            'ShippingCost': shippingCost,
+            'VatPercentage': vatPercentage,
+            'InvoiceDueDate': invoiceDueDate
         };
         $('#order-final-create').hide();
         $('#order-final-wait').show();
@@ -233,6 +242,7 @@ $('#order-final-create').on('click', function () {
                 console.log(data);
                 $('#create-order-modal').modal('hide');
                 $('#customer-orders').modal('show');
+                $("#customer-orders-title").text(data.CustomerName + " Orders");
                 customerOrderDataTable.ajax.url('/api/Inventory/GetOrders/' + data.CustomerID).load();
                 orderDataTable.ajax.reload();
                 customerDataTable.ajax.reload();

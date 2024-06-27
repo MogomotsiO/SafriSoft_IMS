@@ -1,7 +1,14 @@
 ﻿$(document).ready(function () {
-    //var today = new Date();
+    var today = new Date();
+    var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    debugger;
+    var startDay = '01';
+    var endDay = monthEnd.getDate();
 
-    //document.getElementById("period").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2);
+    document.getElementById("start").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + startDay;
+    document.getElementById("end").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + endDay;
+
+    refreshGeneralLedgerDT();
 });
 
 var generalLedgerTable = $("#generalLedgerTable").DataTable({
@@ -51,7 +58,7 @@ var generalLedgerTable = $("#generalLedgerTable").DataTable({
         {
             'data': 'Debit',
             'searchable': true,
-            'className': 'indexStyle',
+            'className': 'indexStyle text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -62,7 +69,7 @@ var generalLedgerTable = $("#generalLedgerTable").DataTable({
         {
             'data': 'Credit',
             'searchable': true,
-            'className': 'indexStyle',
+            'className': 'indexStyle text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -122,6 +129,74 @@ $('#ImportGeneralLedger').on('click', function () {
 
 });
 
+var importFromSafriSoftTB = $("#importFromSafriSoftTB").DataTable({
+    "responsive": true,
+    "autoWidth": false,
+    "info": true,
+    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+    "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+    lengthMenu: [[-1], ["All"]],
+    'columns': [
+        {
+            'data': 'DateStr',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                return '<td id="' + data + '" >' + data + '</td>';
+            }
+        },
+        {
+            'data': 'AccountNumber',
+            'searchable': true,
+            'render': function (data, type, full, meta) {
+                return '<td id="' + data + '" >' + data + '</td>';
+            }
+        },
+        {
+            'data': 'AccountName',
+            'searchable': true
+        },
+        {
+            'data': 'AccountDescription',
+            'searchable': true
+        },
+        {
+            'data': 'Debit',
+            'searchable': true,
+            'className': 'indexStyle text-right',
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
+        },
+        {
+            'data': 'Credit',
+            'searchable': true,
+            'className': 'indexStyle text-right',
+            'render': function (data, type, full, meta) {
+                if (type === 'display')
+                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                else
+                    return data;
+            }
+        }
+    ]
+});
+
+$('#ImportSafriSoft').on('click', function () {
+    $('#uploadSafriSoftModal').modal('show');
+
+    var url = '/api/Inventory/ImportFromSafriSoft';
+
+    SafriSoftGetRequest(url, (response) => {
+        importFromSafriSoftTB.clear();
+        importFromSafriSoftTB.rows.add(response.Obj);
+        importFromSafriSoftTB.draw();
+    });
+
+});
+
 var generalLedgerResultsDT = $("#generalLedgerResultsTable").DataTable({
     "responsive": true,
     "autoWidth": false,
@@ -175,13 +250,4 @@ function refreshGeneralLedgerDT() {
         }
     });
 
-    //if (period != null && period != '') {
-
-    //    var month = period[1];
-    //    var year = period[0];
-
-    //    generalLedgerTable.ajax.url('/api/Accounting/GetGeneralLedgerAccounts/' + month + '/' + year).load();
-    //} else {
-    //    toastr.error("Please select a period");
-    //}
 }

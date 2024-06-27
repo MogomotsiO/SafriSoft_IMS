@@ -81,6 +81,7 @@ $("#products-reports-table").DataTable({
         {
             'data': 'Cost',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -91,6 +92,7 @@ $("#products-reports-table").DataTable({
         {
             'data': 'SellingPrice',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -105,6 +107,7 @@ $("#products-reports-table").DataTable({
         {
             'data': 'TotalItemsCost',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -115,6 +118,7 @@ $("#products-reports-table").DataTable({
         {
             'data': 'ExpectedProfit',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -125,6 +129,7 @@ $("#products-reports-table").DataTable({
         {
             'data': 'CurrProfit',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -173,6 +178,7 @@ $("#orders-reports-table").DataTable({
         {
             'data': 'OrderWorth',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
@@ -269,6 +275,7 @@ $("#system-reports-table").DataTable({
         {
             'data': 'OrderWorth',
             'searchable': true,
+            'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
                     return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';

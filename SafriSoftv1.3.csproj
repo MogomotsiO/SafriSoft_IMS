@@ -208,12 +208,14 @@
     <Compile Include="Controllers\API\InventoryController.cs" />
     <Compile Include="Controllers\API\InvoicingController.cs" />
     <Compile Include="Controllers\API\ReportController.cs" />
+    <Compile Include="Controllers\API\SettingController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
     <Compile Include="Controllers\InvoicingController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
+    <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -226,9 +228,10 @@
       <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AccountingViewModel.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CustomerViewModel.cs" />
+    <Compile Include="Models\ViewModels\AccountingViewModel.cs" />
+    <Compile Include="Models\ViewModels\AccountViewModels.cs" />
+    <Compile Include="Models\ViewModels\BaseViewModel.cs" />
+    <Compile Include="Models\ViewModels\CustomerViewModel.cs" />
     <Compile Include="Models\Data\BaseModel.cs" />
     <Compile Include="Models\Data\Customer.cs" />
     <Compile Include="Models\Data\Email.cs" />
@@ -242,27 +245,34 @@
     <Compile Include="Models\Data\Organisations.cs" />
     <Compile Include="Models\Data\OrganisationSoftware.cs" />
     <Compile Include="Models\Data\Product.cs" />
+    <Compile Include="Models\Data\Supplier.cs" />
+    <Compile Include="Models\Data\SupplierInvoice.cs" />
     <Compile Include="Models\Data\TrialBalanceAccount.cs" />
     <Compile Include="Models\Data\TrialBalanceGeneralLedgerMapping.cs" />
-    <Compile Include="Models\HomeViewModel.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\InboxViewModel.cs" />
-    <Compile Include="Models\InvoiceViewModel.cs" />
-    <Compile Include="Models\InvoicingViewModel.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\OrderAuditViewModel.cs" />
-    <Compile Include="Models\OrderViewModel.cs" />
-    <Compile Include="Models\OrganisationViewModel.cs" />
-    <Compile Include="Models\ProductViewModel.cs" />
-    <Compile Include="Models\Result.cs" />
+    <Compile Include="Models\Data\VatOption.cs" />
+    <Compile Include="Models\ViewModels\HomeViewModel.cs" />
+    <Compile Include="Models\ViewModels\IdentityModels.cs" />
+    <Compile Include="Models\ViewModels\InboxViewModel.cs" />
+    <Compile Include="Models\ViewModels\InvoiceViewModel.cs" />
+    <Compile Include="Models\ViewModels\InvoicingViewModel.cs" />
+    <Compile Include="Models\ViewModels\ManageViewModels.cs" />
+    <Compile Include="Models\ViewModels\OrderAuditViewModel.cs" />
+    <Compile Include="Models\ViewModels\OrderViewModel.cs" />
+    <Compile Include="Models\ViewModels\OrganisationViewModel.cs" />
+    <Compile Include="Models\ViewModels\ProductViewModel.cs" />
+    <Compile Include="Models\SystemModels\Result.cs" />
     <Compile Include="Models\SafriSoftDbContext.cs" />
-    <Compile Include="Models\SystemNotificationsViewModel.cs" />
-    <Compile Include="Models\UserViewModel.cs" />
+    <Compile Include="Models\ViewModels\SettingViewModel.cs" />
+    <Compile Include="Models\ViewModels\SupplierViewModel.cs" />
+    <Compile Include="Models\ViewModels\SystemNotificationsViewModel.cs" />
+    <Compile Include="Models\ViewModels\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountingService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\InventoryService.cs" />
     <Compile Include="Services\InvoicingService.cs" />
     <Compile Include="Services\SafriSoftEmailService.cs" />
+    <Compile Include="Services\SettingService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2311,6 +2321,7 @@
     <Content Include="Scripts\Accounting\generallegder.js" />
     <Content Include="Scripts\Accounting\trialbalance.js" />
     <Content Include="Scripts\Accounting\trialbalancereport.js" />
+    <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="assets\vendor\bootstrap\css\bootstrap-grid.css.map" />
@@ -2758,6 +2769,10 @@
     <Content Include="Views\Reporting\Inventory.cshtml" />
     <Content Include="Views\Invoicing\Create.cshtml" />
     <Content Include="Views\Invoicing\Invoices.cshtml" />
+    <Content Include="Views\Invoicing\Invoice.cshtml" />
+    <Content Include="Views\Invoicing\InvoicePDF.cshtml" />
+    <Content Include="Views\Inventory\Suppliers.cshtml" />
+    <Content Include="Views\Setting\Settings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

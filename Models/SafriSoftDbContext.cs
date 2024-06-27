@@ -21,6 +21,9 @@ namespace SafriSoftv1._3.Models
         public virtual DbSet<TrialBalanceGeneralLedgerMapping> TrialBalanceGeneralLedgerMappings { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceItem> InvoiceItems { get; set; }
+        public virtual DbSet<Supplier> Suppliers { get; set; }
+        public virtual DbSet<SupplierInvoice> SupplierInvoices { get; set; }
+        public virtual DbSet<VatOption> VatOptions { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

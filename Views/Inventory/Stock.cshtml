@@ -36,8 +36,9 @@
                         </div>
                         <div class="card-body">
                             <span class="text-right mr-1"><button id="CreateProduct" type="submit" class="btn btn-light"><i class="fa fa-dolly text-info"></i> Create product</button></span>
-                            <span class="text-right"><button id="ImportProduct" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import products</button>
-                                                     <button id="ImportProduct-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Import products - Upgrade To Standard</button>
+                            <span class="text-right">
+                                <button id="ImportProduct" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import products</button>
+                                <button id="ImportProduct-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Import products - Upgrade To Standard</button>
                             </span>
                         </div>
                         <!-- /.card-header -->
@@ -85,11 +86,11 @@
             <div class="modal-body login-card-body">
                 <div class="row">
                     @*<div class="mb-5 col-lg-12">
-            <input id="img-source" type="text" />
-            <input id="img-filename" type="text" />
-            <img id="logo" src="" alt="" style="height:120px;" />
+                            <input id="img-source" type="text" />
+                            <input id="img-filename" type="text" />
+                            <img id="logo" src="" alt="" style="height:120px;" />
 
-        </div>*@
+                        </div>*@
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Item Code</label>
@@ -169,13 +170,13 @@
                         </div>
                     </div>
                     @*<div class="mb-3 col-lg-12">
-            <div class="input-group form-group bmd-form-group">
-                <div class="custom-file">
-                    <input class="custom-file-input text-light" id="input-logo" type="file">
-                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
-                </div>
-            </div>
-        </div>*@
+                            <div class="input-group form-group bmd-form-group">
+                                <div class="custom-file">
+                                    <input class="custom-file-input text-light" id="input-logo" type="file">
+                                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
+                                </div>
+                            </div>
+                        </div>*@
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
@@ -201,11 +202,11 @@
             <div class="modal-body login-card-body">
                 <div class="row">
                     @*<div class="mb-5 col-lg-12">
-            <input id="edit-img-source" type="text" />
-            <input id="edit-img-filename" type="text" />
-            <img id="edit-logo" src="" alt="" style="height:120px;" />
+                            <input id="edit-img-source" type="text" />
+                            <input id="edit-img-filename" type="text" />
+                            <img id="edit-logo" src="" alt="" style="height:120px;" />
 
-        </div>*@
+                        </div>*@
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Item Code</label>
@@ -286,13 +287,13 @@
                         </div>
                     </div>
                     @*<div class="mb-3 col-lg-12">
-            <div class="input-group form-group bmd-form-group is-filled">
-                <div class="custom-file">
-                    <input class="custom-file-input text-light" id="input-logo" type="file">
-                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
-                </div>
-            </div>
-        </div>*@
+                            <div class="input-group form-group bmd-form-group is-filled">
+                                <div class="custom-file">
+                                    <input class="custom-file-input text-light" id="input-logo" type="file">
+                                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
+                                </div>
+                            </div>
+                        </div>*@
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
@@ -324,13 +325,13 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <p>Example Format:</p>
-                        <img src="~/Content/images/excelProductFormat.png" style="width: 100%; box-shadow:10px;"/>
+                        <img src="~/Content/images/excelProductFormat.png" style="width: 100%; box-shadow:10px;" />
                         <div id="dropzone" class="fade">
                             <h3>Drag & Drop File</h3>
                         </div>
                     </div>
                     <div class="card-body">
-                        
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -343,3 +344,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+@section scripts{
+    <script src="~/Scripts/Inventory/products.js"></script>
+    <script src="~/Scripts/Inventory/app.inbox.js"></script>
+}

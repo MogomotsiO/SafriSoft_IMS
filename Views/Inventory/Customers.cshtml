@@ -309,6 +309,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mb-1 mt-3 col-md-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Invoice Due Date</label>
+                            <input id="invoiceDueDate" class="form-control" type="date">
+                        </div>
+                    </div>
                     <div class="mb-3 col-md-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Delivery Date</label>
@@ -324,6 +330,17 @@
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Shipping Cost</label>
                             <input id="shipping-cost" class="form-control" type="text">
+                            <div class="input-group-append">
+                                <div class="input-group-text  bg-white border-white">
+                                    <span class="fas fa-dolly-flatbed text-info"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 col-md-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Vat Percentage</label>
+                            <input id="vatPercentage" class="form-control" type="text">
                             <div class="input-group-append">
                                 <div class="input-group-text  bg-white border-white">
                                     <span class="fas fa-dolly-flatbed text-info"></span>
@@ -385,3 +402,10 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+@section scripts{
+
+    <script src="~/Scripts/Inventory/customers.js"></script>
+    <script src="~/Scripts/Inventory/orders.js"></script>
+    <script src="~/Scripts/Inventory/app.inbox.js"></script>
+}

@@ -56,9 +56,9 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
-                    
+
                     <div class="card">
                         <div class="card-header card-header-info">
                             <h4 class="card-title"><i class="fas fa-coins"></i> General Ledger</h4>
@@ -66,7 +66,8 @@
                         <div class="card-body">
                             @*<span class="text-right mr-1"><button id="CreateGeneralLedger" type="submit" class="btn btn-light"><i class="fa fa-edit text-info"></i> Create</button></span>*@
                             <span class="text-right">
-                                <button id="ImportGeneralLedger" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import</button>
+                                <button id="ImportGeneralLedger" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import Excel</button>
+                                @*<button id="ImportSafriSoft" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import SafriSoft</button>*@
                             </span>
                         </div>
                         <!-- /.card-header -->
@@ -97,7 +98,6 @@
     </div><!-- /.container-fluid -->
 </div>
 <!-- /.content -->
-
 <!-- Upload Data -->
 <div class="modal fade" id="upload-excel">
     <div class="modal-dialog modal-lg">
@@ -117,7 +117,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="alert alert-info" style="border:none !important;">
-                            <strong>NB!</strong> Please provide us with the Account Number, Account Name, Month, Year, Amount columns in your excel.
+                            <strong>NB!</strong> Please provide us with the Date (dd/mm/yyyy), Account Number, Account Name, Debit, Credit columns in your excel.
                         </div>
                         <div id="dropzone" class="fade">
                             <h3>Drag & Drop File</h3>
@@ -161,6 +161,42 @@
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="uploadSafriSoftModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Import From SafriSoft</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-card-body">
+                <table id="importFromSafriSoftTB" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Date</th>
+                            <th>Account Number</th>
+                            <th>Account Name</th>
+                            <th>Account Description</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" data-dismiss="modal">Submit</button>
             </div>
         </div>
         <!-- /.modal-content -->

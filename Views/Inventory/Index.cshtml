@@ -2,6 +2,47 @@
     ViewBag.title = "Dashboard";
 }
 
+<style type="text/css">
+/* Chart.js */
+ @@keyframes chartjs-render-animation{
+    from{
+        opacity:.99
+    }
+    to{
+        opacity:1
+    }
+}
+.chartjs-render-monitor{
+    animation:chartjs-render-animation 1ms
+}
+.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{
+    position:absolute;
+    direction:ltr;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    overflow:hidden;
+    pointer-events:none;
+    visibility:hidden;
+    z-index:-1
+}
+.chartjs-size-monitor-expand>div{
+    position:absolute;
+    width:1000000px;
+    height:1000000px;
+    left:0;
+    top:0
+}
+.chartjs-size-monitor-shrink>div{
+    position:absolute;
+    width:200%;
+    height:200%;
+    left:0;
+    top:0
+}
+</style>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -112,14 +153,14 @@
                     <div class="card card-stats">
                         <div class="card-header card-header-info card-header-icon">
                             <div class="card-icon">
-                                <i class="fas fa-dollar-sign"></i>
+                                <i class="fas fa-coins"></i>
                             </div>
                             <p class="card-category">Revenue</p>
                             <h1 id="stock-sold-value" class="card-titlec"></h1>
                         </div>
                         <div class="card-footer">
                             <div class="stats">
-                                <i class="fas fa-dollar-sign"></i>
+                                <i class="fas fa-coins"></i>
                             </div>
                         </div>
                     </div>
@@ -174,14 +215,14 @@
                     <div class="card card-stats">
                         <div class="card-header card-header-info card-header-icon">
                             <div class="card-icon">
-                                <i class="fas fa-dolly-moving"></i>
+                                <i class="fas fa-truck"></i>
                             </div>
                             <p class="card-category">Orders InTransit</p>
                             <h1 id="orders-intransit" class="card-titlec"></h1>
                         </div>
                         <div class="card-footer">
                             <div class="stats">
-                                <i class="fas fa-dolly-moving"></i>
+                                <i class="fas fa-truck"></i>
                             </div>
                         </div>
                     </div>
@@ -210,7 +251,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-chart-pie"></i> Pie Chart</h4>
+                            <h4 class="card-title"><i class="fas fa-chart-pie"></i> Inventory</h4>
                         </div>
                         <div class="card-body table-responsive">
                             <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
@@ -218,6 +259,7 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
+                    
                     <!-- BAR CHART
                     <div class="card card-light">
                         <div class="card-header">
@@ -236,7 +278,18 @@
                     </div>-->
                     <!-- /.card -->
                 </div>
-                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fas fa-chart-bar"></i> Top 10 Debits & Credits</h4>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
+                            <canvas id="barChart" style="min-height: 100%; height: 100%; max-height: 100%; max-width: 100%; display: block; width: 486px;" width="752" height="600" class="chartjs-render-monitor"></canvas>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
             </div>
         </div>
     </div><!-- /.container-fluid -->
@@ -248,14 +301,16 @@
 
 
 <!-- Open Street Map-->
-<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+@*<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>*@
 
 <!-- Leaflet heat map includes-->
-<script src="~/Scripts/heatmap.js"></script>
-<script src="~/Scripts/leaflet-heatmap.js"></script>
+@*<script src="~/Scripts/heatmap.js"></script>*@
+@*<script src="~/Scripts/leaflet-heatmap.js"></script>*@
 
 
 <script>
+
+
     window.onload = function () {
         $(function () {
             /* ChartJS
@@ -270,33 +325,92 @@
             // Get context with jQuery - using jQuery's .get() method.
             //var areaChartCanvas = $('#areaChart').get(0).getContext('2d');
 
-            var areaChartData = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [
-                    {
-                        label: 'Sales',
-                        backgroundColor: '#17a2b8',
-                        borderColor: 'rgba(60,141,188,0.8)',
-                        pointRadius: false,
-                        pointColor: '#3b8bba',
-                        pointStrokeColor: 'rgba(60,141,188,1)',
-                        pointHighlightFill: '#fff',
-                        pointHighlightStroke: 'rgba(60,141,188,1)',
-                        data: [28, 48, 40, 19, 86, 27, 90, 70, 75, 60, 50, 40]
-                    },
-                    {
-                        label: 'Products',
-                        backgroundColor: '#ffc107',
-                        borderColor: 'rgba(210, 214, 222, 1)',
-                        pointRadius: false,
-                        pointColor: 'rgba(210, 214, 222, 1)',
-                        pointStrokeColor: '#c1c7d1',
-                        pointHighlightFill: '#fff',
-                        pointHighlightStroke: 'rgba(220,220,220,1)',
-                        data: [65, 59, 80, 81, 56, 55, 40, 58, 70, 30, 20, 10]
-                    },
-                ]
-            }
+            var today = new Date();
+            var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+            var startDay = '01';
+            var endDay = monthEnd.getDate();
+
+            var start = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + startDay;
+            var end = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + endDay;
+
+            var vm = {
+                'Start': start,
+                'End': end
+            };
+
+            var url = '/api/Accounting/GetTrialBalanceReport';
+
+            SafriSoftPostRequest(url, vm, (data) => {
+                if (data.Success) {
+                    console.log(data);
+                    var debits = data.Obj.filter(x => x.Total > 0).sort(function (a, b) { a.Total - b.Total });
+                    var credits = data.Obj.filter(x => x.Total < 0).sort(function (a, b) { b.Total - a.Total });
+                    var labels = [];
+                    var totals = [];
+                    var period = '';
+                    debugger;
+                    for (var i = 0; i < debits.length; i++) {
+
+                        if (debits[i].AccountNumber == 0 || i == 5)
+                            continue;
+
+                        labels.push(debits[i].AccountName);
+                        totals.push(Math.round(debits[i].Total * 100) / 100);
+                        period = debits[i].Period;
+                    }
+
+                    for (var i = 0; i < credits.length; i++) {
+
+                        if (credits[i].AccountNumber == 0 || i == 5)
+                            continue;
+
+                        labels.push(credits[i].AccountName);
+                        totals.push(Math.round(credits[i].Total * 100) / 100);
+                        period = credits[i].Period;
+                    }
+
+                    var barChartData = {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: period,
+                                backgroundColor: 'lightblue',
+                                borderColor: 'rgba(60,141,188,1)',
+                                borderWidth: 1,
+                                pointRadius: false,
+                                pointColor: '#3b8bba',
+                                pointStrokeColor: 'rgba(60,141,188,1)',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(60,141,188,1)',
+                                data: totals
+                            }
+                        ]
+                    }
+
+                    var barChartCanvas = $('#barChart').get(0).getContext('2d')
+                    var barChartData = jQuery.extend(true, {}, barChartData)
+                    var temp1 = barChartData.datasets[0]
+                    barChartData.datasets[0] = temp1
+
+                    var barChartOptions = {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        datasetFill: false
+                    }
+
+                    var barChart = new Chart(barChartCanvas, {
+                        type: 'bar',
+                        data: barChartData,
+                        options: barChartOptions
+                    })
+
+                } else {
+                    toastr.error(data.Message);
+                }
+            });
+
+            
 
             //var areaChartOptions = {
             //    maintainAspectRatio: false,
@@ -330,24 +444,7 @@
             //-------------
             //- BAR CHART -
             //-------------
-            //var barChartCanvas = $('#barChart').get(0).getContext('2d')
-            //var barChartData = jQuery.extend(true, {}, areaChartData)
-            //var temp0 = areaChartData.datasets[0]
-            //var temp1 = areaChartData.datasets[1]
-            //barChartData.datasets[0] = temp1
-            //barChartData.datasets[1] = temp0
-
-            //var barChartOptions = {
-            //    responsive: true,
-            //    maintainAspectRatio: false,
-            //    datasetFill: false
-            //}
-
-            //var barChart = new Chart(barChartCanvas, {
-            //    type: 'bar',
-            //    data: barChartData,
-            //    options: barChartOptions
-            //})
+            
 
         });
         var donutData;
@@ -375,7 +472,7 @@
                     datasets: [
                         {
                             data: [data.StockAvailable, data.StockSold],
-                            backgroundColor: ['#17a2b8', '#28a745'],
+                            backgroundColor: ['rgba(60,141,188,1)', 'lightblue' ],
                         }
                     ]
                 }

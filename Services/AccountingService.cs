@@ -347,6 +347,7 @@ namespace SafriSoftv1._3.Services
             else
             {
                 result.Success = false;
+                result.Message = "No data for period";
                 result.obj = new List<GeneralLedger>();
             }
 
@@ -430,6 +431,31 @@ namespace SafriSoftv1._3.Services
 
             result.Success = true;
             result.obj = items.OrderBy(x => x.Index);
+
+            return result;
+        }
+
+        public Result ImportFromSafriSoft(DateParameters vm, int organisationId)
+        {
+            var result = new Result();
+
+            var items = new List<AccountingViewModel>();
+
+            // supplier
+            var supplierTotal = db.SupplierInvoices.Where(x => x.OrganisationId == organisationId && x.Inserted >= vm.Start && x.Inserted <= vm.End).Select(x => x.Amount).Sum();
+            // supplier VAT
+            var supplierTotalVat = db.SupplierInvoices.Where(x => x.OrganisationId == organisationId && x.Inserted >= vm.Start && x.Inserted <= vm.End).Select(x => x.VatAmount).Sum();
+            // invoices
+            var invoicesTotal = db.Invoices.Where(x => x.OrganisationId == organisationId && x.InvoiceDate >= vm.Start && x.InvoiceDate <= vm.End && x.Paid == true).Select(x => x.Amount).Sum();
+            // invoices VAT
+            var invoices = db.Invoices.Where(x => x.OrganisationId == organisationId && x.InvoiceDate >= vm.Start && x.InvoiceDate <= vm.End && x.Paid == true).ToList();
+
+            var invoicesVateAmount = 0;
+
+            foreach(var inVat in invoices)
+            {
+
+            }
 
             return result;
         }

@@ -199,7 +199,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[ExpectedDeliveryDate],[OrderWorth],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrganisationId = {1} AND Status = 'Active' AND CONVERT(date, [ExpectedDeliveryDate],103) < CONVERT(date, [DateOrderCreated],103) and (OrderStatus = 'Processed' or OrderStatus = 'Packaged') Order By OrderProgress ASC, Status ASC", conn.Database, organisationId);
+                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[ExpectedDeliveryDate],[OrderWorth],[DateOrderCreated] from [{0}].[dbo].[Orders] where OrganisationId = {1} AND Status = 'Active' AND ExpectedDeliveryDate < DateOrderCreated and (OrderStatus = 'Processed' or OrderStatus = 'Packaged') Order By OrderProgress ASC, Status ASC", conn.Database, organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {

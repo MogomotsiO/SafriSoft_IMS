@@ -481,6 +481,31 @@ namespace SafriSoftv1._3.Controllers.API
 
             return Json(new { Success = result.Success, Message = result.Message, Obj = result.obj });
         }
+
+        [HttpGet, Route("ImportFromSafriSoft")]
+        public IHttpActionResult ImportFromSafriSoft()
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                //result.obj = aSvc.ImportFromSafriSoft(organisationId);
+
+                result.Success = true;
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
     }
 
 
