@@ -463,9 +463,19 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     while (reader.Read())
                     {
+                        var customerId = reader.GetInt32(0);
+
+                        var balance = 0.0;
+                        var transactions = SafriSoft.CustomerTransactions.Where(x => x.CustomerId == customerId).ToList();
+
+                        if (transactions.Count > 0)
+                        {
+                            balance = transactions.Sum(x => x.Amount);
+                        }
+
                         var Customers = new CustomerViewModel();
                         countUsers += 1;
-                        Customers.Id = reader.GetInt32(0);
+                        Customers.Id = customerId;
                         Customers.CustomerName = reader.GetString(1);
                         Customers.CustomerEmail = reader.GetString(2);
                         Customers.CustomerCell = reader.GetString(3);
@@ -476,6 +486,7 @@ namespace SafriSoftv1._3.Controllers.API
                         customer.NumberOfOrders = numberOfOrders;
                         SafriSoft.SaveChanges();
                         Customers.NumberOfOrders = numberOfOrders;
+                        Customers.Balance = balance;
                         CustomerViewModel.Add(Customers);
                     }
                     reader.NextResult();
@@ -820,14 +831,16 @@ namespace SafriSoftv1._3.Controllers.API
                     InvoiceDetails = new Invoice
                     {
                         InvoiceNumber = $"INV-{invoiceNumber}",
-                        InvoiceDescription = generateOrderId,
+                        InvoiceDescription = $"{generateOrderId} - {OrderData.ProductName}",
                         InvoiceDate = DateTime.Now,
                         InvoiceDueDate = OrderData.InvoiceDueDate,
                         Shipping = Convert.ToDouble(OrderData.ShippingCost),
                         Amount = Convert.ToDouble(orderWorth + Double.Parse(OrderData.ShippingCost.ToString()) + vat),
                         CustomerId = Convert.ToInt32(customerId),
-                        VatPercentage = OrderData.VatPercentage,
-                        Reference = generateOrderId
+                        Reference = generateOrderId,
+                        VatOptionId = OrderData.VatOptionId,
+                        InvoiceAccountId = OrderData.InvoiceAccountId,
+                        DebtorsAccountId = OrderData.DebtorsAccountId
                     },
                     InvoiceItems = new List<InvoiceItem>() { new InvoiceItem()
                     {
@@ -1711,9 +1724,14 @@ namespace SafriSoftv1._3.Controllers.API
             HttpContext context = HttpContext.Current;
             HttpPostedFile postedFile = context.Request.Files["files[]"];
 
+            var date = Convert.ToDateTime(context.Request.Headers["safrisoft"].Replace('|', '-'));
+            var description = context.Request.Headers["description"];
             var qty = Convert.ToInt32(context.Request.Headers["qty"]);
             var vatAmount = Convert.ToDouble(context.Request.Headers["vatAmount"]);
             var amount = Convert.ToDouble(context.Request.Headers["amount"]);
+            var vatAccountId = Convert.ToInt32(context.Request.Headers["vatAccountId"]);
+            var invoiceAccountId = Convert.ToInt32(context.Request.Headers["invoiceAccountId"]);
+            var creditorsAccountId = Convert.ToInt32(context.Request.Headers["creditorsAccountId"]);
 
             if(postedFile == null)
             {
@@ -1743,7 +1761,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var iSvc = new InventoryService();
 
-                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, qty, vatAmount, amount, organisationId, Id);
+                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, creditorsAccountId, organisationId, Id);
 
                 if (result.Success == false)
                     return Json(result);
@@ -1786,7 +1804,29 @@ namespace SafriSoftv1._3.Controllers.API
             }
         }
 
-        
+        [HttpPost, Route("PaySupplier")]
+        public async Task<IHttpActionResult> PaySupplier(PaySupplierViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var iSvc = new InventoryService();
+
+                result = iSvc.PaySupplier(vm, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
 
         // functions
         public static Bitmap Base64StringToBitmap(string base64String)

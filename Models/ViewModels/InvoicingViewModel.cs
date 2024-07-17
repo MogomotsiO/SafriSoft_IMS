@@ -14,6 +14,9 @@ namespace SafriSoftv1._3.Models
         public Product Product { get; set; }
         public Invoice InvoiceDetails { get; set; } = new Invoice();
         public List<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
+        public List<VatOption> VatOptions { get; set; } = new List<VatOption>();
+        public List<TrialBalanceAccount> TrialBalanceAccounts { get; set; } = new List<TrialBalanceAccount>();
+        public List<InvoiceTransaction> InvoiceTransactions { get; set; } = new List<InvoiceTransaction>();
     }
 
     public class InvoiceDetalsVm
@@ -27,6 +30,8 @@ namespace SafriSoftv1._3.Models
         public double Amount { get; set; }
         public int OrganisationId { get; set; }
         public bool Paid { get; set; }
+        public double AmountPaid { get; set; }
+        public string Pop { get; set; }
     }
 
     public class InvoiceDetails
@@ -40,5 +45,13 @@ namespace SafriSoftv1._3.Models
         public double VatPercentage { get; set; }
         public double Amount { get; set; }
         public int CustomerId { get; set; }
+    }
+
+    public class PayInvoiceDetailsVm
+    {
+        public int InvoiceId { get; set; }
+        public DateTime Date { get; set; }
+        public double Amount { get; set; }
+        public int AccountId { get; set; }
     }
 }

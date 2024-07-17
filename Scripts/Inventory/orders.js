@@ -212,6 +212,9 @@ $('#order-final-create').on('click', function () {
     var finalDeliveryDate = deliveryDate.getDate() + "/" + (deliveryDate.getMonth() + 1) + "/" + deliveryDate.getFullYear();
     var vatPercentage = $("#vatPercentage").val();
     var invoiceDueDate = $("#invoiceDueDate").val();
+    var vatOptionId = $("#selectedVatOption").val();
+    var debtorsAccountId = $("#selectedDebtorsAccount").val();
+    var invoiceAccountId = $("#selectedInvoiceAccount").val();
     //var finalDeliveryDate = new Date(numberOfDays);
 
     if (customerName != "" && productName != "" && numberOfItems != "" && numberOfDays != "") {
@@ -225,7 +228,9 @@ $('#order-final-create').on('click', function () {
             'DateOrderCreated': orderCreatedDate,
             'ExpectedDeliveryDate': finalDeliveryDate,
             'ShippingCost': shippingCost,
-            'VatPercentage': vatPercentage,
+            'VatOptionId': vatOptionId,
+            'DebtorsAccountId': debtorsAccountId,
+            'InvoiceAccountId': invoiceAccountId,
             'InvoiceDueDate': invoiceDueDate
         };
         $('#order-final-create').hide();

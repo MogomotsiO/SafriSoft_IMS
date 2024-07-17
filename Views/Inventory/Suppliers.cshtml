@@ -1,4 +1,5 @@
-﻿
+﻿@model SafriSoftv1._3.Models.SupplierViewModel
+
 @{
     ViewBag.Title = "Suppliers";
 }
@@ -55,6 +56,7 @@
                                         <th>C Person Phone</th>
                                         <th>C Person Email</th>
                                         <th>Product</th>
+                                        <th>Balance</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -207,6 +209,18 @@
                         <div class="col-md-12">
                             <div class="mb-3 col-md-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Date</label>
+                                    <input id="date" class="form-control" type="date">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Description</label>
+                                    <input id="description" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating">QTY</label>
                                     <input id="qty" class="form-control" type="text">
                                 </div>
@@ -219,8 +233,44 @@
                             </div>
                             <div class="mb-3 col-md-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Total Invoice Amount</label>
+                                    <label class="bmd-label-floating">Invoice Amount (Excl VAT)</label>
                                     <input id="amount" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedVatAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT VAT ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedInvoiceAccount" class="safriSelect2 form-control" style="width: 100%;min-width: 100%; min-height: 100px;">
+                                        <option value="-100">SELECT INVOICE ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedCreditorsAccount" class="safriSelect2 form-control" style="width: 100%;min-width: 100%; min-height: 100px;">
+                                        <option value="-100">SELECT CREDITORS ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -228,8 +278,8 @@
                             <h3 style="color: #17a2b8;">Drag & Drop File</h3>
                         </div>
                         @*<div id="dropzone-upgrade">
-                            <h5><i class="fa fa-lock"></i> Import Documents - Upgrade Package</h5>
-                        </div>*@
+                                <h5><i class="fa fa-lock"></i> Import Documents - Upgrade Package</h5>
+                            </div>*@
                     </div>
                     <div class="card-body">
                         <table id="supplierInvoicesDt" class="table">
@@ -251,6 +301,82 @@
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="paySupplierModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Pay Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-paste"></i> Pay Supplier</h4>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Date</label>
+                                    <input id="paymentDate" class="form-control" type="date">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Description</label>
+                                    <input id="paymentDescription" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Amount</label>
+                                    <input id="paymentAmount" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedPaymentInvoice" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT INVOICE</option>
+                                        @foreach (var invoice in Model.SuppliersInvoices)
+                                        {
+                                            <option value="@invoice.Id">@invoice.InvoiceDate.GetValueOrDefault().ToString("dd-MM-yyy") - @invoice.Description</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedPaymentAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light" onclick="paySupplier()">Submit</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -322,11 +448,23 @@
                     searchable: true,
                 },
                 {
+                    'data': 'Balance',
+                    'searchable': true,
+                    'className': 'text-right',
+                    'render': function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
                     data: 'Id',
                     searchable: true,
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="getSupplierDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a> </div> </td>'
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="getSupplierDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
                     }
                 }
             ]
@@ -489,14 +627,23 @@
                 autoUpload: false,
                 beforeSend: function (request) {
 
-                    var dateEffective = $("#dateEffective").val();
+                    var date = $("#date").val();
+                    var description = $("#description").val();
                     var qty = $("#qty").val();
                     var vatAmount = $("#vatAmount").val();
                     var amount = $("#amount").val();
+                    var vatAccountId = $("#selectedVatAccount").val();
+                    var invoiceAccountId = $("#selectedInvoiceAccount").val();
+                    var creditorsAccountId = $("#selectedCreditorsAccount").val();
 
+                    request.setRequestHeader("safrisoft", date.replaceAll('-', '|'));
+                    request.setRequestHeader("description", description);
                     request.setRequestHeader("qty", qty);
                     request.setRequestHeader("vatAmount", vatAmount);
                     request.setRequestHeader("amount", amount);
+                    request.setRequestHeader("vatAccountId", vatAccountId);
+                    request.setRequestHeader("invoiceAccountId", invoiceAccountId);
+                    request.setRequestHeader("creditorsAccountId", creditorsAccountId);
                 }
             }).on('fileuploadadd', function (e, data) {
 
@@ -505,9 +652,24 @@
 
                 var error = false;
 
+                var date = $("#date").val();
+                var description = $("#description").val();
                 var qty = $("#qty").val();
                 var vatAmount = $("#vatAmount").val();
                 var amount = $("#amount").val();
+                var vatAccountId = $("#selectedVatAccount").val();
+                var invoiceAccountId = $("#selectedInvoiceAccount").val();
+                var creditorsAccountId = $("#selectedCreditorsAccount").val();
+
+                if (date == '') {
+                    toastr.error('Please provide the date of invoice');
+                    error = true;
+                }
+
+                if (description == '') {
+                    toastr.error('Please provide the description of the invoice');
+                    error = true;
+                }
 
                 if (qty == '') {
                     toastr.error('Please provide the quantity of the product');
@@ -524,14 +686,34 @@
                     error = true;
                 }
 
+                if (vatAccountId == '') {
+                    toastr.error('Please provide the Invoice Vat Account Id');
+                    error = true;
+                }
+
+                if (invoiceAccountId == '') {
+                    toastr.error('Please provide the Invoice Account');
+                    error = true;
+                }
+
+                if (creditorsAccountId == '') {
+                    toastr.error('Please provide the Creditors Account');
+                    error = true;
+                }
+
                 if (error == false) {
+                    data.files[0]["safrisoft"] = date.replaceAll('-', '|');
+                    data.files[0]["description"] = description;
                     data.files[0]["qty"] = qty;
                     data.files[0]["vatAmount"] = vatAmount;
                     data.files[0]["amout"] = amount;
+                    data.files[0]["vatAccountId"] = vatAccountId;
+                    data.files[0]["invoiceAccountId"] = invoiceAccountId;
+                    data.files[0]["creditorsAccountId"] = creditorsAccountId;
                     console.log(data);
                     data.submit();
                 }
-                
+
             }).on('fileuploadalways', function (e, data) {
 
                 supplierInvoicesDt.ajax.reload();
@@ -609,11 +791,69 @@
                 {
                     'data': 'Id',
                     'render': function (data, type, full, meta) {
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="DownloadFile?fileId=' + full.Id + '"><i class="fas fa-download text-info"></i></a> </div> </td>'
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="DownloadFile?Id=' + full.Id + '"><i class="fas fa-download text-info"></i></a> </div> </td>'
                     }
                 }
             ]
         });
+
+        function paySupplierModal(id) {
+            _supplierId = id;
+            $('#paySupplierModal').modal('show');
+        }
+
+
+        function paySupplier() {
+
+            var date = $("#paymentDate").val();
+            var description = $("#paymentDescription").val();
+            var amount = $("#paymentAmount").val();
+            var accountId = $("#selectedPaymentAccount").val();
+            var selectedInvoice = $("#selectedPaymentInvoice").val();
+
+            if (date == '') {
+                toastr.error('Please provide the date');
+                return;
+            }
+
+            if (description == '') {
+                toastr.error('Please provide the description');
+                return;
+            }
+
+            if (amount == '') {
+                toastr.error('Please provide the amount');
+                return;
+            }
+
+            if (accountId == '') {
+                toastr.error('Please provide the account');
+                return;
+            }
+
+            var data = {
+                Date: date,
+                Description: description,
+                Amount: amount,
+                AccountId: accountId,
+                SupplierId: _supplierId,
+                SupplierInvoiceId: selectedInvoice
+            }
+
+            var url = '/api/Inventory/PaySupplier';
+
+            SafriSoftPostRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                    $('#paySupplierModal').modal('hide');
+                } else {
+                    toastr.error(response.Message);
+                }
+
+                suppliersDt.ajax.reload();
+            })
+
+        }
 
         function downloadFile(fileId) {
 

@@ -83,22 +83,33 @@
                                     <tr>
                                         <th>Product</th>
                                         <th>Qty</th>
-                                        <th style="width:150px;text-align:right;">Amount</th>
+                                        <th style="width:150px;text-align:right;">Price</th>
+                                        <th style="width:150px;text-align:right;">Vat</th>
+                                        <th style="width:150px;text-align:right;">Totals</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @{
                                         var subtotal = 0.0;
+                                        var itemVatAmount = 0.0;
+                                        var itemTotalAmount = 0.0;
                                     }
                                     @foreach (var item in Model.InvoiceItems)
                                     {
                                         {
-                                            subtotal = subtotal + item.Amount;
+                                            var vatItem = Model.VatOptions.Where(x => x.Id == item.VatOptionId).FirstOrDefault();
+                                            if(vatItem != null) {
+                                                itemVatAmount = item.Amount * (vatItem.Percentage / 100);
+                                            }
+                                            itemTotalAmount = item.Amount + itemVatAmount;
+                                            subtotal = subtotal + itemTotalAmount;
                                         }
                                         <tr>
                                             <td>@item.Description</td>
                                             <td>@item.Qty</td>
                                             <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", item.Amount))</td>
+                                            <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", itemVatAmount))</td>
+                                            <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", itemTotalAmount))</td>
                                         </tr>
                                     }
 
@@ -106,18 +117,25 @@
                                 <tbody>
                                     <tr>
                                         <td></td>
+                                        <td></td>
+                                        <td></td>
                                         <td style="text-align:right;font-weight:bold;">SUBTOTAL:</td>
                                         <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", subtotal))</td>
                                     </tr>
                                     <tr>
                                         @{
-                                            var vatAmount = subtotal * (Model.InvoiceDetails.VatPercentage / 100);
+                                            var invoiceVat = Model.VatOptions.Where(x => x.Id == Model.InvoiceDetails.VatOptionId).FirstOrDefault();
+                                            var vatAmount = subtotal * (invoiceVat.Percentage / 100);
                                         }
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td style="text-align:right;font-weight:bold;">VAT(<span>@Model.InvoiceDetails.VatPercentage</span>%):</td>
                                         <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", vatAmount))</td>
                                     </tr>
                                     <tr>
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td style="text-align:right;font-weight:bold;">SHIPPING:</td>
                                         <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", Model.InvoiceDetails.Shipping))</td>
@@ -126,6 +144,8 @@
                                         @{
                                             var total = subtotal + vatAmount + Model.InvoiceDetails.Shipping;
                                         }
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td style="text-align:right;font-weight:bold;">TOTAL:</td>
                                         <td style="width:150px;text-align:right;">@(string.Format(cZA, "{0:C}", total))</td>

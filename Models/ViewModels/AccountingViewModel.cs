@@ -60,7 +60,7 @@ namespace SafriSoftv1._3.Models
     public class TrialBalanceContainer
     {
         public int Id { get; set; }
-        public long AccountNumber { get; set; }
+        public string AccountNumber { get; set; }
         public string AccountName { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }

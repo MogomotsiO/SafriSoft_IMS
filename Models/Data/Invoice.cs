@@ -14,10 +14,13 @@ namespace SafriSoftv1._3.Models.Data
         public string Reference { get; set; }
         public double Shipping { get; set; }
         public double VatPercentage { get; set; }
+        public int VatOptionId { get; set; }
         public double Amount { get; set; }
         public int CustomerId { get; set; }
+        public int DebtorsAccountId { get; set; }
         public bool Paid { get; set; }
         public bool Repeating { get; set; }
         public string ProofOfPoayment { get; set; }
+        public int InvoiceAccountId { get; set; }
     }
 }

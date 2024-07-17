@@ -1,5 +1,6 @@
 ﻿using Rotativa;
 using SafriSoftv1._3;
+using SafriSoftv1._3.Controllers;
 using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Services;
 using System;
@@ -7,11 +8,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Web;
 using System.Web.Mvc;
 
 namespace SafriSoft.Controllers
 {
-    public class InventoryController : Controller
+    public class InventoryController : BaseController
     {
         public ActionResult Index()
         {
@@ -25,7 +27,14 @@ namespace SafriSoft.Controllers
 
         public ActionResult Suppliers()
         {
-            return View();
+            var organisationName = GetOrganisationName();
+            var organisationId = BaseService.GetOrganisationId(organisationName);
+
+            var iSvc = new InventoryService();
+
+            var vm = iSvc.GetSupplierVm(organisationId);
+
+            return View(vm);
         }
 
         public ActionResult Stock()
@@ -35,7 +44,18 @@ namespace SafriSoft.Controllers
 
         public ActionResult Customers()
         {
-            return View();
+            var organisationName = GetOrganisationName();
+            var organisationId = BaseService.GetOrganisationId(organisationName);
+
+            var vm = new CustomerContainerViewModel();
+
+            var aSvc = new AccountingService();
+
+            vm.VatOptions = aSvc.GetVatOptions(organisationId);
+
+            vm.TrialBalanceAccounts = aSvc.GetTrialBalanceAccounts(organisationId);
+
+            return View(vm);
         }
 
         public ActionResult Orders()
@@ -220,6 +240,7 @@ namespace SafriSoft.Controllers
             };
         }
 
+        // create Download controller and move these
         public ActionResult DownloadFile(int Id)
         {
             var Isvc = new InventoryService();
@@ -230,7 +251,10 @@ namespace SafriSoft.Controllers
 
             var fullFileName = $"{saveFileDir}/{supplierInvoice.FileName}";
 
-            return File(fullFileName, supplierInvoice.FileContentType);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullFileName);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, supplierInvoice.FileName);
         }
+
     }
 }

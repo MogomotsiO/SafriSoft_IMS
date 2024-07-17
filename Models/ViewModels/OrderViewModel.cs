@@ -18,6 +18,9 @@ namespace SafriSoftv1._3.Models
         public decimal ShippingCost { get; set; }
         public double VatPercentage { get; set; }
         public DateTime InvoiceDueDate { get; set; }
+        public int VatOptionId { get; set; }
+        public int DebtorsAccountId { get; set; }
+        public int InvoiceAccountId { get; set; }
     }
 
     public class OrderRequestViewModel

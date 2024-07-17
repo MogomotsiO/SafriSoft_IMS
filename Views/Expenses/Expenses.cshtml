@@ -1,0 +1,319 @@
+﻿@model SafriSoftv1._3.Models.ViewModels.ExpensesViewModel
+
+@{
+    ViewBag.Title = "Expenses";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-file"></i> Expenses</h4>
+                    </div>
+                    <div class="card-body">
+                        <span class="text-right mr-1"><button id="" type="submit" class="btn btn-light" style="text-align:right !important;" onclick="addExpenseModal()"><i class="fa fa-plus text-info"></i> Add Expense</button></span>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+                        <table id="expensesDt" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Amount Account</th>
+                                    <th>Vat Account</th>
+                                    <th>Bank Account</th>
+                                    <th>Amount</th>
+                                    <th>Vat Amount</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<!-- Modal -->
+<div class="modal fade" id="addExpenseModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">Add Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+
+                    <div class="card-header card-header-info">
+                        <h5 class="card-title"><i class="fa fa-pencil-square"></i> Add Expense</h5>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Date</label>
+                                    <input id="date" class="form-control" type="date">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Name</label>
+                                    <input id="name" class="form-control" type="text">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Amount</label>
+                                    <input id="amount" class="form-control" type="text">
+                                    <div class="input-group-append">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedCategory" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                                        <option value="-100">SELECT CATEGORY</option>
+                                        @foreach (var cat in Model.categories)
+                                        {
+                                            <option value="@cat.Id">@cat.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedAmountAccount" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                                        <option value="-100">SELECT ACCOUNT</option>
+                                        @foreach (var account in Model.Accounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedVatOptionId" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                                        <option value="-100">SELECT VAT OPTION</option>
+                                        @foreach (var vat in Model.VatOptions)
+                                        {
+                                            <option value="@vat.Id">@vat.Name - @vat.Percentage%</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            @*<div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedVatAccount" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                                        <option value="-100">SELECT VAT ACCOUNT</option>
+                                        @foreach (var account in Model.Accounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>*@
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedBankAccount" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                                        <option value="-100">SELECT BANK ACCOUNT</option>
+                                        @foreach (var account in Model.Accounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="" type="button" class="btn btn-light" onclick="addExpense()"><i class="fa fa-plus text-info"></i> Add Expense</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        function addExpenseModal() {
+            $("#addExpenseModal").modal('show');
+        }
+
+        var expensesDt = $("#expensesDt").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[-1], ["All"]],
+            ajax: {
+                url: '/api/Expenses/GetExpenses/',
+                method: 'GET',
+                "dataSrc": "obj"
+            },
+            columns: [
+                {
+                    data: 'Date',
+                    searchable: true
+                },
+                {
+                    data: 'Name',
+                    searchable: true
+                },
+                {
+                    data: 'Category',
+                    searchable: true
+                },
+                {
+                    data: 'AccountName',
+                    searchable: true
+                },                
+                {
+                    data: 'VatAccountName',
+                    searchable: true
+                },
+                {
+                    data: 'BankAccountName',
+                    searchable: true
+                },
+                {
+                    data: 'Amount',
+                    searchable: true,
+                    render: function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
+                    data: 'VatAmount',
+                    searchable: true,
+                    render: function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+            ]
+        });
+
+        function addExpense() {
+
+            var date = $('#date').val();
+            var name = $('#name').val();
+            var category = $('#selectedCategory').val();
+            var amount = $('#amount').val();
+            var amountAccount = $('#selectedAmountAccount').val();
+            //var taxAccountId = $('#selectedVatAccount').val();
+            var vatOption = $('#selectedVatOptionId').val();
+            var bankAccount = $('#selectedBankAccount').val();
+
+            if (name === '') {
+                toastr.error('Name cannot be empty');
+                return;
+            }
+
+            if (category === -100) {
+                toastr.error('Category needs to be selected');
+                return;
+            }
+
+            if (amount === '') {
+                toastr.error('Amount cannot be empty');
+                return;
+            }
+
+            if (amountAccount === -100) {
+                toastr.error('Amount account needs to be selected');
+                return;
+            }
+
+            //if (taxAccountId === -100) {
+            //    toastr.error('Vat account needs to be selected');
+            //    return;
+            //}
+
+            if (vatOption === -100) {
+                toastr.error('Vat option needs to be selected');
+                return;
+            }
+
+            if (bankAccount === -100) {
+                toastr.error('Bank account needs to be selected');
+                return;
+            }
+
+            var data = {
+                Date: date,
+                Name: name,
+                CategoryId: category,
+                Amount: amount,
+                AccountId: amountAccount,
+                //VatAccountId: taxAccountId,
+                VatOptionId: vatOption,
+                BankAccountId: bankAccount
+            }
+
+            var url = "/api/Expenses/SaveExpense";
+
+            SafriSoftPostRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    $("#addExpenseModal").modal('hide');
+                    toastr.success(response.Message);
+                    expensesDt.ajax.reload();
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+    </script>
+}

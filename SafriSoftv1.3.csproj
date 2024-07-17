@@ -208,6 +208,7 @@
     <Compile Include="Controllers\API\InventoryController.cs" />
     <Compile Include="Controllers\API\InvoicingController.cs" />
     <Compile Include="Controllers\API\ReportController.cs" />
+    <Compile Include="Controllers\API\ExpensesController.cs" />
     <Compile Include="Controllers\API\SettingController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="Controllers\InvoicingController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
+    <Compile Include="Controllers\ExpensesController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -228,6 +230,12 @@
       <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Data\CustomerTransaction.cs" />
+    <Compile Include="Models\Data\Expense.cs" />
+    <Compile Include="Models\Data\InvoiceTransaction.cs" />
+    <Compile Include="Models\Data\Setting.cs" />
+    <Compile Include="Models\Data\SupplierTransaction.cs" />
+    <Compile Include="Models\SystemModels\Enums.cs" />
     <Compile Include="Models\ViewModels\AccountingViewModel.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\ViewModels\BaseViewModel.cs" />
@@ -250,6 +258,7 @@
     <Compile Include="Models\Data\TrialBalanceAccount.cs" />
     <Compile Include="Models\Data\TrialBalanceGeneralLedgerMapping.cs" />
     <Compile Include="Models\Data\VatOption.cs" />
+    <Compile Include="Models\ViewModels\ExpensesViewModel.cs" />
     <Compile Include="Models\ViewModels\HomeViewModel.cs" />
     <Compile Include="Models\ViewModels\IdentityModels.cs" />
     <Compile Include="Models\ViewModels\InboxViewModel.cs" />
@@ -269,6 +278,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AccountingService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\ExpensesService.cs" />
     <Compile Include="Services\InventoryService.cs" />
     <Compile Include="Services\InvoicingService.cs" />
     <Compile Include="Services\SafriSoftEmailService.cs" />
@@ -2718,6 +2728,7 @@
     <Content Include="Views\Accounting\TrialBalanceAccounts.cshtml" />
     <Content Include="Views\Accounting\GeneralLedger.cshtml" />
     <Content Include="Views\Accounting\TrialBalanceReport.cshtml" />
+    <Content Include="Views\Expenses\Expenses.cshtml" />
     <None Include="Views\Home\about.cshtml" />
     <None Include="Views\Home\contact.cshtml" />
     <Content Include="Scripts\Report\ReportsDataTables.js" />

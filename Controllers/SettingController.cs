@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.ViewModels;
+using SafriSoftv1._3.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,7 +15,17 @@ namespace SafriSoftv1._3.Controllers
         // GET: Setting
         public ActionResult Settings()
         {
-            return View();
+            var settingsVm = new SettingViewModel();
+
+            var aSvc = new AccountingService();
+
+            var accounts = aSvc.GetTrialBalanceAccounts().obj;
+
+            var json = JsonConvert.SerializeObject(accounts);
+
+            settingsVm.Accounts = JsonConvert.DeserializeObject<List<TrialBalanceAccount>>(json);
+
+            return View(settingsVm);
         }
     }
 }

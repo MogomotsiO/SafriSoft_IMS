@@ -312,6 +312,29 @@
                             }
 
                         </li>
+
+                        <li id="Expenses-Menu" class="nav-item">
+
+                            @if (packageId == 3)
+                            {
+                                <a id="Expenses" href="~/Expenses/Expenses" class="nav-link">
+                                    <i class="nav-icon fas fa-money-check text-white"></i>
+                                    <p class="text-white">
+                                        Expenses
+                                    </p>
+                                </a>
+                            }
+                            else
+                            {
+                                <a id="Expenses" href="#" class="nav-link">
+                                    <i class="fa fa-crown text-primary nav-icon"></i>
+                                    <p class="text-white">
+                                        Expenses
+                                    </p>
+                                </a>
+                            }
+
+                        </li>
                         <li id="Accounting-Menu" class="nav-item has-treeview">
                             <a id="Accounting" href="#" class="nav-link">
                                 <i class="nav-icon fas fa-coins text-white"></i>
@@ -324,17 +347,18 @@
                             {
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
-                                            <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">Trial Balance Accounts</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">General Ledger</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Chart Of Accounts</p>
+                                        </a>
+                                    </li>
+
                                     <li class="nav-item">
                                         <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
                                             <i class="far fa-circle text-white nav-icon"></i>
@@ -347,17 +371,18 @@
                             {
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="TrialBalanceAccounts" href="#" class="nav-link">
-                                            <i class="fa fa-crown text-primary nav-icon"></i>
-                                            <p class="text-white">Trial Balance Accounts</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a id="GeneralLedger" href="#" class="nav-link">
                                             <i class="fa fa-crown text-primary nav-icon"></i>
                                             <p class="text-white">General Ledger</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceAccounts" href="#" class="nav-link">
+                                            <i class="fa fa-crown text-primary nav-icon"></i>
+                                            <p class="text-white">Chart Of Accounts</p>
+                                        </a>
+                                    </li>
+
                                     <li class="nav-item">
                                         <a id="TrialBalanceReport" href="#" class="nav-link">
                                             <i class="fa fa-crown text-primary nav-icon"></i>

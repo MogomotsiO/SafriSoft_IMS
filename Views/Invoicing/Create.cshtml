@@ -24,101 +24,158 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header card-header-info">
-                            <h5 class="card-title"><i class="fa fa-edit"></i> Complete Invoice Details</h5>
+                <div class="col-md-4" style="margin-top:-30px !important;">
+                    <div class="card card-outline card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Add Invoice Details</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+
                         </div>
-                        <div class="card-body">
-                            <div class="mb-4 col-md-12">
+
+                        <div class="card-body" style="display: block;">
+                            <div class="input-group form-group bmd-form-group is-filled">
+                                <label class="bmd-label-floating"></label>
+                                <select id="selectedOption" class="safriSelect2 form-control" data-bind="value: customerId, event: {change: selectedCustomerChange}" style="min-width:100%; min-height:100px;">
+                                    <option value="-100">SELECT CUSTOMER</option>
+                                    @foreach (var cust in Model.Customers)
+                                    {
+                                        <option value="@cust.Id">@cust.CustomerName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mt-2">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating"></label>
-                                    <select id="selectedOption" class="safriSelect2 form-control" data-bind="value: customerId, event: {change: selectedCustomerChange}" style="min-width:100%; min-height:100px;">
-                                        <option value="-100">SELECT CUSTOMER</option>
-                                        @foreach (var cust in Model.Customers)
+                                    <select id="selectedInvoiceAccount" class="safriSelect2 form-control" data-bind="value: invoiceAccountId, enable: itemAccountId() < 0 && itemVatOptionId() < 0" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT INVOICE ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
                                         {
-                                            <option value="@cust.Id">@cust.CustomerName</option>
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
                                         }
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12" style="padding-left:15px;padding-right:20px;">
-                                @*<div class="mb-4 mt-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">Invoice Number:</label>
-                                        <input id="invoiceNumber" data-bind="textInput: InvoiceNumber" class="form-control" type="text">
-                                    </div>
-                                </div>*@
-                                <div class="mb-4 mt-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">Invoice Name:</label>
-                                        <input id="invoiceName" data-bind="textInput: InvoiceName" class="form-control" type="text">
-                                    </div>
+                            <div class="mt-2">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedDebtorsAccount" class="safriSelect2 form-control" data-bind="value: debtorsAccountId, enable: itemAccountId() < 0 && itemVatOptionId() < 0" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT DEBTORS ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
                                 </div>
-
-                                <div class="mb-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">Date Issued:</label>
-                                        <input id="dateIssued" data-bind="textInput: DateIssued" class="form-control" type="date">
-                                    </div>
+                            </div>
+                            <div class="mb-4 mt-2">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedInvoiceVatOption" class="safriSelect2 form-control" data-bind="value: invoiceVatOptionId, enable: itemAccountId() < 0 && itemVatOptionId() < 0" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT INVOICE VAT</option>
+                                        @foreach (var vat in Model.VatOptions)
+                                        {
+                                            <option value="@vat.Id">@vat.Percentage% - @vat.Name</option>
+                                        }
+                                    </select>
                                 </div>
-                                <div class="mb-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">Date Due:</label>
-                                        <input id="dateDue" data-bind="textInput: DateDue" class="form-control" type="date">
-                                    </div>
+                            </div>
+                            <div class="mb-4 ">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Date Issued:</label>
+                                    <input id="dateIssued" data-bind="textInput: DateIssued" class="form-control" type="date">
                                 </div>
-                                <div class="mb-4 mt-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">Reference:</label>
-                                        <input id="reference" data-bind="textInput: Reference" class="form-control" type="text">
-                                    </div>
+                            </div>
+                            <div class="mb-4 ">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Date Due:</label>
+                                    <input id="dateDue" data-bind="textInput: DateDue" class="form-control" type="date">
                                 </div>
-                                <div class="mb-4 mt-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">Shipping:</label>
-                                        <input id="shipping" data-bind="textInput: shipping" class="form-control" type="text">
-                                    </div>
+                            </div>
+                            <div class="mb-4 mt-4 ">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Invoice Name:</label>
+                                    <input id="invoiceName" data-bind="textInput: InvoiceName" class="form-control" type="text">
                                 </div>
-                                <div class="mb-4 mt-4 col-md-12">
-                                    <div class="input-group form-group bmd-form-group is-filled">
-                                        <label class="bmd-label-floating">VAT(%):</label>
-                                        <input id="vatPercent" data-bind="textInput: VatPercent" class="form-control" type="number">
-                                    </div>
+                            </div>
+                            <div class="mb-4 mt-4 ">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Reference:</label>
+                                    <input id="reference" data-bind="textInput: Reference" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-4 mt-4">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Shipping:</label>
+                                    <input id="shipping" data-bind="textInput: shipping" class="form-control" type="text">
                                 </div>
                             </div>
 
+                        </div>
 
-                            <div class="card">
-                                <div class="card-header card-header-info text-center">
-                                    <h5 class="card-title"><i class="fa fa-edit"></i> Complete Line Items</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mt-4 mb-3 col-md-12">
-                                        <div class="input-group form-group bmd-form-group is-filled">
-                                            <label class="bmd-label-floating">Product Description:</label>
-                                            <input id="productDescription" data-bind="textInput: description" class="form-control" type="text">
-                                        </div>
-                                    </div>
+                    </div>
 
-                                    <div class="mb-3 col-md-12">
-                                        <div class="input-group form-group bmd-form-group is-filled">
-                                            <label class="bmd-label-floating">Qty:</label>
-                                            <input id="qty" data-bind="textInput: qty" class="form-control" type="number">
-                                        </div>
-                                    </div>
+                    <div class="card card-outline card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Add Invoice Line Items</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
 
-                                    <div class="mb-3 col-md-12">
-                                        <div class="input-group form-group bmd-form-group is-filled">
-                                            <label class="bmd-label-floating">Amount:</label>
-                                            <input id="amount" data-bind="textInput: amount" class="form-control" type="number">
-                                        </div>
-                                    </div>
+                        </div>
 
-                                    <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-plus text-info"></span> Add Line</button>
+                        <div class="card-body" style="display: block;">
+                            <div class="mt-4 mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Product Description:</label>
+                                    <input id="productDescription" data-bind="textInput: description" class="form-control" type="text">
                                 </div>
                             </div>
-                            <div class="row">
+
+                            <div class="mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Qty:</label>
+                                    <input id="qty" data-bind="textInput: qty" class="form-control" type="number">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Price:</label>
+                                    <input id="amount" data-bind="textInput: amount" class="form-control" type="number">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedItemAccount" class="safriSelect2 form-control" data-bind="value: itemAccountId, enable: debtorsAccountId() < 0 && invoiceVatOptionId() < 0" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT ITEM ACCOUNT</option>
+                                        @foreach (var accounts in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@accounts.Id">@accounts.AccountNumber - @accounts.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedVatOption" class="safriSelect2 form-control" data-bind="value: itemVatOptionId, enable: debtorsAccountId() < 0 && invoiceVatOptionId() < 0" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT ITEM VAT</option>
+                                        @foreach (var vat in Model.VatOptions)
+                                        {
+                                            <option value="@vat.Id">@vat.Percentage% - @vat.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-plus text-info"></span> Add Line</button>
+                            @*<div class="row">
                                 <div class="col-md-6">
 
                                 </div>
@@ -126,156 +183,173 @@
                                     <button class="btn btn-light" data-bind="click: saveInvoice"><span class="fa fa-save text-info"></span> Save Invoice</button>
                                 </div>
 
+                            </div>*@
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="col-md-8">
+                    <button class="btn btn-outline-info" data-bind="click: saveInvoice">Save Invoice</button>
+                    <div style="background-color:#fff;padding:20px;margin-top:10px;">
+
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h4>
+                                    <img id="logo" src="@Model.Organisation.OrganisationLogo" alt="" style="height:150px;" />
+                                </h4>
                             </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- info row -->
+                        <div class="row" style="font-family: 'Century Gothic' !important;">
+                            <div class="col-lg-12 table-responsive">
+                                <input type="text" id="view-order-id" hidden value="@ViewBag.Title" />
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <b>Date Issued:</b> <span data-bind="text: DateIssued"></span>  <br>
+                                                <b>Date Due: </b> <span data-bind="text: DateDue"></span><br>
+                                                <b>VAT Number:</b> @Model.Organisation.VATNumber
+                                            </td>
+                                            <td>
+                                                From:
+                                                <address>
+                                                    <strong>@Model.Organisation.OrganisationName</strong><br>
+                                                    @Model.Organisation.OrganisationStreet<br>
+                                                    @Model.Organisation.OrganisationSuburb, @Model.Organisation.OrganisationCity @Model.Organisation.OrganisationCode<br>
+                                                    Phone: @Model.Organisation.OrganisationCell<br>
+                                                    Email: @Model.Organisation.OrganisationEmail
+                                                </address>
+                                            </td>
+                                            <td>
+                                                To:
+                                                <address data-bind="selectedCustomer != null">
+                                                    <strong data-bind="text: selectedCustomer().name"></strong><br>
+                                                    <span data-bind="text: selectedCustomer().address"></span><br>
+                                                    Phone: <span data-bind="text: selectedCustomer().cell"></span><br>
+                                                    Email: <span data-bind="text: selectedCustomer().email"></span>
+                                                </address>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                        <!-- Table row -->
+                        <div class="row">
+                            <div class="col-12 table-responsive">
+                                <table class="table table-bordered" style="font-family: 'Century Gothic' !important;">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Qty</th>
+                                            <th style="width:150px;text-align:right;">Price</th>
+                                            <th style="width:150px;text-align:right;">Vat</th>
+                                            <th style="width:150px;text-align:right;">Totals</th>
+                                            <th style="width:50px;text-align:center;">Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: lineItems">
+                                        <tr>
+                                            <td data-bind="text: Description"></td>
+                                            <td data-bind="text: Qty"></td>
+                                            <td data-bind="text: amountStr" style="width:150px;text-align:right;"></td>
+                                            <td data-bind="text: itemVatAmountStr" style="width:150px;text-align:right;"></td>
+                                            <td data-bind="text: itemTotalAmountStr" style="width:150px;text-align:right;"></td>
+                                            <td data-bind="" style="width:50px;text-align:center;"><button class="btn btn-light" data-bind="click: $parent.removeItem"><span class="fas fa-trash text-danger"></span></button></td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td style="text-align:right;font-weight:bold;">SUBTOTAL:</td>
+                                            <td style="width:150px;text-align:right;" data-bind="text: subtotalStr"></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td style="text-align:right;font-weight:bold;">VAT(<span data-bind="text: VatPercent"></span>%):</td>
+                                            <td style="width:150px;text-align:right;" data-bind="text: vatStr"></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td style="text-align:right;font-weight:bold;">SHIPPING:</td>
+                                            <td style="width:150px;text-align:right;" data-bind="text: shippingStr"></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td style="text-align:right;font-weight:bold;">TOTAL:</td>
+                                            <td style="width:150px;text-align:right;" data-bind="text: totalStr"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table" style="font-family: 'Century Gothic' !important;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <p class="lead">Banking Details:</p>
+                                                <table class="table table-bordered">
+                                                    <tr>
+                                                        <td><b>Account Name:</b></td>
+                                                        <td><span id="account-name">@Model.Organisation.AccountName</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Bank:</b></td>
+                                                        <td><span id="bank-name">@Model.Organisation.BankName</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Account Number:</b></td>
+                                                        <td><span id="account-no">@Model.Organisation.AccountNo</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Branch:</b></td>
+                                                        <td><span id="bank-branch">@Model.Organisation.BranchName</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Branch Code:</b></td>
+                                                        <td><span id="branch-code">@Model.Organisation.BranchCode</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Reference:</b></td>
+                                                        <td><span id="client-Reference" data-bind="text: Reference"></span></td>
 
+                                                    </tr>
+
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <p class="lead" style="padding-top:200px !important;">Tax Invoice</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.col -->
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" style="background-color:#fff;padding:20px;">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <h4>
-                                <img id="logo" src="@Model.Organisation.OrganisationLogo" alt="" style="height:150px;" />
-                            </h4>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!-- info row -->
-                    <div class="row" style="font-family: 'Century Gothic' !important;">
-                        <div class="col-lg-12 table-responsive">
-                            <input type="text" id="view-order-id" hidden value="@ViewBag.Title" />
-                            <table class="table table-bordered">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <b>Date Issued:</b> <span data-bind="text: DateIssued"></span>  <br>
-                                            <b>Date Due: </b> <span data-bind="text: DateDue"></span><br>
-                                            <b>VAT Number:</b> @Model.Organisation.VATNumber
-                                        </td>
-                                        <td>
-                                            From:
-                                            <address>
-                                                <strong>@Model.Organisation.OrganisationName</strong><br>
-                                                @Model.Organisation.OrganisationStreet<br>
-                                                @Model.Organisation.OrganisationSuburb, @Model.Organisation.OrganisationCity @Model.Organisation.OrganisationCode<br>
-                                                Phone: @Model.Organisation.OrganisationCell<br>
-                                                Email: @Model.Organisation.OrganisationEmail
-                                            </address>
-                                        </td>
-                                        <td>
-                                            To:
-                                            <address data-bind="selectedCustomer != null">
-                                                <strong data-bind="text: selectedCustomer().name"></strong><br>
-                                                <span data-bind="text: selectedCustomer().address"></span><br>
-                                                Phone: <span data-bind="text: selectedCustomer().cell"></span><br>
-                                                Email: <span data-bind="text: selectedCustomer().email"></span>
-                                            </address>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!-- /.row -->
-                    <!-- Table row -->
-                    <div class="row">
-                        <div class="col-12 table-responsive">
-                            <table class="table table-bordered" style="font-family: 'Century Gothic' !important;">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Qty</th>
-                                        <th style="width:150px;text-align:right;">Amount</th>
-                                        <th style="width:50px;text-align:center;">Remove</th>
-                                    </tr>
-                                </thead>
-                                <tbody data-bind="foreach: lineItems">
-                                    <tr>
-                                        <td data-bind="text: Description"></td>
-                                        <td data-bind="text: Qty"></td>
-                                        <td data-bind="text: amountStr" style="width:150px;text-align:right;"></td>
-                                        <td data-bind="" style="width:50px;text-align:center;"><button class="btn btn-light" data-bind="click: $parent.removeItem"><span class="fas fa-trash text-danger"></span></button></td>
-                                    </tr>
-                                </tbody>
-                                <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td style="text-align:right;font-weight:bold;">SUBTOTAL:</td>
-                                        <td style="width:150px;text-align:right;" data-bind="text: subtotalStr"></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td style="text-align:right;font-weight:bold;">VAT(<span data-bind="text: VatPercent"></span>%):</td>
-                                        <td style="width:150px;text-align:right;" data-bind="text: vatStr"></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td style="text-align:right;font-weight:bold;">SHIPPING:</td>
-                                        <td style="width:150px;text-align:right;" data-bind="text: shippingStr"></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td style="text-align:right;font-weight:bold;">TOTAL:</td>
-                                        <td style="width:150px;text-align:right;" data-bind="text: totalStr"></td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!-- /.row -->
-                    <div class="row">
-                        <div class="col-lg-12 table-responsive">
-                            <table class="table" style="font-family: 'Century Gothic' !important;">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <p class="lead">Banking Details:</p>
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <td><b>Account Name:</b></td>
-                                                    <td><span id="account-name">@Model.Organisation.AccountName</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Bank:</b></td>
-                                                    <td><span id="bank-name">@Model.Organisation.BankName</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Account Number:</b></td>
-                                                    <td><span id="account-no">@Model.Organisation.AccountNo</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Branch:</b></td>
-                                                    <td><span id="bank-branch">@Model.Organisation.BranchName</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Branch Code:</b></td>
-                                                    <td><span id="branch-code">@Model.Organisation.BranchCode</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Reference:</b></td>
-                                                    <td><span id="client-Reference" data-bind="text: Reference"></span></td>
-
-                                                </tr>
-
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <p class="lead" style="padding-top:200px !important;">Tax Invoice</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </div>
-
             </div>
 
         </div>
@@ -289,6 +363,7 @@
     <script type="text/javascript">
 
         var customers = JSON.parse('@Html.Raw(Json.Encode(Model.Customers))');
+        var vatOptions = JSON.parse('@Html.Raw(Json.Encode(Model.VatOptions))');
 
         function customer(id, name, address, cell, email) {
             this.name = name;
@@ -298,11 +373,20 @@
             this.email = email;
         }
 
-        function item(description, qty, amount) {
+        function item(description, qty, amount, vatPercentage, vatOptionId, itemAccountId) {
+            debugger;
             this.Description = description;
             this.Qty = qty;
             this.Amount = amount;
             this.amountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(amount);
+            this.VatOptionId = vatOptionId;
+            this.itemAccountId = itemAccountId;
+            var itemVatAmount = amount * (vatPercentage / 100);
+            this.itemVatAmount = itemVatAmount;
+            var totalAmount = parseFloat(amount) + itemVatAmount;
+            this.itemTotalAmount = totalAmount;
+            this.itemVatAmountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(itemVatAmount);
+            this.itemTotalAmountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(totalAmount);
         }
 
         var InvoiceViewModel = function () {
@@ -328,6 +412,15 @@
             self.selectedCustomer = ko.observable({});
             self.emailSubject = ko.observable('');
             self.emailBody = ko.observable('');
+            self.selectedVatOption = ko.observable({});
+            self.itemVatAmount = ko.observable(0);
+            self.itemVatOptionId = ko.observable(0);
+            self.invoiceVatOptionId = ko.observable(0);
+            self.debtorsAccountId = ko.observable(-100);
+            self.invoiceAccountId = ko.observable(-100);
+            self.itemAccountId = ko.observable(0);
+            self.vatOptions = ko.observable(vatOptions);
+            
             self.totalStr = ko.computed(function () {
 
                 var total = parseFloat(self.subtotal()) + parseFloat(self.shipping()) + parseFloat(self.vat());
@@ -347,10 +440,18 @@
             });
 
             self.vatStr = ko.computed(function () {
+                var vat = 0;
 
-                var vat = parseFloat(self.subtotal()) * (self.VatPercent() / 100);
+                var vatItem = self.vatOptions().find(x => x.Id == parseInt(self.invoiceVatOptionId()));
 
-                self.vat(vat);
+                if (vatItem != null) {
+
+                    self.VatPercent(vatItem.Percentage);
+
+                    vat = parseFloat(self.subtotal()) * (self.VatPercent() / 100);
+
+                    self.vat(vat);
+                }
 
                 return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(vat));
 
@@ -379,12 +480,36 @@
 
             }
 
-            self.addLineItem = function () {
-                var itemVm = new item(self.description(), self.qty(), self.amount());
+            //self.selectedVatOptionChange = function (e) {
+            //    var custId = $("#selectedOption").val();
 
+            //    if (custId == -100) {
+            //        self.selectedCustomer({});
+            //        return;
+            //    }
+
+            //    var findCustomer = self.customers().find(x => x.Id == parseInt(custId));
+
+            //    self.selectedCustomer(new customer(findCustomer.Id, findCustomer.CustomerName, findCustomer.CustomerAddress, findCustomer.CustomerCell, findCustomer.CustomerEmail));
+
+            //}
+
+            self.addLineItem = function () {
+                debugger;
+
+                var vatPercent = 0;
+
+                var vatItem = self.vatOptions().find(x => x.Id == parseInt(self.itemVatOptionId()));
+
+                if (vatItem != null) {
+                    vatPercent = vatItem.Percentage;
+                }
+
+                var itemVm = new item(self.description(), self.qty(), self.amount(), vatPercent, self.itemVatOptionId(), self.itemAccountId());
+                console.log(itemVm);
                 self.lineItems.push(itemVm);
 
-                var tot = parseFloat(self.subtotal()) + parseFloat(self.amount());
+                var tot = parseFloat(self.subtotal()) + parseFloat(itemVm.itemTotalAmount);
 
                 self.subtotal(tot);
 
@@ -413,12 +538,15 @@
                     Shipping: self.shipping(),
                     VatPercentage: self.VatPercent(),
                     CustomerId: self.customerId(),
+                    VatOptionId: self.invoiceVatOptionId(),
+                    DebtorsAccountId: self.debtorsAccountId(),
+                    InvoiceAccountId: self.invoiceAccountId()
                 }
 
                 var invoiceDetailsVm = {
                     InvoiceDetails: invoiceDetails,
                     CustomerId: self.customerId(),
-                    InvoiceItems: self.lineItems(),
+                    InvoiceItems: self.lineItems()
                 }
                 console.log(invoiceDetailsVm);
 

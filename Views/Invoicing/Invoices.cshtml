@@ -1,4 +1,5 @@
-﻿
+﻿@model SafriSoftv1._3.Models.InvoicingViewModel
+
 @{
     ViewBag.Title = "Invoices";
 }
@@ -50,13 +51,14 @@
                             <table id="invoicesDt" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Mark As Paid</th>
+                                        <th>Payment</th>
                                         <th>Date Issued</th>
                                         <th>Date Due</th>
                                         <th>Invoice Number</th>
                                         <th>Invoice Name</th>
                                         <th>Customer</th>
-                                        <th>Amount</th>
+                                        <th>Invoice Amount</th>
+                                        <th>Paid Amount</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -131,7 +133,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Proof Of Payment</h5>
+                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Proof of Payment</h5>
                 <input type="text" id="tenant-id" hidden />
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -140,7 +142,7 @@
             <div class="modal-body">
                 <div class="card">
                     <div class="card-header card-header-info">
-                        <h4 class="card-title"><i class="fa fa-paste"></i> Add Proof Of Payment</h4>
+                        <h4 class="card-title"><i class="fa fa-paste"></i> Proof of Payment</h4>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -148,11 +150,71 @@
                             <h3 style="color: #17a2b8;">Drag & Drop File</h3>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="receivePaymentModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Receive Payment</h5>
+                <input type="text" id="tenant-id" hidden />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-paste"></i> Payment Details</h4>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="mb-3 col-md-12">
+                            <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                <label class="bmd-label-floating">Payment Date</label>
+                                <input id="date" class="form-control" type="date">
+                                <div class="input-group-append">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-12">
+                            <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                <label class="bmd-label-floating">Amount Received</label>
+                                <input id="amount" class="form-control" type="number">
+                                <div class="input-group-append">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 col-md-12">
+                            <div class="input-group form-group bmd-form-group is-filled">
+                                <label class="bmd-label-floating"></label>
+                                <select id="selectAccount" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                    <option value="-100">SELECT ACCOUNT</option>
+                                    @foreach (var account in Model.TrialBalanceAccounts)
+                                    {
+                                        <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light" onclick="submitPaymentDetails()">Submit</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -178,15 +240,26 @@
             },
             columns: [
                 {
-                    data: 'Paid',
+                    data: 'Id',
                     searchable: true,
-                    className: 'markAsPaidCol',
+                    className: 'buttonWidth',
                     'render': function (data, type, full, meta) {
 
-                        if (data === true)
-                            return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                        var pop = '';
+
+                        if (full.Pop != null && full.Pop != '') {
+                            pop = '<a id="' + data + '" class="btn btn-light" href="DownloadPopFile?Id=' + data +'" ><i class="fa fa-paperclip text-info"></i></a>';
+                        }
+
+                        if(data === true)
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', false)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>';
                         else
-                            return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', true)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>'
+                            //if (data === true)
+                        //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                        //else
+                        //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+
                     }
                 },
                 {
@@ -222,6 +295,18 @@
                     }
                 },
                 {
+                    data: 'AmountPaid',
+                    searchable: true,
+                    className: 'text-right',
+                    'render': function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
                     data: 'Id',
                     searchable: true,
                     className: 'buttonWidth',
@@ -239,6 +324,10 @@
         function downloadInvoice(id, orgId) {
             window.location.href = '@Url.Action("CustomerInvoicePdf", "Invoicing")' + '?id=' + id + '&organisationId=' + orgId;
         }
+
+        function downloadPop(id) {
+            window.location.href = '@Url.Action("DownloadPopFile", "Inventory")' + '?id=' + id;
+        }        
 
         function sendInvoiceEmail(id, number, customerName) {
             $('#invoiceId').val(id);
@@ -280,19 +369,6 @@
             });
         }
 
-        //function paid(id, paid) {
-        //    var url = `/api/Invoicing/PayInvoice/${id}/${paid}`;
-
-        //    SafriSoftGetRequest(url, (response) => {
-        //        if (response.Success == true) {
-        //            invoicesDt.ajax.reload();
-        //            toastr.success(response.Message);
-        //        } else {
-        //            toastr.error(response.Message);
-        //        }
-        //    });
-        //}
-
         function paid(id, paid) {
             var url = `/api/Invoicing/PayInvoice/${id}/${paid}`;
 
@@ -302,7 +378,7 @@
                 dropZone: $('#dropzone'),
                 dataType: "application/json",
                 url: url,
-                autoUpload: false,
+                autoUpload: false
             }).on('fileuploadadd', function (e, data) {
 
                 var dropZone = $('#dropzone');
@@ -332,6 +408,40 @@
             $(document).bind('drop dragover', function (e) {
                 e.preventDefault();
             });
+        }
+
+        var _editingId = 0;
+
+        function receivePaymentDetails(id) {
+            _editingId = id;
+            $('#receivePaymentModal').modal('show');
+        }
+
+        function submitPaymentDetails() {
+            var date = $("#date").val();
+            var amount = $("#amount").val();
+            var account = $("#selectAccount").val();
+
+            var data = {
+                InvoiceId: _editingId,
+                Date: date,
+                Amount: amount,
+                AccountId: account
+            }
+
+            var url = `/api/Invoicing/PayInvoiceDetails`;
+
+            SafriSoftPostRequest(url, data, (response) => {
+
+                if (response.Success == true) {
+                    invoicesDt.ajax.reload();
+                    $('#receivePaymentModal').modal('hide');
+                    toastr.success(response.Message);
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+
         }
 
     </script>

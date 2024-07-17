@@ -29,12 +29,12 @@ namespace SafriSoftv1._3.Services
             long accountNumber = 100;
 
             if (existingTb != null)
-                accountNumber = existingTb.AccountNumber + 1;
+                accountNumber = Convert.ToInt64(existingTb.AccountNumber) + 1;
 
             var tb = new TrialBalanceAccount()
             {
                 Id = existingTb != null ? existingTb.Id : 0, // new or existing
-                AccountNumber = accountNumber,
+                AccountNumber = accountNumber.ToString(),
                 AccountName = vm.AccountName,
                 Index = existingTb != null ? existingTb.Index + 1 : 1,
                 OrganisationId = organisationId
@@ -186,15 +186,15 @@ namespace SafriSoftv1._3.Services
         {
             var result = new Result();
 
-            var mappedGlItems = db.TrialBalanceGeneralLedgerMappings.Where(x => x.TrialBalanceAccountId == id && x.OrganisationId == organisationId).ToList();
-
             var items = new List<MappedGlAccounts>();
 
-            foreach (var mappedItem in mappedGlItems)
-            {
-                var item = db.GeneralLedgers.Where(x => x.Id == mappedItem.GeneralLedgerId).FirstOrDefault();
+            var account = db.TrialBalanceAccounts.Where(x => x.Id == id).FirstOrDefault();
 
-                if(item != null)
+            if(account != null)
+            {
+                var gls = db.GeneralLedgers.Where(x => x.AccountNumber == account.AccountNumber).ToList();
+
+                foreach(var item in gls)
                 {
                     items.Add(new MappedGlAccounts()
                     {
@@ -204,6 +204,25 @@ namespace SafriSoftv1._3.Services
                     });
                 }
             }
+
+            //var mappedGlItems = db.TrialBalanceGeneralLedgerMappings.Where(x => x.TrialBalanceAccountId == id && x.OrganisationId == organisationId).ToList();
+
+            //var items = new List<MappedGlAccounts>();
+
+            //foreach (var mappedItem in mappedGlItems)
+            //{
+            //    var item = db.GeneralLedgers.Where(x => x.Id == mappedItem.GeneralLedgerId).FirstOrDefault();
+
+            //    if(item != null)
+            //    {
+            //        items.Add(new MappedGlAccounts()
+            //        {
+            //            Id = item.Id,
+            //            AccountNumber = item.AccountNumber,
+            //            AccountName = item.AccountName
+            //        });
+            //    }
+            //}
 
             result.Success = true;
             result.obj = items;
@@ -368,15 +387,15 @@ namespace SafriSoftv1._3.Services
                 return result;
             }
 
-            var trialBalanceMappingsForOrganisation = db.TrialBalanceGeneralLedgerMappings.Where(x => x.OrganisationId == organisationId).ToList();
+            //var trialBalanceMappingsForOrganisation = db.TrialBalanceGeneralLedgerMappings.Where(x => x.OrganisationId == organisationId).ToList();
 
-            if (trialBalanceMappingsForOrganisation.Count() == 0)
-            {
-                result.Success = false;
-                result.Message = "No mappings for organisation";
-                result.obj = new List<TrialBalanceContainer>();
-                return result;
-            }
+            //if (trialBalanceMappingsForOrganisation.Count() == 0)
+            //{
+            //    result.Success = false;
+            //    result.Message = "No mappings for organisation";
+            //    result.obj = new List<TrialBalanceContainer>();
+            //    return result;
+            //}
 
             var trialBalanceItems = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
 
@@ -387,39 +406,40 @@ namespace SafriSoftv1._3.Services
             foreach (var tbItem in trialBalanceItems)
             {
 
-                var trialBalanceMappings = db.TrialBalanceGeneralLedgerMappings.Where(x => x.TrialBalanceAccountId == tbItem.Id && x.OrganisationId == organisationId);
+                var gls = db.GeneralLedgers.Where(x => x.AccountNumber == tbItem.AccountNumber && x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).ToList();
+                //var trialBalanceMappings = db.TrialBalanceGeneralLedgerMappings.Where(x => x.TrialBalanceAccountId == tbItem.Id && x.OrganisationId == organisationId);
 
-                if(trialBalanceMappings.Count() > 0)
+                var total = 0.00;
+
+                //var glAccounts = new List<GeneralLedger>();
+
+                foreach (var glAccount in gls)
                 {
-                    var total = 0.00;
+                    //var glAccount = db.GeneralLedgers.Where(x => x.Id == mapping.GeneralLedgerId && x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).FirstOrDefault();
 
-                    var glAccounts = new List<GeneralLedger>();
+                    //if (glAccount != null)
+                    //{
+                    //    total += glAccount.Debit;
+                    //    total -= glAccount.Credit;
 
-                    foreach (var mapping in trialBalanceMappings)
-                    {
-                        var glAccount = db.GeneralLedgers.Where(x => x.Id == mapping.GeneralLedgerId && x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).FirstOrDefault();
+                    //    glAccounts.Add(glAccount);
+                    //}
 
-                        if (glAccount != null)
-                        {
-                            total += glAccount.Debit;
-                            total -= glAccount.Credit;
-
-                            glAccounts.Add(glAccount);
-                        }
-                    }
-
-                    trialBalanceTotal += total;
-
-                    items.Add(new TrialBalanceContainer()
-                    {
-                        AccountNumber = tbItem.AccountNumber,
-                        AccountName = tbItem.AccountName,
-                        Index = tbItem.Index,
-                        Period = $"{vm.Start.ToString("dd MMMM yyyy")} - {vm.End.ToString("dd MMMM yyyy")}",
-                        Total = Math.Round(total, 2),
-                        TrialBalanceItems = glAccounts
-                    });
+                    total += glAccount.Debit;
+                    total -= glAccount.Credit;
                 }
+
+                trialBalanceTotal += total;
+
+                items.Add(new TrialBalanceContainer()
+                {
+                    AccountNumber = tbItem.AccountNumber,
+                    AccountName = tbItem.AccountName,
+                    Index = tbItem.Index,
+                    Period = $"{vm.Start.ToString("dd MMMM yyyy")} - {vm.End.ToString("dd MMMM yyyy")}",
+                    Total = Math.Round(total, 2),
+                    TrialBalanceItems = gls
+                });
 
             }
 
@@ -458,6 +478,37 @@ namespace SafriSoftv1._3.Services
             }
 
             return result;
+        }
+
+        public Result SaveCustomerTransaction(CustomerTransaction ct)
+        {
+            var result = new Result();
+
+            db.CustomerTransactions.Add(ct);
+            var res = db.SaveChanges();
+
+            if(res > 0)
+            {
+                result.Success = true;
+                result.Message = "Customer transaction saved";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Customer transaction failed to save";
+            }
+
+            return result;
+        }
+
+        public List<VatOption> GetVatOptions(int organisationId)
+        {
+            return db.VatOptions.Where(x => x.OrganisationId == organisationId).ToList();
+        }
+
+        public List<TrialBalanceAccount> GetTrialBalanceAccounts(int organisationId)
+        {
+            return db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
         }
     }
 }

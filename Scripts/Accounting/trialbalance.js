@@ -9,14 +9,14 @@
         $("#" + currTbId).closest("tr").removeClass("bg-info");
     });
 });
-
+var pageScrollPos;
 var trialBalanceTable = $("#trialBalanceTable").DataTable({
     "responsive": true,
     "autoWidth": false,
     "info": true,
     dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
     "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
-    lengthMenu: [[-1], ["All"]],
+    lengthMenu: [[10], ["10"]],
     //"order": [[3, "asc"]],
     ajax: {
         url: '/api/Accounting/GetTrialBalanceAccounts/',
@@ -26,8 +26,9 @@ var trialBalanceTable = $("#trialBalanceTable").DataTable({
     'columns': [
         {
             'searchable': true,
+            'className': 'buttonWidth',
             'render': function (data, type, full, meta) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-light" href="#" onclick="linkedGlAccounts(this.id)"><i class="fas fa-eye text-info"></i></a> </div> </td>';
+                return '<td class="text-right py-0 align-middle" style="height:20px !important;"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-light" href="#" onclick="linkedGlAccounts(this.id)"><i class="fas fa-eye text-info"></i></a> </div> </td>';
             }
         },
         {
@@ -48,17 +49,17 @@ var trialBalanceTable = $("#trialBalanceTable").DataTable({
             'searchable': true,
             'className': 'buttonWidth',
             'render': function (data) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="moveUp(this.id)"><i class="fas fa-arrow-up text-info"></i></a> <a id="' + data +'" class="btn btn-light" href="#" onclick="moveDown(this.id)"><i class="fas fa-arrow-down text-info"></i></a> </div> </td>'
+                return '<td class="text-right py-0 align-middle" style="height:20px !important;"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="moveUp(this.id)"><i class="fas fa-arrow-up text-info"></i></a> <a id="' + data +'" class="btn btn-light" href="#" onclick="moveDown(this.id)"><i class="fas fa-arrow-down text-info"></i></a> </div> </td>'
             }
         },
-        {
-            'data': 'Id',
-            'searchable': true,
-            'className': 'buttonWidth',
-            'render': function (data) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="linkGlAccounts(this.id)"><i class="fas fa-link text-info"></i></a> </div> </td>'
-            }
-        }
+        //{
+        //    'data': 'Id',
+        //    'searchable': true,
+        //    'className': 'buttonWidth',
+        //    'render': function (data) {
+        //        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="linkGlAccounts(this.id)"><i class="fas fa-link text-info"></i></a> </div> </td>'
+        //    }
+        //}
     ]
 });
 
@@ -116,7 +117,9 @@ function moveUp(tbId) {
         traditional: true
     }).done(function (data) {
         if (data.Success) {
-            trialBalanceTable.ajax.reload();
+            trialBalanceTable.ajax.reload(function (res) {
+                console.log(res);
+            }, false);
             setTimeout(function () {
                 $("#" + tbId).closest("tr").addClass("bg-info");
             }, 50);
@@ -284,12 +287,12 @@ var linkedGlAccountsDT = $("#linkedGlAccountsTable").DataTable({
         {
             data: "AccountName",
         },
-        {
-            data: "Id",
-            render: function (data) {
-                return '<span><div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="unlinkGlAccount(this.id)"><i class="fas fa-unlink text-info"></i></a> </div></span>';
-            }
-        }
+        //{
+        //    data: "Id",
+        //    render: function (data) {
+        //        return '<span><div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="unlinkGlAccount(this.id)"><i class="fas fa-unlink text-info"></i></a> </div></span>';
+        //    }
+        //}
     ]
 });
 

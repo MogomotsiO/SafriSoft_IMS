@@ -1,7 +1,11 @@
-﻿using Rotativa;
+﻿using Newtonsoft.Json;
+using Rotativa;
+using SafriSoftv1._3.Models;
+using SafriSoftv1._3.Models.Data;
 using SafriSoftv1._3.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -34,12 +38,21 @@ namespace SafriSoftv1._3.Controllers
 
         public ActionResult Invoices()
         {
-            return View();
+            var vm = new InvoicingViewModel();
+
+            var aSvc = new AccountingService();
+
+            var accounts = aSvc.GetTrialBalanceAccounts().obj;
+
+            var json = JsonConvert.SerializeObject(accounts);
+
+            vm.TrialBalanceAccounts = JsonConvert.DeserializeObject<List<TrialBalanceAccount>>(json);
+
+            return View(vm);
         }
 
         public ActionResult Invoice(int id)
         {
-
             var organisationName = GetOrganisationName();
             var organisationId = BaseService.GetOrganisationId(organisationName);
 
@@ -67,5 +80,20 @@ namespace SafriSoftv1._3.Controllers
             };
         }
 
+        public ActionResult DownloadPopFile(int Id)
+        {
+            var Isvc = new InvoicingService();
+
+            var filename = Isvc.GetProofOfPayment(Id);
+
+            var saveFileDir = $@"{AppDomain.CurrentDomain.BaseDirectory}\\Documents\\InvoicesProofOfPayment";
+
+            var fullFileName = $@"{saveFileDir}\\{filename}";
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullFileName);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+
+        }
     }
 }

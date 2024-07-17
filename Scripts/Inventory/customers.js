@@ -15,6 +15,10 @@
             //    'searchable': true
             //},
             {
+                'data': 'DateCustomerCreated',
+                'searchable': true
+            },
+            {
                 'data': 'CustomerName',
                 'searchable': true,
                 'render': function (data, type, full, meta) {
@@ -34,14 +38,22 @@
                 'searchable': true
             },
             {
-                'data': 'DateCustomerCreated',
-                'searchable': true
-            },
-            {
                 'data': 'NumberOfOrders',
                 'searchable': true,
                 'render': function (data, type, full, meta) {
                     return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" name="' + full.CustomerName + '" href="#" onclick="customerFeatures(this.id, this.name)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a class="btn btn-white" href="#">' + data + '</a> </div> </td>';
+                }
+            },
+            {
+                'data': 'Balance',
+                'searchable': true,
+                'className': 'text-right',
+                'render': function (data, type, full, meta) {
+
+                    if (type === 'display')
+                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    else
+                        return data;
                 }
             },
             {

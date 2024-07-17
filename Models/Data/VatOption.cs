@@ -10,5 +10,6 @@ namespace SafriSoftv1._3.Models.Data
         public string Name { get; set; }
         public string Description { get; set; }
         public double Percentage { get; set; }
+        public int TaxAccountId { get; set; }
     }
 }

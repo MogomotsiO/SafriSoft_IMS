@@ -12,6 +12,7 @@ namespace SafriSoftv1._3.Models
         public List<SupplierInvoice> SuppliersInvoices { get; set; }
         public Supplier Supplier { get; set; }
         public SupplierInvoice SupplierInvoice { get; set; }
+        public List<TrialBalanceAccount> TrialBalanceAccounts { get; set; }
     }
 
     public class SupplierDetailsViewModel
@@ -31,7 +32,9 @@ namespace SafriSoftv1._3.Models
         public string ContactPersonPhone { get; set; }
         public string ContactPersonEmail { get; set; }
         public string ProductName { get; set; }
+        public double Balance { get;set; }
         public List<Product> Products { get; set; }
+        public List<TrialBalanceAccount> TrialBalanceAccounts { get; set; }
     }
 
     public class SupplierInvoiceDetailViewModel
@@ -42,7 +45,9 @@ namespace SafriSoftv1._3.Models
         public string FileContentType { get; set; }
         public int Qty { get; set; }
         public double VatAmount { get; set; }
+        public int VatAccountId { get; set; }
         public double Amount { get; set; }
+        public int AmountAccountId { get;}
     }
 
     public class DocumentDetails
@@ -50,5 +55,16 @@ namespace SafriSoftv1._3.Models
         public int Qty { get; set; }
         public double VatAmount { get; set; }
         public double Amount { get; set; }
+    }
+
+    public class PaySupplierViewModel
+    {
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+        public double Amount { get; set; }
+        public int AccountId { get; set;}
+        public int SupplierId { get; set;}
+        public int SupplierInvoiceId { get; set;}
+        public int CreditorsAccountId { get; set; }
     }
 }

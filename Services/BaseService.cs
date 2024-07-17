@@ -26,6 +26,11 @@ namespace SafriSoftv1._3.Services
         {
             int organisationId = 0;
 
+            if (string.IsNullOrEmpty(organisationName))
+            {
+                return 0;
+            }
+
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString()))
             {
                 conn.Open();

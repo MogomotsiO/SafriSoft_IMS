@@ -176,5 +176,29 @@ namespace SafriSoftv1._3.Controllers.API
                 return Json(result);
             }
         }
+
+        [HttpPost, Route("PayInvoiceDetails")]
+        public IHttpActionResult PayInvoiceDetails(PayInvoiceDetailsVm vm)
+        {
+            var result = new Result();            
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var ivSvc = new InvoicingService();
+
+                result = ivSvc.PayInvoiceDetails(vm, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
     }
 }

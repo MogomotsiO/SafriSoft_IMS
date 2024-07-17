@@ -5,11 +5,23 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Web.UI.HtmlControls;
 
 namespace SafriSoftv1._3.Services
 {
     public class InventoryService: BaseService
     {
+        public SupplierViewModel GetSupplierVm(int organisationId)
+        {
+            var vm = new SupplierViewModel();
+
+            vm.TrialBalanceAccounts = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
+
+            vm.SuppliersInvoices = db.SupplierInvoices.Where(x => x.OrganisationId == organisationId).ToList();
+
+            return vm;
+        }
+
         public List<SupplierDetailsViewModel> GetSuppliers(int organisationId)
         {
             var result = new Result();
@@ -20,9 +32,13 @@ namespace SafriSoftv1._3.Services
 
             var products = db.Products.Where(x => x.OrganisationId == organisationId).ToList();
 
+            var trialBalanceAccounts = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
+            
             foreach(var supplier in suppliers)
             {
                 var product = products.Where(x => x.Id == supplier.ProductId).FirstOrDefault();
+
+                var balance = db.SupplierTransactions.Where(x => x.SupplierId == supplier.Id).Sum(x => x.Amount);
 
                 vm.Add(new SupplierDetailsViewModel()
                 {
@@ -39,6 +55,8 @@ namespace SafriSoftv1._3.Services
                     ContactPersonPosition = supplier.ContactPersonPosition,
                     ProductName = product != null ? product.ProductName : "",
                     Products = products,
+                    TrialBalanceAccounts = trialBalanceAccounts,
+                    Balance = balance
                 });
             }
 
@@ -132,9 +150,11 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public Result SaveInvoiceFileDetails(string fileName, string fileContentType, int qty, double vatAmount, double amount, int organisationId, int id)
+        public Result SaveInvoiceFileDetails(string fileName, string fileContentType, DateTime date, string description, int qty, double vatAmount, double amount, int vatAccountId, int invoiceAccountId, int creditorsAccountId, int organisationId, int id)
         {
             var result = new Result();
+
+            var aSvc = new AccountingService();
 
             var invoice = db.SupplierInvoices.Where(x => x.FileName == fileName && x.FileContentType == fileContentType && x.OrganisationId == organisationId).FirstOrDefault();
 
@@ -147,6 +167,8 @@ namespace SafriSoftv1._3.Services
 
             var invoiceFile = new SupplierInvoice()
             {
+                InvoiceDate = date,
+                Description = description,
                 FileName = fileName,
                 FileContentType = fileContentType,
                 Qty = qty,
@@ -155,15 +177,119 @@ namespace SafriSoftv1._3.Services
                 OrganisationId = organisationId,
                 SupplierId = id,
                 Inserted = DateTime.Now,
-                Updated = DateTime.Now
+                Updated = DateTime.Now,
+                VatAccountId = vatAccountId,
+                InvoiceAccountId = invoiceAccountId,
             };
 
             db.SupplierInvoices.Add(invoiceFile);
 
             var res = db.SaveChanges();
 
-            if(res > 0)
+            if (res > 0)
             {
+                // save gls
+                var vatAccount = db.TrialBalanceAccounts.Where(x => x.Id == vatAccountId).FirstOrDefault();
+
+                if (vatAccount != null)
+                {
+                    var gl = new GlAccountViewModel
+                    {
+                        AccountName = $"{description} - {vatAccount.AccountNumber} - {vatAccount.AccountName}",
+                        AccountNumber = vatAccount.AccountNumber,
+                        Description = $"{description} - {vatAccount.AccountName}",
+                        Debit = vatAmount > 0 ? vatAmount : 0,
+                        Credit = vatAmount < 0 ? vatAmount : 0,
+                        Date = date,
+                        Month = date.Month,
+                        Year = date.Year,
+                    };
+
+                    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                    if (glRes.Success == true)
+                    {
+                        var st = new SupplierTransaction
+                        {
+                            Description = $"{description} - {vatAccount.AccountName}",
+                            Amount = vatAmount,
+                            SupplierInvoiceId = res,
+                            OrganisationId = organisationId,
+                            SupplierId = id,
+                            Inserted = DateTime.Now,
+                            Updated = DateTime.Now,
+                        };
+
+                        SaveSupplierTransaction(st);
+                    }
+                }
+
+                var invoiceAccount = db.TrialBalanceAccounts.Where(x => x.Id == invoiceAccountId).FirstOrDefault();
+
+                if (invoiceAccount != null)
+                {
+                    var gl = new GlAccountViewModel
+                    {
+                        AccountName = $"{description} - {invoiceAccount.AccountNumber} - {invoiceAccount.AccountName}",
+                        AccountNumber = invoiceAccount.AccountNumber,
+                        Description = $"{description} - {invoiceAccount.AccountName}",
+                        Debit = amount > 0 ? amount : 0,
+                        Credit = amount < 0 ? amount : 0,
+                        Date = date,
+                        Month = date.Month,
+                        Year = date.Year,
+                    };
+
+                    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                    if (glRes.Success == true && creditorsAccountId > 0)
+                    {
+                        var creditorsAccount = db.TrialBalanceAccounts.Where(x => x.Id == creditorsAccountId).FirstOrDefault();
+
+                        if (creditorsAccount != null)
+                        {
+                            var creditorsAmount = amount + vatAmount;
+
+                            var creditorsGl = new GlAccountViewModel
+                            {
+                                AccountName = $"{description} - {creditorsAccount.AccountNumber} - {creditorsAccount.AccountName}",
+                                AccountNumber = creditorsAccount.AccountNumber,
+                                Description = $"{description} - {creditorsAccount.AccountName}",
+                                Debit = creditorsAmount > 0 ? creditorsAccountId : 0,
+                                Credit = creditorsAccountId < 0 ? creditorsAccountId : 0,
+                                Date = date,
+                                Month = date.Month,
+                                Year = date.Year,
+                            };
+
+                            glRes = aSvc.CreateUpdateGlAccount(creditorsGl, organisationId);
+                        }
+                        else
+                        {
+                            result.Success = false;
+                            result.Message = "Could not find creditors account provided";
+                        }
+
+                    }
+
+                    if (glRes.Success == true)
+                    {
+                        var st = new SupplierTransaction
+                        {
+                            Description = $"{description} - {invoiceAccount.AccountName}",
+                            Amount = amount,
+                            SupplierInvoiceId = res,
+                            OrganisationId = organisationId,
+                            SupplierId = id,
+                            Inserted = DateTime.Now,
+                            Updated = DateTime.Now,
+                        };
+
+                        SaveSupplierTransaction(st);
+                    }
+                }
+
+
                 result.Success = true;
                 result.Message = "File processed";
             }
@@ -187,7 +313,7 @@ namespace SafriSoftv1._3.Services
                 vm.Add(new SupplierInvoiceDetailViewModel()
                 {
                     Id = inv.Id,
-                    Date = inv.Inserted.ToString("dd/MM/yyyy"),
+                    Date = inv.InvoiceDate.GetValueOrDefault().ToString("dd/MM/yyyy"),
                     FileName = inv.FileName,
                     Qty = inv.Qty,
                     VatAmount = inv.VatAmount,
@@ -209,6 +335,7 @@ namespace SafriSoftv1._3.Services
                 vm.Id = supplierInvoice.Id;
                 vm.Date = supplierInvoice.Inserted.ToString("dd/MM/yyyy");
                 vm.FileName = supplierInvoice.FileName;
+                vm.FileContentType = supplierInvoice.FileContentType;
                 vm.Qty = supplierInvoice.Qty;
                 vm.VatAmount = supplierInvoice.VatAmount;
                 vm.Amount = supplierInvoice.Amount;
@@ -216,6 +343,82 @@ namespace SafriSoftv1._3.Services
 
             return vm;
         }
+
+        public bool SaveSupplierTransaction(SupplierTransaction st)
+        {
+            db.SupplierTransactions.Add(st);
+            var res = db.SaveChanges();
+
+            if (res > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
                
+
+        public Result PaySupplier(PaySupplierViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var aSvc = new AccountingService();
+
+            var account = db.TrialBalanceAccounts.Where(x => x.Id == vm.AccountId).FirstOrDefault();
+
+            if (account != null)
+            {
+                var gl = new GlAccountViewModel
+                {
+                    AccountName = $"{vm.Description} - {account.AccountNumber} - {account.AccountName}",
+                    AccountNumber = account.AccountNumber,
+                    Description = $"{vm.Description} - {account.AccountName}",
+                    Debit = vm.Amount > 0 ? vm.Amount : 0,
+                    Credit = vm.Amount < 0 ? vm.Amount : 0,
+                    Date = vm.Date,
+                    Month = vm.Date.Month,
+                    Year = vm.Date.Year,
+                };
+
+                var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                if (glRes.Success == true)
+                {
+                    var st = new SupplierTransaction
+                    {
+                        Description = $"{vm.Description} - {account.AccountName}",
+                        Amount = vm.Amount,
+                        SupplierInvoiceId = vm.SupplierInvoiceId,
+                        OrganisationId = organisationId,
+                        SupplierId = vm.SupplierId,
+                        Inserted = DateTime.Now,
+                        Updated = DateTime.Now,
+                    };
+
+                    var res = SaveSupplierTransaction(st);
+
+                    if(res == true)
+                    {
+                        result.Success = true;
+                        result.Message = "Successfully saved payment";
+                    }
+                    else
+                    {
+                        result.Success = false;
+                        result.Message = "Could not save payment";
+                    }
+                }
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not find account provided";
+            }
+
+            return result;
+
+        }
     }
 }
