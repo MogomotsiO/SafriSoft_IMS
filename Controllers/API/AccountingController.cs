@@ -1,5 +1,6 @@
 ﻿using ExcelDataReader;
 using SafriSoftv1._3.Models;
+using SafriSoftv1._3.Models.ViewModels;
 using SafriSoftv1._3.Services;
 using System;
 using System.Collections.Generic;
@@ -505,6 +506,401 @@ namespace SafriSoftv1._3.Controllers.API
                 result.Message = Ex.Message;
                 return Json(result);
             }
+        }
+
+        [HttpGet, Route("GetBalanceSheetAccounts")]
+        public IHttpActionResult GetBalanceSheetAccounts()
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                result.obj = aSvc.GetBalanceSheetAccounts(organisationId);
+
+                result.Success = true;
+                return Json(result.obj);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("GetIncomeStatementAccounts")]
+        public IHttpActionResult GetIncomeStatementAccounts()
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                result.obj = aSvc.GetIncomeStatementAccounts(organisationId);
+
+                result.Success = true;
+                return Json(result.obj);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("GetBalanceSheetAccount/{id}")]
+        public IHttpActionResult GetBalanceSheetAccount(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                result.obj = aSvc.GetBalanceSheetAccount(id, organisationId);
+
+                result.Success = true;
+                return Json(result.obj);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("GetIncomeStatementAccount/{id}")]
+        public IHttpActionResult GetIncomeStatementAccount(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                result.obj = aSvc.GetIncomeStatementAccount(id, organisationId);
+
+                result.Success = true;
+                return Json(result.obj);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpPost, Route("SaveBalanceSheetAccount")]
+        public IHttpActionResult SaveBalanceSheetAccount(ReportBalanceSheetDetailViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                if(vm.Id == 0)
+                {
+                    result = aSvc.SaveBalanceSheetAccount(vm, organisationId);
+                }
+                else
+                {
+                    result = aSvc.UpdateBalanceSheetAccount(vm, organisationId);
+                }                
+
+                result.Success = true;
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpPost, Route("SaveIncomeStatementAccount")]
+        public IHttpActionResult SaveIncomeStatementAccount(ReportIncomeStatementDetailViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var aSvc = new AccountingService();
+
+                if(vm.Id == 0)
+                {
+                    result = aSvc.SaveIncomeStatementAccount(vm, organisationId);
+                }
+                else
+                {
+                    result = aSvc.UpdateIncomeStatementAccount(vm, organisationId);
+                }
+                
+
+                result.Success = true;
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("MoveUpBalanceSheetAccount/{id}")]
+        public IHttpActionResult MoveUpBalanceSheetAccount(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.MoveUpBalanceSheetAccount(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("MoveDownBalanceSheetAccount/{id}")]
+        public IHttpActionResult MoveDownBalanceSheetAccount(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.MoveDownBalanceSheetAccount(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("GetUnlinkedBsAccounts/{id}")]
+        public IHttpActionResult GetUnlinkedBsAccounts(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetUnlinkedBsAccounts(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("GetLinkedBsAccounts/{id}")]
+        public IHttpActionResult GetLinkedBsAccounts(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetLinkedBsAccounts(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("GetUnlinkedIsAccounts/{id}")]
+        public IHttpActionResult GetUnlinkedIsAccounts(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetUnlinkedIsAccounts(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("GetLinkedIsAccounts/{id}")]
+        public IHttpActionResult GetLinkedIsAccounts(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetLinkedIsAccounts(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("LinkBsAccount/{tbAccountId}/{bsAccountId}")]
+        public IHttpActionResult LinkBsAccount(int tbAccountId, int bsAccountId)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.LinkBsAccount(bsAccountId, tbAccountId, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("LinkIsAccount/{tbAccountId}/{isAccountId}")]
+        public IHttpActionResult LinkIsAccount(int tbAccountId, int isAccountId)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.LinkIsAccount(isAccountId, tbAccountId, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("UnlinkBsAccount/{tbAccountId}/{bsAccountId}")]
+        public IHttpActionResult UnlinkBsAccount(int tbAccountId, int bsAccountId)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.UnlinkBsAccount(bsAccountId, tbAccountId, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("UnlinkIsAccount/{tbAccountId}/{isAccountId}")]
+        public IHttpActionResult UnlinkIsAccount(int tbAccountId, int isAccountId)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.UnlinkIsAccount(isAccountId, tbAccountId, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
         }
     }
 

@@ -1,9 +1,15 @@
 ﻿using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Web;
+using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
 namespace SafriSoftv1._3.Services
 {
@@ -278,7 +284,6 @@ namespace SafriSoftv1._3.Services
         {
             var result = new Result();
             var id = 0;
-            //var existingGl = db.GeneralLedgers.Where(x => x.AccountNumber == vm.AccountNumber && x.Month == vm.Month && x.Year == vm.Year && x.OrganisationId == organisationId).FirstOrDefault();
 
             try
             {
@@ -304,39 +309,6 @@ namespace SafriSoftv1._3.Services
                 result.Message = $"Could not save Gl {vm.AccountName} - {ex.Message}";
             }            
 
-            //if (existingGl == null)
-            //{
-            //    gl.Id = 0;
-            //    gl.AccountNumber = vm.AccountNumber;
-            //    gl.AccountName = vm.AccountName;
-            //    gl.Month = vm.Month;
-            //    gl.Year = vm.Year;
-            //    gl.Amount = vm.Amount;
-            //    gl.OrganisationId = organisationId;
-            //}
-            //else
-            //{
-            //    existingGl.AccountName = vm.AccountName;
-            //    existingGl.AccountNumber = vm.AccountNumber;
-            //    existingGl.Month = vm.Month;
-            //    existingGl.Year = vm.Year;
-            //    existingGl.Amount = vm.Amount;
-            //}
-
-
-            //var id = 0;
-
-            //if (existingGl == null)
-            //{
-            //    db.GeneralLedgers.Add(gl);
-            //    id = db.SaveChanges();
-            //}
-            //else
-            //{
-            //    db.SaveChanges();
-            //    id = existingGl.Id;
-            //}            
-
             if (id > 0) //created
             {
                 result.Success = true;
@@ -356,6 +328,10 @@ namespace SafriSoftv1._3.Services
             var result = new Result();
 
             var items = db.GeneralLedgers.Where(x => x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).OrderBy(x => x.AccountDate).ThenBy(x => x.AccountNumber).ToList();
+
+            var jeGls = GetJournalEntriesAsGls(vm, organisationId);
+
+            items.AddRange(jeGls);
 
             if (items.Count() > 0)
             {
@@ -387,16 +363,6 @@ namespace SafriSoftv1._3.Services
                 return result;
             }
 
-            //var trialBalanceMappingsForOrganisation = db.TrialBalanceGeneralLedgerMappings.Where(x => x.OrganisationId == organisationId).ToList();
-
-            //if (trialBalanceMappingsForOrganisation.Count() == 0)
-            //{
-            //    result.Success = false;
-            //    result.Message = "No mappings for organisation";
-            //    result.obj = new List<TrialBalanceContainer>();
-            //    return result;
-            //}
-
             var trialBalanceItems = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
 
             var items = new List<TrialBalanceContainer>();
@@ -407,24 +373,15 @@ namespace SafriSoftv1._3.Services
             {
 
                 var gls = db.GeneralLedgers.Where(x => x.AccountNumber == tbItem.AccountNumber && x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).ToList();
-                //var trialBalanceMappings = db.TrialBalanceGeneralLedgerMappings.Where(x => x.TrialBalanceAccountId == tbItem.Id && x.OrganisationId == organisationId);
+
+                var jeGls = GetJournalEntriesAsGls(vm, organisationId);
+
+                gls.AddRange(jeGls.Where(x => x.AccountNumber == tbItem.AccountNumber).ToList());
 
                 var total = 0.00;
 
-                //var glAccounts = new List<GeneralLedger>();
-
                 foreach (var glAccount in gls)
                 {
-                    //var glAccount = db.GeneralLedgers.Where(x => x.Id == mapping.GeneralLedgerId && x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).FirstOrDefault();
-
-                    //if (glAccount != null)
-                    //{
-                    //    total += glAccount.Debit;
-                    //    total -= glAccount.Credit;
-
-                    //    glAccounts.Add(glAccount);
-                    //}
-
                     total += glAccount.Debit;
                     total -= glAccount.Credit;
                 }
@@ -436,7 +393,7 @@ namespace SafriSoftv1._3.Services
                     AccountNumber = tbItem.AccountNumber,
                     AccountName = tbItem.AccountName,
                     Index = tbItem.Index,
-                    Period = $"{vm.Start.ToString("dd MMMM yyyy")} - {vm.End.ToString("dd MMMM yyyy")}",
+                    Period = $"{vm.Start:dd MMMM yyyy} - {vm.End:dd MMMM yyyy}",
                     Total = Math.Round(total, 2),
                     TrialBalanceItems = gls
                 });
@@ -445,6 +402,8 @@ namespace SafriSoftv1._3.Services
 
             items.Add(new TrialBalanceContainer()
             {
+                AccountName = "Balance",
+                AccountNumber = string.Empty,
                 Total = trialBalanceTotal,
                 Index = 1000000
             });
@@ -501,6 +460,265 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
+        public List<GeneralLedger> GetJournalEntriesAsGls(DateParameters vm, int organisationId)
+        {
+            var jeGls = new List<GeneralLedger>();
+
+            var journals = db.Journals.Where(x => x.Date >= vm.Start && x.Date <= vm.End && x.OrganisationId == organisationId && x.IsActive == true).ToList();
+
+            foreach(var journal in journals)
+            {
+                var entries = db.JournalEntries.Where(x => x.JournalId == journal.Id).ToList();
+
+                foreach(var entry in entries)
+                {
+                    var account = db.TrialBalanceAccounts.Where(x => x.Id == entry.AccountId).FirstOrDefault();
+
+                    var jeGl = new GeneralLedger()
+                    {
+                        AccountNumber = account.AccountNumber,
+                        AccountName = $"{journal.Number} - {account.AccountNumber} - {account.AccountName}",
+                        AccountDescription = $"{journal.Number} - {entry.Narration}",
+                        AccountDate = journal.Date,
+                        Month = journal.Date.Month,
+                        Year = journal.Date.Year,
+                        Debit = entry.Debit,
+                        Credit = entry.Credit,
+                        OrganisationId = organisationId,
+                    };
+
+                    jeGls.Add(jeGl);
+                }                
+            }
+
+            return jeGls;
+        }
+
+        public List<GeneralLedger> GetJournalEntriesAsGlsByYear(int year, int organisationId)
+        {
+            var jeGls = new List<GeneralLedger>();
+
+            var journals = db.Journals.Where(x => x.Date.Year == year && x.OrganisationId == organisationId && x.IsActive == true).ToList();
+
+            foreach (var journal in journals)
+            {
+                var entries = db.JournalEntries.Where(x => x.JournalId == journal.Id).ToList();
+
+                foreach (var entry in entries)
+                {
+                    var account = db.TrialBalanceAccounts.Where(x => x.Id == entry.AccountId).FirstOrDefault();
+
+                    var jeGl = new GeneralLedger()
+                    {
+                        AccountNumber = account.AccountNumber,
+                        AccountName = $"{journal.Number} - {account.AccountNumber} - {account.AccountName}",
+                        AccountDescription = $"{journal.Number} - {entry.Narration}",
+                        AccountDate = journal.Date,
+                        Month = journal.Date.Month,
+                        Year = journal.Date.Year,
+                        Debit = entry.Debit,
+                        Credit = entry.Credit,
+                        OrganisationId = organisationId,
+                    };
+
+                    jeGls.Add(jeGl);
+                }
+            }
+
+            return jeGls;
+        }
+        public Result GetBalanceSheetAccounts(int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<ReportBalanceSheetDetailViewModel>();
+
+            var items = db.ReportBalanceSheetAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).ToList();
+
+            foreach(var item in items)
+            {
+                var heading = db.ReportBalanceSheetAccounts.Where(x => x.Id == item.HeadingAccountId).FirstOrDefault();
+                var subtotal = db.ReportBalanceSheetAccounts.Where(x => x.Id == item.SubtotalAccountId).FirstOrDefault();
+
+                vm.Add(new ReportBalanceSheetDetailViewModel()
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    HeadingAccountName = heading?.Name,
+                    SubtotalAccountName = subtotal?.Name,
+                    IsHeading = item.IsHeading,
+                    IsSubtotal = item.IsSubtotal,
+                    Index = item.Index,
+                });
+            }
+
+            result.obj = vm.OrderBy(x => x.Index);
+
+            return result;
+        }
+
+        public Result GetIncomeStatementAccounts(int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<ReportBalanceSheetDetailViewModel>();
+
+            var items = db.ReportIncomeStatementAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).ToList();
+
+            foreach (var item in items)
+            {
+                var heading = db.ReportIncomeStatementAccounts.Where(x => x.Id == item.HeadingAccountId).FirstOrDefault();
+                var subtotal = db.ReportIncomeStatementAccounts.Where(x => x.Id == item.SubtotalAccountId).FirstOrDefault();
+
+                vm.Add(new ReportBalanceSheetDetailViewModel()
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    HeadingAccountName = heading?.Name,
+                    SubtotalAccountName = subtotal?.Name,
+                    IsHeading = item.IsHeading,
+                    IsSubtotal = item.IsSubtotal,
+                    Index = item.Index,
+                });
+            }
+
+            result.obj = vm.OrderBy(x => x.Index);
+
+            return result;
+        }
+
+        public Result SaveBalanceSheetAccount(ReportBalanceSheetDetailViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var lastItem = db.ReportBalanceSheetAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).OrderByDescending(x => x.Index).FirstOrDefault();
+
+            var item = new ReportBalanceSheetAccount()
+            {
+                Name = vm.Name,
+                HeadingAccountId = vm.HeadingAccountId,
+                SubtotalAccountId = vm.SubtotalAccountId,
+                IsHeading = vm.IsHeading,
+                IsSubtotal = vm.IsSubtotal,
+                Index = lastItem != null ? lastItem.Index + 1 : 1,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+                OrganisationId = organisationId
+            };
+
+            var res = db.ReportBalanceSheetAccounts.Add(item);
+
+            var saveRes = db.SaveChanges();
+
+            if(saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Successfully saved account";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save account";
+            }
+
+            return result;
+        }
+
+        public Result SaveIncomeStatementAccount(ReportIncomeStatementDetailViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var lastItem = db.ReportIncomeStatementAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).OrderByDescending(x => x.Index).FirstOrDefault();
+
+            var item = new ReportIncomeStatementAccount()
+            {
+                Name = vm.Name,
+                HeadingAccountId = vm.HeadingAccountId,
+                SubtotalAccountId = vm.SubtotalAccountId,
+                IsHeading = vm.IsHeading,
+                IsSubtotal = vm.IsSubtotal,
+                Index = lastItem != null ? lastItem.Index + 1 : 1,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+                OrganisationId = organisationId
+            };
+
+            var res = db.ReportIncomeStatementAccounts.Add(item);
+
+            var saveRes = db.SaveChanges();
+
+            if (saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Successfully saved account";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save account";
+            }
+
+            return result;
+        }
+
+        public Result UpdateBalanceSheetAccount(ReportBalanceSheetDetailViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var item = db.ReportBalanceSheetAccounts.Where(x => x.Id == vm.Id).FirstOrDefault();
+
+            item.Name = vm.Name;
+            item.HeadingAccountId = vm.HeadingAccountId;
+            item.SubtotalAccountId = vm.SubtotalAccountId;
+            item.IsHeading = vm.IsHeading;
+            item.IsSubtotal = vm.IsSubtotal;
+            item.Updated = DateTime.Now;
+
+            var saveRes = db.SaveChanges();
+
+            if (saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Successfully saved account";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save account";
+            }
+
+            return result;
+        }
+
+        public Result UpdateIncomeStatementAccount(ReportIncomeStatementDetailViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var item = db.ReportIncomeStatementAccounts.Where(x => x.Id == vm.Id).FirstOrDefault();
+
+            item.Name = vm.Name;
+            item.HeadingAccountId = vm.HeadingAccountId;
+            item.SubtotalAccountId = vm.SubtotalAccountId;
+            item.IsHeading = vm.IsHeading;
+            item.IsSubtotal = vm.IsSubtotal;
+            item.Updated = DateTime.Now;
+
+            var saveRes = db.SaveChanges();
+
+            if (saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Successfully saved account";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save account";
+            }
+
+            return result;
+        }
+
         public List<VatOption> GetVatOptions(int organisationId)
         {
             return db.VatOptions.Where(x => x.OrganisationId == organisationId).ToList();
@@ -510,5 +728,544 @@ namespace SafriSoftv1._3.Services
         {
             return db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
         }
+
+        public ReportBalanceSheetViewModel GetBalanceSheetAccountList(int organisationId)
+        {
+            var vm = new ReportBalanceSheetViewModel();
+
+            vm.HeadingAccounts = db.ReportBalanceSheetAccounts.Where(x => (x.OrganisationId == organisationId || x.IsGlobal) && x.IsHeading).ToList();
+            vm.SubtotalAccounts = db.ReportBalanceSheetAccounts.Where(x => (x.OrganisationId == organisationId || x.IsGlobal) && x.IsSubtotal).ToList();
+
+            return vm;
+        }
+
+        public ReportIncomeStatementViewModel GetIncomeStatementAccountList(int organisationId)
+        {
+            var vm = new ReportIncomeStatementViewModel();
+
+            vm.HeadingAccounts = db.ReportIncomeStatementAccounts.Where(x => (x.OrganisationId == organisationId || x.IsGlobal == true) && x.IsHeading).ToList();
+            vm.SubtotalAccounts = db.ReportIncomeStatementAccounts.Where(x => (x.OrganisationId == organisationId || x.IsGlobal == true) && x.IsSubtotal).ToList();
+
+            return vm;
+        }
+
+        public Result GetBalanceSheetAccount(int id, int organisationId)
+        {
+            var result = new Result();
+
+            var item = db.ReportBalanceSheetAccounts.Where(x => x.Id == id).FirstOrDefault();
+
+            result.obj = item;
+
+            return result;
+        }
+
+        public Result GetIncomeStatementAccount(int id, int organisationId)
+        {
+            var result = new Result();
+
+            var item = db.ReportIncomeStatementAccounts.Where(x => x.Id == id).FirstOrDefault();
+
+            result.obj = item;
+
+            return result;
+        }
+
+        public Result MoveUpBalanceSheetAccount(int id, int organisationId)
+        {
+            var result = new Result();
+
+            if (id != 0)
+            {
+                var item = db.ReportBalanceSheetAccounts.Where(x => x.Id == id && x.OrganisationId == organisationId).FirstOrDefault();
+                var prevItem = db.ReportBalanceSheetAccounts.Where(x => x.Index == item.Index - 1 && x.OrganisationId == organisationId).FirstOrDefault();
+
+                if (prevItem == null)
+                {
+                    result.Success = false;
+                    result.Message = "Cannot move account up";
+                    return result;
+                }
+
+                var currIndex = 0;
+                var prevIndex = 0;
+
+                if (item != null)
+                    currIndex = item.Index;
+
+                if (prevItem != null)
+                    prevIndex = prevItem.Index;
+
+                item.Index = prevIndex;
+                prevItem.Index = currIndex;
+
+                db.SaveChanges();
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public Result MoveDownBalanceSheetAccount(int id, int organisationId)
+        {
+            var result = new Result();
+
+            if (id != 0)
+            {
+                var item = db.ReportBalanceSheetAccounts.Where(x => x.Id == id && x.OrganisationId == organisationId).FirstOrDefault();
+                var nextItem = db.ReportBalanceSheetAccounts.Where(x => x.Index == item.Index + 1 && x.OrganisationId == organisationId).FirstOrDefault();
+
+                if (nextItem == null)
+                {
+                    result.Success = false;
+                    result.Message = "Cannot move account down";
+                    return result;
+                }
+
+                var currIndex = 0;
+                var nextItemIndex = 0;
+
+                if (item != null)
+                    currIndex = item.Index;
+
+                if (nextItem != null)
+                    nextItemIndex = nextItem.Index;
+
+                item.Index = nextItemIndex;
+                nextItem.Index = currIndex;
+
+                db.SaveChanges();
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public Result MoveUpIncomeStatementAccount(int id, int organisationId)
+        {
+            var result = new Result();
+
+            if (id != 0)
+            {
+                var item = db.ReportIncomeStatementAccounts.Where(x => x.Id == id && x.OrganisationId == organisationId).FirstOrDefault();
+                var prevItem = db.ReportIncomeStatementAccounts.Where(x => x.Index == item.Index - 1 && x.OrganisationId == organisationId).FirstOrDefault();
+
+                if (prevItem == null)
+                {
+                    result.Success = false;
+                    result.Message = "Cannot move account up";
+                    return result;
+                }
+
+                var currIndex = 0;
+                var prevIndex = 0;
+
+                if (item != null)
+                    currIndex = item.Index;
+
+                if (prevItem != null)
+                    prevIndex = prevItem.Index;
+
+                item.Index = prevIndex;
+                prevItem.Index = currIndex;
+
+                db.SaveChanges();
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public Result MoveDownIncomeStatementAccount(int id, int organisationId)
+        {
+            var result = new Result();
+
+            if (id != 0)
+            {
+                var item = db.ReportIncomeStatementAccounts.Where(x => x.Id == id && x.OrganisationId == organisationId).FirstOrDefault();
+                var nextItem = db.ReportIncomeStatementAccounts.Where(x => x.Index == item.Index + 1 && x.OrganisationId == organisationId).FirstOrDefault();
+
+                if (nextItem == null)
+                {
+                    result.Success = false;
+                    result.Message = "Cannot move account down";
+                    return result;
+                }
+
+                var currIndex = 0;
+                var nextItemIndex = 0;
+
+                if (item != null)
+                    currIndex = item.Index;
+
+                if (nextItem != null)
+                    nextItemIndex = nextItem.Index;
+
+                item.Index = nextItemIndex;
+                nextItem.Index = currIndex;
+
+                db.SaveChanges();
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public Result LinkBsAccount(int bsAccountId, int tbAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var link = new ReportBalanceSheetAccountLink()
+            {
+                BsAccountId = bsAccountId,
+                TbAccountId = tbAccountId,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+                OrganisationId = organisationId
+            };
+
+            db.ReportBalanceSheetAccountLinks.Add(link);
+
+            var saveRes = db.SaveChanges();
+
+            if(saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Saved link";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save link";
+            }            
+
+            return result;
+        }
+
+        public Result LinkIsAccount(int isAccountId, int tbAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var link = new ReportIncomeStatementAccountLink()
+            {
+                IsAccountId = isAccountId,
+                TbAccountId = tbAccountId,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+                OrganisationId = organisationId
+            };
+
+            db.ReportIncomeStatementAccountLinks.Add(link);
+
+            var saveRes = db.SaveChanges();
+
+            if (saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Saved link";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save link";
+            }
+
+            return result;
+        }
+
+        public Result UnlinkBsAccount(int bsAccountId, int tbAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var item = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == bsAccountId && x.TbAccountId == tbAccountId).FirstOrDefault();
+
+            db.ReportBalanceSheetAccountLinks.Remove(item);
+
+            var saveRes = db.SaveChanges();
+
+            if (saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Saved link";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save link";
+            }
+
+            return result;
+        }
+
+        public Result UnlinkIsAccount(int isAccountId, int tbAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var item = db.ReportIncomeStatementAccountLinks.Where(x => x.IsAccountId == isAccountId && x.TbAccountId == tbAccountId).FirstOrDefault();
+
+            db.ReportIncomeStatementAccountLinks.Remove(item);
+
+            var saveRes = db.SaveChanges();
+
+            if (saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "Saved link";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save link";
+            }
+
+            return result;
+        }
+
+        public Result GetLinkedBsAccounts(int bsAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<ReportBalanceSheetLinkedAccounts>();
+
+            var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == bsAccountId).ToList();
+
+            foreach (var link in links)
+            {
+                var tbItem = db.TrialBalanceAccounts.Where(x => x.Id == link.TbAccountId).FirstOrDefault();
+
+                vm.Add(new ReportBalanceSheetLinkedAccounts()
+                {
+                    Id = tbItem.Id,
+                    Name = $"{tbItem.AccountNumber} - {tbItem.AccountName}"
+                });
+            }
+
+            result.obj = vm;
+
+            return result;
+        }
+
+        public Result GetUnlinkedBsAccounts(int bsAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<ReportBalanceSheetLinkedAccounts>();
+
+            var tbAccounts = GetTrialBalanceAccounts(organisationId);
+
+            foreach (var tbItem in tbAccounts)
+            {
+                var link = db.ReportBalanceSheetAccountLinks.Where(x => x.TbAccountId == tbItem.Id).FirstOrDefault();
+
+                if(link == null)
+                {
+                    vm.Add(new ReportBalanceSheetLinkedAccounts()
+                    {
+                        Id = tbItem.Id,
+                        Name = $"{tbItem.AccountNumber} - {tbItem.AccountName}"
+                    });
+                }                
+            }
+
+            result.obj = vm;
+
+            return result;
+        }
+
+        public Result GetLinkedIsAccounts(int bsAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<ReportIncomeStatementLinkedAccounts>();
+
+            var links = db.ReportIncomeStatementAccountLinks.Where(x => x.IsAccountId == bsAccountId).ToList();
+
+            foreach (var link in links)
+            {
+                var tbItem = db.TrialBalanceAccounts.Where(x => x.Id == link.TbAccountId).FirstOrDefault();
+
+                vm.Add(new ReportIncomeStatementLinkedAccounts()
+                {
+                    Id = tbItem.Id,
+                    Name = $"{tbItem.AccountNumber} - {tbItem.AccountName}"
+                });
+            }
+
+            result.obj = vm;
+
+            return result;
+        }
+
+        public Result GetUnlinkedIsAccounts(int bsAccountId, int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<ReportIncomeStatementLinkedAccounts>();
+
+            var tbAccounts = GetTrialBalanceAccounts(organisationId);
+
+            foreach (var tbItem in tbAccounts)
+            {
+                var link = db.ReportIncomeStatementAccountLinks.Where(x => x.TbAccountId == tbItem.Id).FirstOrDefault();
+
+                if (link == null)
+                {
+                    vm.Add(new ReportIncomeStatementLinkedAccounts()
+                    {
+                        Id = tbItem.Id,
+                        Name = $"{tbItem.AccountNumber} - {tbItem.AccountName}"
+                    });
+                }
+            }
+
+            result.obj = vm;
+
+            return result;
+        }
+
+        public List<BalanceSheetYearly> RunBalanceSheetYearly(BalanceSheetViewModel vm, int organisation)
+        {
+            var data = new List<BalanceSheetYearly>();
+
+            var startYear = vm.Start.Year;
+            var endYear = vm.End.Year;
+
+            var counter = 1;
+
+            var accounts = db.ReportBalanceSheetAccounts.Where(x => x.OrganisationId == organisation || x.IsGlobal).OrderBy(x => x.Index).ToList();
+
+            foreach(var account in accounts)
+            {
+                data.Add(new BalanceSheetYearly()
+                {
+                    Id = account.Id,
+                    Name = account.Name,
+                    IsHeading = account.IsHeading,
+                    IsSubtotal = account.IsSubtotal,
+                    SubtotalAccountId = account.SubtotalAccountId
+                });
+            }
+
+            var accountsRequireBalance = data.Where(x => x.IsHeading == false && x.IsSubtotal == false).ToList();
+
+            var subtotals = data.Where(x => x.IsSubtotal).ToList();
+
+            while (startYear <= endYear)
+            {
+                foreach(var account in accountsRequireBalance)
+                {
+                    var link = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == account.Id).FirstOrDefault();
+
+                    if (link != null)
+                    {
+                        var balance = GetTrialBalanceAccountBalanceByYear(startYear, link.TbAccountId, organisation);
+
+                        var accountData = data.Where(x => x.Id == link.BsAccountId).FirstOrDefault();
+
+                        if (counter == 1)
+                        {
+                            accountData.YearOne = $"{startYear}";
+                            accountData.YearOneBalance = balance;
+                        }
+                        else if (counter == 2)
+                        {
+                            accountData.YearTwo = $"{startYear}";
+                            accountData.YearTwoBalance = balance;
+                        }
+                        else if (counter == 3)
+                        {
+                            accountData.YearThree = $"{startYear}";
+                            accountData.YearThreeBalance = balance;
+                        }
+                    }                    
+                }
+                
+                foreach(var subTot in subtotals)
+                {
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).ToList();
+
+                    if (counter == 1)
+                    {
+                        subTot.YearOne = $"{startYear}";
+                        subTot.YearOneBalance = subTotAccounts.Sum(x => x.YearOneBalance);
+                    }
+                    else if (counter == 2)
+                    {
+                        subTot.YearTwo = $"{startYear}";
+                        subTot.YearTwoBalance = subTotAccounts.Sum(x => x.YearOneBalance); ;
+                    }
+                    else if (counter == 3)
+                    {
+                        subTot.YearThree = $"{startYear}";
+                        subTot.YearThreeBalance = subTotAccounts.Sum(x => x.YearOneBalance); ;
+                    }
+                }
+
+                startYear += 1;
+                counter++;
+            }
+
+            return data;
+        }
+
+        public List<BalanceSheetMonthly> RunBalanceSheetMonthly(BalanceSheetViewModel vm, int organisation)
+        {
+            var data = new List<BalanceSheetMonthly>();
+
+
+
+            return data;
+        }
+
+        //public Result GetLinkedIsAccounts()
+        //{
+        //    var result = new Result();
+
+        //    var vm = new List<>();
+
+        //    var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == bsAccountId).ToList();
+
+        //    foreach (var link in links)
+        //    {
+        //        var tbItem = db.TrialBalanceAccounts.Where(x => x.Id == link.TbAccountId).FirstOrDefault();
+
+        //        vm.Add(new ReportBalanceSheetLinkedAccounts()
+        //        {
+        //            Name = $"{tbItem.AccountNumber} - {tbItem.AccountName}"
+        //        });
+        //    }
+
+        //    result.obj = vm;
+
+        //    return result;
+        //}
+
+        public double GetTrialBalanceAccountBalanceByYear(int year, int accountId, int organisationId)
+        {
+            double balance = 0.0;
+
+            var tbItem = db.TrialBalanceAccounts.Where(x => x.Id == accountId).FirstOrDefault();
+
+            var gls = db.GeneralLedgers.Where(x => x.AccountNumber == tbItem.AccountNumber && x.AccountDate.Year == year && x.OrganisationId == organisationId).ToList();
+
+            var jeGls = GetJournalEntriesAsGlsByYear(year, organisationId);
+
+            gls.AddRange(jeGls.Where(x => x.AccountNumber == tbItem.AccountNumber).ToList());
+
+            var total = 0.00;
+
+            foreach (var glAccount in gls)
+            {
+                total += glAccount.Debit;
+                total -= glAccount.Credit;
+            }
+
+            return balance;
+        }
+
     }
 }

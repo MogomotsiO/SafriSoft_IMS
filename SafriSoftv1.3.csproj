@@ -207,6 +207,7 @@
     <Compile Include="Controllers\API\BaseApiController.cs" />
     <Compile Include="Controllers\API\InventoryController.cs" />
     <Compile Include="Controllers\API\InvoicingController.cs" />
+    <Compile Include="Controllers\API\JournalController.cs" />
     <Compile Include="Controllers\API\ReportController.cs" />
     <Compile Include="Controllers\API\ExpensesController.cs" />
     <Compile Include="Controllers\API\SettingController.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventoryController.cs" />
     <Compile Include="Controllers\InvoicingController.cs" />
+    <Compile Include="Controllers\JournalController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\ExpensesController.cs" />
@@ -230,9 +232,15 @@
       <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Data\ReportBalanceSheetAccount.cs" />
+    <Compile Include="Models\Data\ReportBalanceSheetAccountLink.cs" />
     <Compile Include="Models\Data\CustomerTransaction.cs" />
     <Compile Include="Models\Data\Expense.cs" />
+    <Compile Include="Models\Data\ReportIncomeStatementAccountLink.cs" />
+    <Compile Include="Models\Data\ReportIncomeStatementAccount.cs" />
     <Compile Include="Models\Data\InvoiceTransaction.cs" />
+    <Compile Include="Models\Data\Journal.cs" />
+    <Compile Include="Models\Data\JournalEntry.cs" />
     <Compile Include="Models\Data\Setting.cs" />
     <Compile Include="Models\Data\SupplierTransaction.cs" />
     <Compile Include="Models\SystemModels\Enums.cs" />
@@ -264,6 +272,7 @@
     <Compile Include="Models\ViewModels\InboxViewModel.cs" />
     <Compile Include="Models\ViewModels\InvoiceViewModel.cs" />
     <Compile Include="Models\ViewModels\InvoicingViewModel.cs" />
+    <Compile Include="Models\ViewModels\JournalViewModel.cs" />
     <Compile Include="Models\ViewModels\ManageViewModels.cs" />
     <Compile Include="Models\ViewModels\OrderAuditViewModel.cs" />
     <Compile Include="Models\ViewModels\OrderViewModel.cs" />
@@ -271,6 +280,8 @@
     <Compile Include="Models\ViewModels\ProductViewModel.cs" />
     <Compile Include="Models\SystemModels\Result.cs" />
     <Compile Include="Models\SafriSoftDbContext.cs" />
+    <Compile Include="Models\ViewModels\ReportBalanceSheetViewModel.cs" />
+    <Compile Include="Models\ViewModels\ReportIncomeStatementViewModel.cs" />
     <Compile Include="Models\ViewModels\SettingViewModel.cs" />
     <Compile Include="Models\ViewModels\SupplierViewModel.cs" />
     <Compile Include="Models\ViewModels\SystemNotificationsViewModel.cs" />
@@ -281,6 +292,7 @@
     <Compile Include="Services\ExpensesService.cs" />
     <Compile Include="Services\InventoryService.cs" />
     <Compile Include="Services\InvoicingService.cs" />
+    <Compile Include="Services\JournalService.cs" />
     <Compile Include="Services\SafriSoftEmailService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Startup.cs" />
@@ -1497,6 +1509,7 @@
     <Content Include="plugins\fullcalendar\main.js" />
     <Content Include="plugins\fullcalendar\main.min.css" />
     <Content Include="plugins\fullcalendar\main.min.js" />
+    <Content Include="plugins\i-check\i-check.js" />
     <Content Include="plugins\icheck-bootstrap\icheck-bootstrap.css" />
     <Content Include="plugins\icheck-bootstrap\icheck-bootstrap.min.css" />
     <Content Include="plugins\inputmask\bindings\inputmask.binding.js" />
@@ -2729,6 +2742,8 @@
     <Content Include="Views\Accounting\GeneralLedger.cshtml" />
     <Content Include="Views\Accounting\TrialBalanceReport.cshtml" />
     <Content Include="Views\Expenses\Expenses.cshtml" />
+    <Content Include="Views\Accounting\BalanceSheetAccounts.cshtml" />
+    <Content Include="Views\Accounting\IncomeStatementAccounts.cshtml" />
     <None Include="Views\Home\about.cshtml" />
     <None Include="Views\Home\contact.cshtml" />
     <Content Include="Scripts\Report\ReportsDataTables.js" />
@@ -2784,6 +2799,7 @@
     <Content Include="Views\Invoicing\InvoicePDF.cshtml" />
     <Content Include="Views\Inventory\Suppliers.cshtml" />
     <Content Include="Views\Setting\Settings.cshtml" />
+    <Content Include="Views\Journal\Journals.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

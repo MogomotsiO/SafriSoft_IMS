@@ -130,7 +130,7 @@
     <input id="packageId" hidden value="@packageId"/>
     <div class="wrapper">
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-info navbar-info bg-light">
+        <nav class="main-header navbar navbar-expand navbar-light bg-light">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -335,6 +335,14 @@
                             }
 
                         </li>
+                        <li id="Journal-Menu" class="nav-item has-treeview">
+                            <a id="Journals" href="~/Journal/Journals" class="nav-link">
+                                <i class="nav-icon fas fa-balance-scale text-white"></i>
+                                <p class="text-white">
+                                    Journals
+                                </p>
+                            </a>
+                        </li>
                         <li id="Accounting-Menu" class="nav-item has-treeview">
                             <a id="Accounting" href="#" class="nav-link">
                                 <i class="nav-icon fas fa-coins text-white"></i>
@@ -347,12 +355,6 @@
                             {
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
-                                            <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">General Ledger</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Chart Of Accounts</p>
@@ -360,9 +362,27 @@
                                     </li>
 
                                     <li class="nav-item">
+                                        <a id="BalanceSheetAccounts" href="~/Accounting/BalanceSheetAccounts" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Balance Sheet Accounts</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="IncomeStatementAccounts" href="~/Accounting/IncomeStatementAccounts" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Income Statement Accounts</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">General Ledger</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
                                             <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">Trial Balance Report</p>
+                                            <p class="text-white">Trial Balance</p>
                                         </a>
                                     </li>
                                 </ul>
@@ -707,7 +727,7 @@
             }
 
         </script>
-
+        <script src="~/plugins/i-check/i-check.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/vendor/jquery.ui.widget.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/jquery.iframe-transport.js"></script>
         <script src="~/Backload/Client/blueimp/fileupload/js/jquery.fileupload.js"></script>

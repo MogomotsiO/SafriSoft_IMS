@@ -29,6 +29,12 @@ namespace SafriSoftv1._3.Models
         public virtual DbSet<VatOption> VatOptions { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<Expense> Expenses { get; set; }
+        public virtual DbSet<Journal> Journals { get; set; }
+        public virtual DbSet<JournalEntry> JournalEntries { get; set; }
+        public virtual DbSet<ReportBalanceSheetAccount> ReportBalanceSheetAccounts { get; set; }
+        public virtual DbSet<ReportBalanceSheetAccountLink> ReportBalanceSheetAccountLinks { get; set; }
+        public virtual DbSet<ReportIncomeStatementAccount> ReportIncomeStatementAccounts { get; set; }
+        public virtual DbSet<ReportIncomeStatementAccountLink> ReportIncomeStatementAccountLinks { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

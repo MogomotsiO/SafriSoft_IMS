@@ -1,0 +1,453 @@
+﻿@model SafriSoftv1._3.Models.ViewModels.ReportBalanceSheetViewModel
+
+@{
+    ViewBag.Title = "BalanceSheetStructure";
+}
+
+<style>
+    .indexStyle {
+        text-align: center;
+    }
+
+    .buttonWidth {
+        text-align: center;
+        width: 100px;
+    }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fas fa-coins"></i> Balance Sheet Structure</h4>
+                        </div>
+                        <div class="card-body">
+                            <span class="text-right mr-1"><button id="" type="submit" class="btn btn-light" onclick="openCreateBSAccountModal()"><i class="fa fa-edit text-info"></i> Create</button></span>
+                            @*<span class="text-right">
+                                    <button id="ImportTrialBalance" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import</button>
+                                </span>*@
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="balanceSheetAccountsDT" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Account Name</th>
+                                        <th>Heading Account</th>
+                                        <th>Subtotal Account</th>
+                                        <th>Index</th>
+                                        <th>Sorting</th>
+                                        <th>Accounts</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<!-- Modal -->
+<div class="modal fade" id="createBsAccountModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@*<i class="fa fa-plus"></i>*@Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Account Name</label>
+                            <input id="accountName" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating"></label>
+                            <select id="selectHeaingAccount" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                <option value="-100">SELECT HEADING ACCOUNT</option>
+                                @foreach (var account in Model.HeadingAccounts)
+                                {
+                                    <option value="@account.Id">@account.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating"></label>
+                            <select id="selectSubtotalAccount" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                <option value="-100">SELECT SUBTOTAL ACCOUNT</option>
+                                @foreach (var account in Model.SubtotalAccounts)
+                                {
+                                    <option value="@account.Id">@account.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 col-md-12">
+                        <div class="icheck-info d-inline"> <input type="checkbox" id="isHeading" onclick="$(this).attr('value',this.checked);"> <label for="isHeading"> Is Heading? </label> </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="icheck-info d-inline"> <input type="checkbox" id="isSubtotal" onclick="$(this).attr('value',this.checked);"> <label for="isSubtotal"> Is Subtotal? </label> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="createTrialBalanceBtn" onclick="createBsAccount()" type="button" class="btn btn-light"><i class="fa fa-edit text-info"></i> Save</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="linkTbAccountsModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">@*<i class="fa fa-plus"></i>*@</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <table id="linkTbAccountsTable" class="table table-bordered ">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Link</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table id="unlinkTbAccountsTable" class="table table-bordered ">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Unlink</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                </div>                
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        var balanceSheetAccountsDT = $("#balanceSheetAccountsDT").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[-1], ["All"]],
+            order: [[3, "asc"]],
+            ajax: {
+                url: '/api/Accounting/GetBalanceSheetAccounts/',
+                method: 'GET',
+                "dataSrc": "obj"
+            },
+            columns: [
+                {
+                    data: 'Name',
+                    searchable: true
+                },
+                {
+                    data: 'HeadingAccountName',
+                    searchable: true,
+                },
+                {
+                    data: 'SubtotalAccountName',
+                    searchable: true,
+                },
+                {
+                    data: 'Index',
+                    searchable: true,
+                    className: 'buttonWidth',
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data) {
+                        return '<td class="text-right py-0 align-middle" style="height:20px !important;"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="moveUp(this.id)"><i class="fas fa-arrow-up text-info"></i></a> <a id="' + data + '" class="btn btn-light" href="#" onclick="moveDown(this.id)"><i class="fas fa-arrow-down text-info"></i></a> </div> </td>'
+                    }
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+
+                        if (full.IsHeading == true || full.IsSubtotal == true) {
+                            return '';
+                        }
+
+                        return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${data}" class="btn btn-light" href="#" onclick="linkAccounts(this.id,'${full.Name}')"><i class="fas fa-link text-info"></i></a> </div> </td>`
+                    }
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="editBsAccount(this.id)"><i class="fa fa-edit text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+        var linkTbAccountsTable = $("#linkTbAccountsTable").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[10], ["10"]],
+            ajax: {
+                url: `/api/Accounting/GetUnlinkedBsAccounts/0`,
+                method: 'GET',
+                "dataSrc": "obj"
+            },
+            columns: [
+                {
+                    data: 'Name',
+                    searchable: true
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="linkTbAccount(this.id)"><i class="fa fa-link text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+
+        var unlinkTbAccountsTable = $("#unlinkTbAccountsTable").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[10], ["10"]],
+            ajax: {
+                url: `/api/Accounting/GetLinkedBsAccounts/0`,
+                method: 'GET',
+                "dataSrc": "obj"
+            },
+            columns: [
+                {
+                    data: 'Name',
+                    searchable: true
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="unlinkTbAccount(this.id)"><i class="fa fa-unlink text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+        var _linkAccountId = 0;
+
+        function linkAccounts(id, name) {
+            _linkAccountId = id;
+            $('#title').text(name);
+            linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedBsAccounts/${_linkAccountId}`).load();
+            unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedBsAccounts/${_linkAccountId}`).load();
+            $("#linkTbAccountsModal").modal('show');
+        }
+
+        function linkTbAccount(id) {
+
+            var url = `/api/Accounting/LinkBsAccount/${id}/${_linkAccountId}`;
+
+            SafriSoftGetRequest(url, (response) => {
+
+                if (response.Success == true) {
+                    linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedBsAccounts/${_linkAccountId}`).load();
+                    unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedBsAccounts/${_linkAccountId}`).load();
+                    toastr.success(response.Message);
+                } else {
+                    toastr.error(response.Message);
+                }
+
+            });
+
+        }
+
+        function unlinkTbAccount(id) {
+            var url = `/api/Accounting/UnlinkBsAccount/${id}/${_linkAccountId}`;
+
+            SafriSoftGetRequest(url, (response) => {
+
+                if (response.Success == true) {
+                    linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedBsAccounts/${_linkAccountId}`).load();
+                    unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedBsAccounts/${_linkAccountId}`).load();
+                    toastr.success(response.Message);
+                } else {
+                    toastr.error(response.Message);
+                }
+
+            });
+        }
+
+        function openCreateBSAccountModal() {
+            _editId = 0;
+            $('#accountName').val('');
+            $('#selectHeaingAccount').val(-100);
+            $('#selectHeaingAccount').trigger('change.select2');
+            $('#selectSubtotalAccount').val(-100);
+            $('#selectSubtotalAccount').trigger('change.select2');
+            $('#isHeading').val(false);
+            $('#isHeading').iCheck('uncheck');
+
+            $('#isSubtotal').val(false);
+            $('#isSubtotal').iCheck('uncheck');
+            $("#createBsAccountModal").modal('show');
+        }
+
+        var _editId = 0;
+
+        function editBsAccount(id) {
+            var url = `/api/Accounting/GetBalanceSheetAccount/${id}`;
+
+            SafriSoftGetRequest(url, (response) => {
+                console.log(response);
+                _editId = id;
+                $('#accountName').val(response.obj.Name);
+                $('#selectHeaingAccount').val(response.obj.HeadingAccountId);
+                $('#selectHeaingAccount').trigger('change.select2');
+                $('#selectSubtotalAccount').val(response.obj.SubtotalAccountId);
+                $('#selectSubtotalAccount').trigger('change.select2');
+                $('#isHeading').val(response.obj.IsHeading);
+                if (response.obj.IsHeading == true) {
+                    $('#isHeading').iCheck('check');
+                } else {
+                    $('#isHeading').iCheck('uncheck');
+                }
+
+                $('#isSubtotal').val(response.obj.IsSubtotal);
+                if (response.obj.IsSubtotal == true) {
+                    $('#isSubtotal').iCheck('check');
+                } else {
+                    $('#isSubtotal').iCheck('uncheck');
+                }
+                $("#createBsAccountModal").modal('show');
+            });
+        }
+
+        function createBsAccount() {
+            var name = $('#accountName').val();
+            var headingAccount = $('#selectHeaingAccount').val();
+            var subtotalAccount = $('#selectSubtotalAccount').val();
+            var isHeading = $('#isHeading').val();
+            var isSubtotal = $('#isSubtotal').val();
+
+            if (name == '') {
+                toastr.error('Name needs to be completed');
+                return;
+            }
+
+            var data = {
+                Id: _editId,
+                Name: name,
+                HeadingAccountId: headingAccount,
+                SubtotalAccountId: subtotalAccount,
+                IsHeading: isHeading,
+                IsSubtotal: isSubtotal,
+            }
+            console.log(data);
+            var url = `/api/Accounting/SaveBalanceSheetAccount`;
+
+            SafriSoftPostRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                    balanceSheetAccountsDT.ajax.reload();
+                    $("#createBsAccountModal").modal('hide');
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+        function moveUp(id) {
+
+            var url = `/api/Accounting/MoveUpBalanceSheetAccount/${id}`;
+
+            SafriSoftGetRequest(url, (response) => {
+                balanceSheetAccountsDT.ajax.reload();
+            });
+
+        }
+
+        function moveDown(id) {
+            var url = `/api/Accounting/MoveDownBalanceSheetAccount/${id}`;
+
+            SafriSoftGetRequest(url, (response) => {
+                balanceSheetAccountsDT.ajax.reload();
+            });
+        }
+
+    </script>
+
+}

@@ -6,13 +6,11 @@ using System.Web;
 
 namespace SafriSoftv1._3.Models.Data
 {
-    public class TrialBalanceAccount
+    public class TrialBalanceAccount: BaseModel
     {
-        [Key]
-        public int Id { get; set; }
         public string AccountNumber { get; set; }
         public string AccountName { get; set; }     
         public int Index { get; set; }
-        public int OrganisationId { get; set; }
+        public bool IsGlobal { get; set; }
     }
 }

@@ -1,0 +1,448 @@
+﻿@model SafriSoftv1._3.Models.ViewModels.JournalViewModel
+
+
+@{
+    ViewBag.Title = "Journals";
+}
+
+<style>
+    .buttonWidth {
+        width: 50px;
+        text-align: center;
+    }
+
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title"><i class="fas fa-balance-scale"></i> Journals</h4>
+                        </div>
+
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <button id="createJournal" type="submit" class="btn btn-light" style="text-align:right !important;" onclick="createJournalModal()"><i class="fa fa-plus text-info"></i> Create Journal</button>
+                            <br />
+                            <br />
+                            <table id="journalsDt" class="table table-bordered ">
+                                <thead>
+                                    <tr>
+                                        <th>Journal Date</th>
+                                        <th>Number</th>
+                                        <th>Narration</th>
+                                        <th>Active</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+
+        </div>
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+<!-- Modal -->
+<div class="modal fade" id="journalModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title"><strong><span data-bind="text:journalNumber"></span></strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Journal Details</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+
+                                <div class="mb-4">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Date:</label>
+                                        <input id="date" data-bind="textInput: date" class="form-control" type="date">
+                                    </div>
+                                </div>
+                                <div class="mb-4 mt-4">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Description:</label>
+                                        <input id="description" data-bind="textInput: description" class="form-control" type="text">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <h3 data-bind="text: total, class: totalColor" class="text-center text-bold"></h3>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Journal Entries</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="max-width:200px;width:200px;min-width:200px;">Account</th>
+                                            <th style="max-width: 100px; width: 100px; min-width: 100px; ">Debit</th>
+                                            <th style="max-width: 100px; width: 100px; min-width: 100px; ">Credit</th>
+                                            <th style="max-width:200px;width:200px;min-width:200px;">Narration</th>
+                                            <th style="max-width: 50px; width: 50px; min-width: 50px; ">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: entries">
+                                        <tr>
+                                            <td data-bind="text: accountStr"></td>
+                                            <td data-bind="text: Debit"></td>
+                                            <td data-bind="text: Credit"></td>
+                                            <td data-bind="text: Narration"></td>
+                                            <td class="text-left py-0 align-middle"> <div class="btn-group btn-group-sm"><a id="" class="btn btn-light" href="#" data-bind="click: vm.removeEntry"><i class="fa fa-trash text-info"></i></a></div> </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody>                                        
+                                        <tr style="height:80px !important;">
+                                            <td>
+                                                <div class="input-group form-group bmd-form-group is-filled">
+                                                    <label class="bmd-label-floating"></label>
+                                                    <select id="selectJournalEntryAccount" class="safriSelect2 form-control" data-bind="value: journalEntryAccountId" style="min-width:100%;width:100%; min-height:100px;">
+                                                        <option value="-100">SELECT ENTRY ACCOUNT</option>
+                                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                                        {
+                                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group form-group bmd-form-group is-filled">
+                                                    <label class="bmd-label-floating">Debit:</label>
+                                                    <input id="debit" data-bind="value: debit" class="form-control" type="number">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group form-group bmd-form-group is-filled">
+                                                    <label class="bmd-label-floating">Credit:</label>
+                                                    <input id="credit" data-bind="value: credit" class="form-control" type="number">
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="input-group form-group bmd-form-group is-filled">
+                                                    <label class="bmd-label-floating">Narration:</label>
+                                                    <input id="entryNarration" data-bind="textInput: entryNarration" class="form-control" type="text">
+                                                </div>
+                                            </td>
+                                            <td class="text-left py-0 align-middle"> <div class="btn-group btn-group-sm"><a id="" class="btn btn-light" href="#" data-bind="click: addEntry"><i class="fa fa-plus text-info"></i></a></div> </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="createJournalSubmit" type="button" class="btn btn-light" data-bind="click: vm.saveJournal"><i class="fa fa-save text-info"></i> Save Journal</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        var accounts = JSON.parse('@Html.Raw(Json.Encode(Model.TrialBalanceAccounts))');
+
+        var _jnlEditId = 0;
+
+        var journalsDt = $("#journalsDt").DataTable({
+            responsive: true,
+            autoWidth: false,
+            info: true,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+            lengthMenu: [[-1], ["All"]],
+            ajax: {
+                url: '/api/Journal/GetJournals/',
+                method: 'GET',
+                "dataSrc": "obj"
+            },
+            columns: [
+                {
+                    data: 'DateStr',
+                    searchable: true
+                },
+                {
+                    data: 'Number',
+                    searchable: true
+                },
+                {
+                    data: 'Description',
+                    searchable: true,
+                },
+                {
+                    data: 'IsActive',
+                    className: 'buttonWidth',
+                    searchable: true,
+                    render: function (data,type,full,meta) {
+                        if (data === true)
+                            return '<div class="icheck-success d-inline"> <input onclick="deactivate(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                        else
+                            return '<div class="icheck-success d-inline"> <input onclick="activate(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                    }
+                },
+                {
+                    data: 'Id',
+                    searchable: true,
+                    className: 'buttonWidth',
+                    render: function (data, type, full, meta) {
+
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="viewJournal(this.id)"><i class="fas fa-balance-scale text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+        function deactivate(id) {
+            var url = `/api/Journal/DeactivateJournal/${id}`;
+            SafriSoftGetRequest(url, (response) => {
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                    journalsDt.ajax.reload();
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+        function activate(id) {
+            var url = `/api/Journal/ActivateJournal/${id}`;
+            SafriSoftGetRequest(url, (response) => {
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                    journalsDt.ajax.reload();
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+        }
+
+        function resetInputs() {
+            vm.entries([]);
+            vm.journalEntryAccountId(-100);
+            vm.debit(0);
+            vm.credit(0);
+            vm.entryNarration('');
+            vm.description('');
+            vm.date('');
+            vm.journalNumber('');
+            _jnlEditId = 0;
+            $('#selectJournalEntryAccount').trigger('change.select2');
+        }
+
+        function createJournalModal() {
+            resetInputs();
+            $('#journalModal').modal('show');
+        }
+
+        function customer(id, name, address, cell, email) {
+            this.name = name;
+            this.id = id;
+            this.address = address;
+            this.cell = cell;
+            this.email = email;
+        }
+
+        function viewJournal(id) {
+            resetInputs();
+            var url = `/api/Journal/GetJournalEntries/${id}`;
+            SafriSoftGetRequest(url, (response) => {
+                _jnlEditId = id;
+
+                if (response.obj.length > 0) {
+                    vm.journalNumber(response.obj[0].JournalNumber);
+                    vm.date(response.obj[0].DateStr);
+                    vm.description(response.obj[0].Description);
+
+                    for (var i = 0; i < response.obj.length; i++) {
+                        var newEntry = new entry(response.obj[i].AccountId, response.obj[i].Debit, response.obj[i].Credit, response.obj[i].Narration);
+                        vm.entries.push(newEntry);
+                    }
+                }
+                $('#journalModal').modal('show');
+            });
+
+        }
+
+        function entry(accountId, debit, credit, narration) {
+
+            var entriesLength = vm.entries().length;
+            var account = accounts.find(x => x.Id == accountId);
+            this.id = entriesLength + 1;
+            this.accountStr = account.AccountNumber + ' - ' + account.AccountName;
+            this.AccountId = parseFloat(accountId);
+            this.Debit = debit;
+            this.Credit = credit;
+            this.Narration = narration;
+
+            credit *= -1;
+
+            var total = (debit + credit) + vm.total();
+
+            vm.total(total);
+
+            if (total == 0) {
+                vm.totalColor('text-success');
+            } else {
+                vm.totalColor('text-danger');
+            }
+        }
+
+        var JournalViewModel = function () {
+            var self = this;
+            self.journalNumber = ko.observable('');
+            self.date = ko.observable();
+            self.description = ko.observable('');
+            self.journalEntryAccountId = ko.observable(-100);
+            self.debit = ko.observable(0);
+            self.credit = ko.observable(0);
+            self.entryNarration = ko.observable('');
+            self.amount = ko.observable();
+            self.entries = ko.observableArray([]);
+            self.total = ko.observable(0);
+            self.totalColor = ko.observable('text-success');
+
+            self.addEntry = function (e) {
+                var debit = 0;
+                var credit = 0;
+
+                if (self.debit() != null && self.debit() != '') { debit = self.debit(); }
+                if (self.credit() != null && self.credit() != '') { credit = self.credit(); }
+
+                var entryItem = new entry(self.journalEntryAccountId(), parseFloat(debit), parseFloat(credit), self.entryNarration());
+
+                self.entries.push(entryItem);
+
+                self.journalEntryAccountId(-100);
+                self.debit(0);
+                self.credit(0);
+                self.entryNarration('');
+                $('#selectJournalEntryAccount').trigger('change.select2');
+            }
+
+            self.removeEntry = function (e) {
+                self.entries.remove(e);
+                debugger;
+                var debit = e.Debit;
+                var credit = e.Credit * -1;
+                var total = self.total() - debit - credit;
+                self.total(total);
+            }
+
+            self.saveJournal = function (e) {
+
+                if (self.total() != 0) {
+                    toastr.error('Journal does not balance');
+                    return;
+                }
+
+                if (self.date() == '') {
+                    toastr.error('Please complete journal date');
+                    return;
+                }
+
+                if (self.description() == '') {
+                    toastr.error('Please complete journal description');
+                    return;
+                }
+
+                if (self.entries().length == 0) {
+                    toastr.error('Journal requires entries');
+                    return;
+                }
+
+                var vm = {
+                    Id: _jnlEditId,
+                    Date: self.date(),
+                    Description: self.description(),
+                    Entries: ko.toJS(self.entries())
+                }
+                console.log(vm);
+                var url = '/api/Journal/SaveJournal';
+
+                SafriSoftPostJsonRequest(url, vm, (response) => {
+                    if (response.Success == true) {
+                        toastr.success(response.Message);
+                        $('#journalModal').modal('hide');
+                        journalsDt.ajax.reload();
+                    } else {
+                        toastr.error(response.Message);
+                    }
+                });
+            }
+
+
+        }
+
+        var vm = new JournalViewModel();
+
+        ko.applyBindings(vm);
+
+
+
+    </script>
+
+}

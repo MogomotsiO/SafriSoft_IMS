@@ -20,58 +20,139 @@
     <!-- Main content -->
     <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
-                    <a href="#" onclick="generateCustomerReport()">
-                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                            <span class="info-box-icon bg-info"><i class="fas fa-user-friends"></i></span>
-
-                            <div class="info-box-content">
-                                <span class="info-box-number">Customer Report</span>
-                                <span class="info-box-text text-wrap">Generate customer report.</span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                    </a>
+            <div class="card">
+                <div class="card-header card-header-info">
+                    <h4 class="card-title"><span class="fas fa-file-invoice"></span> Reports</h4>
                 </div>
-                <div class="col-md-6">
-                    <a href="#" onclick="generateProductReport()">
-                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                            <span class="info-box-icon bg-info"><i class="fas fa-dolly"></i></span>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-inf"><span class="fa fa-pie-chart"></span> Accounting</p>
+                            <hr class="text-info" />
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateBalanceSheetReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
 
-                            <div class="info-box-content">
-                                <span class="info-box-number">Inventory Report</span>
-                                <span class="info-box-text text-wrap">Generate report to see how many items you have available and how many you've sold.</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Balance Sheet</span>
+                                            <span class="info-box-text text-wrap">Generate balance sheet report.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
                             </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" onclick="generateOrderReport()">
-                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                            <span class="info-box-icon bg-info"><i class="fas fa-shopping-cart"></i></span>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateCustomerReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
 
-                            <div class="info-box-content">
-                                <span class="info-box-number">Orders Report</span>
-                                <span class="info-box-text text-wrap">Generate report to see the number of orders and their statuses.</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Income Statement</span>
+                                            <span class="info-box-text text-wrap">Generate income statement report.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
                             </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" onclick="generateSystemReport()">
-                        <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                            <span class="info-box-icon bg-info"><i class="fa fa-exclamation"></i></span>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateCustomerReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
 
-                            <div class="info-box-content">
-                                <span class="info-box-number">Attention</span>
-                                <span class="info-box-text text-wrap">Generate report to view system notifications.</span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">VAT Report</span>
+                                            <span class="info-box-text text-wrap">Generate VAT report.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
                             </div>
-                            <!-- /.info-box-content -->
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateCustomerReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Creditors Report</span>
+                                            <span class="info-box-text text-wrap">Generate creditors report.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateCustomerReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Debtors Report</span>
+                                            <span class="info-box-text text-wrap">Generate debtors report.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </a>
+                        <div class="col-md-6">
+                            <p class="text-inf"><span class="fa fa-bar-chart"></span> Inventory</p>
+                            <hr class="text-info"/>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateCustomerReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-user-friends"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Customer Report</span>
+                                            <span class="info-box-text text-wrap">Generate customer report.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateProductReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-dolly"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Inventory Report</span>
+                                            <span class="info-box-text text-wrap">Generate report to see how many items you have available and how many you've sold.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateOrderReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fas fa-shopping-cart"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Orders Report</span>
+                                            <span class="info-box-text text-wrap">Generate report to see the number of orders and their statuses.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-12">
+                                <a href="#" onclick="generateSystemReport()">
+                                    <div class="info-box mt-3 bg-gradient-white cursor-pointer">
+                                        <span class="info-box-icon bg-light"><i class="fa fa-exclamation"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number">Attention</span>
+                                            <span class="info-box-text text-wrap">Generate report to view system notifications.</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
 
@@ -97,7 +178,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <button id="excel-download-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="customer-reports-table" class="table table-bordered table-striped">
+                        <table id="customer-reports-table" class="table table-bordered ">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -140,7 +221,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <button id="excel-download-lock-2" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="products-reports-table" class="table table-bordered table-striped">
+                        <table id="products-reports-table" class="table table-bordered ">
                             <thead>
                                 <tr>
                                     <th>Code</th>
@@ -190,7 +271,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <button id="excel-download-lock-3" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="orders-reports-table" class="table table-bordered table-striped">
+                        <table id="orders-reports-table" class="table table-bordered ">
                             <thead>
                                 <tr>
                                     <th>Order #</th>
@@ -236,7 +317,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <button id="excel-download-lock-4" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="system-reports-table" class="table table-bordered table-striped">
+                        <table id="system-reports-table" class="table table-bordered ">
                             <thead>
                                 <tr>
                                     <th>Order #</th>
@@ -264,6 +345,103 @@
     <!-- /.modal-dialog -->
 </div>
 
+<div class="modal fade" id="balanceSheetReportModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title"><strong>Balance Sheet</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Filter</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">From</label>
+                                            <input id="start" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">To</label>
+                                            <input id="end" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating"></label>
+                                            <select id="selectView" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                                <option value="-100">SELECT VIEW</option>
+                                                <option value="1">Yearly</option>
+                                                <option value="2">Monthly</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <button id="" type="submit" class="btn btn-block btn-outline-info" onclick="runBalanceSheet()">Run Balance Sheet</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Balance Sheet</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <table id="balanceSheetTable" class="table table-bordered ">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Number</th>
+                                            <th>Narration</th>
+                                            <th>Active</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
 <script type="text/javascript">
     function generateCustomerReport() {
         $('#customer-reports').modal('show');
@@ -281,8 +459,21 @@
         $('#system-reports').modal('show');
     }
 
+    function generateBalanceSheetReport() {
+        $('#balanceSheetReportModal').modal('show');
+    }
+
 </script>
 
 @section scripts{
     <script src="~/Scripts/Report/ReportsDataTables.js"></script>
+
+
+    <script type="text/javascript">
+
+
+
+    </script>
+
+
 }

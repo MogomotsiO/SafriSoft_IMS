@@ -11,5 +11,6 @@ namespace SafriSoftv1._3.Models.Data
         public string Description { get; set; }
         public double Percentage { get; set; }
         public int TaxAccountId { get; set; }
+        public bool IsGloabl { get; set; }
     }
 }

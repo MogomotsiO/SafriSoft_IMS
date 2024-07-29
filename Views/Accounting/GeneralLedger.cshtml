@@ -30,38 +30,38 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-6" style="padding:0px !important;">
-                        <div class="card">
-                            <div class="card-header card-header-info">
-                                <h4 class="card-title"><i class="fa fa-file"></i> Filter General Ledger</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="mb-1 mt-3 col-md-5">
-                                        <div class="input-group form-group bmd-form-group is-filled">
-                                            <label class="bmd-label-floating">Gl From</label>
-                                            <input id="start" class="form-control" type="date">
-                                        </div>
+                <div class="col-md-2" style="padding:0px !important;">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h5 class="card-title"><i class="fas fa-coins"></i> Filter</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="mb-1 mt-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Gl From</label>
+                                        <input id="start" class="form-control" type="date">
                                     </div>
-                                    <div class="mb-1 mt-3 col-md-5">
-                                        <div class="input-group form-group bmd-form-group is-filled">
-                                            <label class="bmd-label-floating">Gl To</label>
-                                            <input id="end" class="form-control" type="date">
-                                        </div>
+                                </div>
+                                <div class="mb-1 mt-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Gl To</label>
+                                        <input id="end" class="form-control" type="date">
                                     </div>
-                                    <div class="mb-1 mt-3 col-md-2">
-                                        <button id="" type="submit" class="btn btn-outline-info" onclick="refreshGeneralLedgerDT()">Refresh</button>
-                                    </div>
+                                </div>
+                                <div class="mb-1 mt-3 col-md-12">
+                                    <button id="" type="submit" class="btn btn-block btn-outline-info" onclick="refreshGeneralLedgerDT()">Refresh</button>
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
+                </div>
+
+                <div class="col-md-10">
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-coins"></i> General Ledger</h4>
+                            <h5 class="card-title"><i class="fas fa-coins"></i> General Ledger</h5>
                         </div>
                         <div class="card-body">
                             @*<span class="text-right mr-1"><button id="CreateGeneralLedger" type="submit" class="btn btn-light"><i class="fa fa-edit text-info"></i> Create</button></span>*@
@@ -72,7 +72,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="generalLedgerTable" class="table table-bordered table-striped">
+                            <table id="generalLedgerTable" class="table table-bordered ">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -89,7 +89,6 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
                 <!-- /.col -->
             </div>
@@ -149,7 +148,7 @@
                 </button>
             </div>
             <div class="modal-body login-card-body">
-                <table id="generalLedgerResultsTable" class="table table-bordered table-striped">
+                <table id="generalLedgerResultsTable" class="table table-bordered ">
                     <thead>
                         <tr>
                             <th>Message</th>
@@ -179,7 +178,7 @@
                 </button>
             </div>
             <div class="modal-body login-card-body">
-                <table id="importFromSafriSoftTB" class="table table-bordered table-striped">
+                <table id="importFromSafriSoftTB" class="table table-bordered ">
                     <thead>
                         <tr>
                             <th>Select</th>
