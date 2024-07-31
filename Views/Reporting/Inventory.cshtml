@@ -3,6 +3,17 @@
     ViewBag.Title = "InventoryReporting";
 }
 
+<style>
+    .balances-width{
+        width:120px;
+    }
+
+    .total-row{
+        border-top:1px solid #000 !important;
+        border-bottom:1px solid #000 !important;
+    }
+</style>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -385,7 +396,7 @@
                                     <div class="mb-1 mt-3 col-md-12">
                                         <div class="input-group form-group bmd-form-group is-filled">
                                             <label class="bmd-label-floating"></label>
-                                            <select id="selectView" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                            <select id="type" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
                                                 <option value="-100">SELECT VIEW</option>
                                                 <option value="1">Yearly</option>
                                                 <option value="2">Monthly</option>
@@ -415,15 +426,12 @@
 
                             <div class="card-body" style="display: block;">
                                 <table id="balanceSheetTable" class="table table-bordered ">
-                                    <thead>
+                                    @*<thead>
                                         <tr>
                                             <th></th>
-                                            <th>Number</th>
-                                            <th>Narration</th>
-                                            <th>Active</th>
-                                            <th>Actions</th>
+                                            <th></th>
                                         </tr>
-                                    </thead>
+                                    </thead>*@
 
                                 </table>
                             </div>
@@ -471,8 +479,121 @@
 
     <script type="text/javascript">
 
+        function runBalanceSheet() {
 
+            var start = $('#start').val();
+            var end = $('#end').val();
+            var type = $('#type').val();
 
+            var url = `/api/Accounting/RunBalanceSheetYearly`;
+
+            var data = {
+                Start: start,
+                End: end,
+                Type: type
+            }
+
+            var coloumns = [];
+
+            var firstCol = {
+                data: 'Name',
+                searchable: true,
+                render: function (data, type, full, meta) {
+
+                    if (full.IsHeading == true || full.IsSubtotal == true) {
+                        return `<strong>${data}</strong>`;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+
+            coloumns.push(firstCol);
+
+            SafriSoftPostRequest(url, data, (response) => {
+
+                console.log(response);
+
+                for (var i = 0; i < response.obj.Coloumns.length; i++) {
+                    var dataCol = 'Balances.' + response.obj.Coloumns[i];
+                    var nextCol = {
+                        title: response.obj.Coloumns[i],
+                        searchable: true,
+                        className: 'text-right balances-width',
+                        searchable: true,
+                        data: dataCol,
+                        render: function (data, type, full, meta) {
+
+                            if (full.IsHeading == false) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+                                
+                            } else {
+                                return '';
+                            }                            
+                        },
+                        createdCell: function (cell, data, full, dataIndex) {
+
+                            if (full.IsSubtotal == true) {
+                                $(cell).addClass('total-row');
+                            }
+                        }
+                    }
+                    coloumns.push(nextCol);
+                }
+
+                if ($.fn.DataTable.isDataTable('#balanceSheetTable')) {
+                    $('#balanceSheetTable').dataTable().fnClearTable();
+                    $('#balanceSheetTable').dataTable().fnDestroy();
+                    $('#balanceSheetTable').html('');
+                }               
+
+                var balanceSheetTable = $("#balanceSheetTable").DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    info: true,
+                    ordering: false,
+                    destroy: true,
+                    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+                    buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+                    lengthMenu: [[-1], ["All"]],
+                    columns: coloumns
+        });
+
+                balanceSheetTable.clear();
+                balanceSheetTable.rows.add(response.obj.Items);
+                balanceSheetTable.draw();
+            });
+        }
+        
+
+        
+        //{
+        //    data: 'Amount',
+        //        className: 'text-right',
+        //            searchable: true,
+        //                render: function (data, type, full, meta) {
+
+        //                    if (type === 'display')
+        //                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+        //                    else
+        //                        return data;
+        //                }
+        //},
+        //{
+        //    data: 'VatAmount',
+        //        className: 'text-right',
+        //            searchable: true,
+        //                render: function (data, type, full, meta) {
+
+        //                    if (type === 'display')
+        //                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+        //                    else
+        //                        return data;
+        //                }
+        //},
     </script>
 
 

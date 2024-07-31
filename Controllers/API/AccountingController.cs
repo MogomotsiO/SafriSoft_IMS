@@ -902,6 +902,37 @@ namespace SafriSoftv1._3.Controllers.API
 
             return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
         }
+
+        [HttpPost, Route("RunBalanceSheetYearly")]
+        public IHttpActionResult RunBalanceSheetYearly(BalanceSheetViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                if(vm.Type == 1)
+                {
+                    result.obj = service.RunBalanceSheetYearly(vm, organisationId);
+                }
+                else
+                {
+                    result.obj = service.RunBalanceSheetMonthly(vm, organisationId);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
     }
 
 

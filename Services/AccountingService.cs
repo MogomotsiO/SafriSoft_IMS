@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Web;
@@ -527,6 +528,41 @@ namespace SafriSoftv1._3.Services
 
             return jeGls;
         }
+
+        public List<GeneralLedger> GetJournalEntriesAsGlsByMonth(int year, int month, int organisationId)
+        {
+            var jeGls = new List<GeneralLedger>();
+
+            var journals = db.Journals.Where(x => x.Date.Year == year && x.Date.Month == month && x.OrganisationId == organisationId && x.IsActive == true).ToList();
+
+            foreach (var journal in journals)
+            {
+                var entries = db.JournalEntries.Where(x => x.JournalId == journal.Id).ToList();
+
+                foreach (var entry in entries)
+                {
+                    var account = db.TrialBalanceAccounts.Where(x => x.Id == entry.AccountId).FirstOrDefault();
+
+                    var jeGl = new GeneralLedger()
+                    {
+                        AccountNumber = account.AccountNumber,
+                        AccountName = $"{journal.Number} - {account.AccountNumber} - {account.AccountName}",
+                        AccountDescription = $"{journal.Number} - {entry.Narration}",
+                        AccountDate = journal.Date,
+                        Month = journal.Date.Month,
+                        Year = journal.Date.Year,
+                        Debit = entry.Debit,
+                        Credit = entry.Credit,
+                        OrganisationId = organisationId,
+                    };
+
+                    jeGls.Add(jeGl);
+                }
+            }
+
+            return jeGls;
+        }
+
         public Result GetBalanceSheetAccounts(int organisationId)
         {
             var result = new Result();
@@ -1127,8 +1163,10 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public List<BalanceSheetYearly> RunBalanceSheetYearly(BalanceSheetViewModel vm, int organisation)
+        public BalanceSheetYearlyContainer RunBalanceSheetYearly(BalanceSheetViewModel vm, int organisation)
         {
+            var container = new BalanceSheetYearlyContainer();
+
             var data = new List<BalanceSheetYearly>();
 
             var startYear = vm.Start.Year;
@@ -1154,72 +1192,125 @@ namespace SafriSoftv1._3.Services
 
             var subtotals = data.Where(x => x.IsSubtotal).ToList();
 
+            var dummyBalances = new Dictionary<string, double>();
+
             while (startYear <= endYear)
             {
-                foreach(var account in accountsRequireBalance)
+                container.Coloumns.Add(startYear.ToString());
+
+                dummyBalances.Add(startYear.ToString(), 0);
+
+                foreach (var account in accountsRequireBalance)
                 {
-                    var link = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == account.Id).FirstOrDefault();
+                    var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == account.Id).ToList();
 
-                    if (link != null)
+                    var balance = 0.0;
+
+                    foreach(var link in links)
                     {
-                        var balance = GetTrialBalanceAccountBalanceByYear(startYear, link.TbAccountId, organisation);
+                        balance += GetTrialBalanceAccountBalanceByYear(startYear, link.TbAccountId, organisation);
+                    }
 
-                        var accountData = data.Where(x => x.Id == link.BsAccountId).FirstOrDefault();
-
-                        if (counter == 1)
-                        {
-                            accountData.YearOne = $"{startYear}";
-                            accountData.YearOneBalance = balance;
-                        }
-                        else if (counter == 2)
-                        {
-                            accountData.YearTwo = $"{startYear}";
-                            accountData.YearTwoBalance = balance;
-                        }
-                        else if (counter == 3)
-                        {
-                            accountData.YearThree = $"{startYear}";
-                            accountData.YearThreeBalance = balance;
-                        }
-                    }                    
+                    account.Balances.Add(startYear.ToString(), balance);
                 }
                 
                 foreach(var subTot in subtotals)
                 {
-                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).ToList();
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).Select(x => x.Balances).ToList();
 
-                    if (counter == 1)
-                    {
-                        subTot.YearOne = $"{startYear}";
-                        subTot.YearOneBalance = subTotAccounts.Sum(x => x.YearOneBalance);
-                    }
-                    else if (counter == 2)
-                    {
-                        subTot.YearTwo = $"{startYear}";
-                        subTot.YearTwoBalance = subTotAccounts.Sum(x => x.YearOneBalance); ;
-                    }
-                    else if (counter == 3)
-                    {
-                        subTot.YearThree = $"{startYear}";
-                        subTot.YearThreeBalance = subTotAccounts.Sum(x => x.YearOneBalance); ;
-                    }
+                    var yearBalances = subTotAccounts.Where(x => x.ContainsKey(startYear.ToString())).SelectMany(x => x.Values);
+
+                    subTot.Balances.Add(startYear.ToString(), yearBalances.Sum());
                 }
 
                 startYear += 1;
                 counter++;
             }
 
-            return data;
+            foreach(var acc in data.Where(x => x.IsHeading))
+            {
+                acc.Balances = dummyBalances;
+            }
+
+            container.Items = data;
+
+            return container;
         }
 
-        public List<BalanceSheetMonthly> RunBalanceSheetMonthly(BalanceSheetViewModel vm, int organisation)
+        public BalanceSheetYearlyContainer RunBalanceSheetMonthly(BalanceSheetViewModel vm, int organisation)
         {
-            var data = new List<BalanceSheetMonthly>();
+            var container = new BalanceSheetYearlyContainer();
 
+            var data = new List<BalanceSheetYearly>();
 
+            var start = new DateTime(vm.Start.Year, vm.Start.Month, 1);
+            var end = new DateTime(vm.End.Year, vm.End.Month, 1);
 
-            return data;
+            var counter = 1;
+
+            var accounts = db.ReportBalanceSheetAccounts.Where(x => x.OrganisationId == organisation || x.IsGlobal).OrderBy(x => x.Index).ToList();
+
+            foreach (var account in accounts)
+            {
+                data.Add(new BalanceSheetYearly()
+                {
+                    Id = account.Id,
+                    Name = account.Name,
+                    IsHeading = account.IsHeading,
+                    IsSubtotal = account.IsSubtotal,
+                    SubtotalAccountId = account.SubtotalAccountId
+                });
+            }
+
+            var accountsRequireBalance = data.Where(x => x.IsHeading == false && x.IsSubtotal == false).ToList();
+
+            var subtotals = data.Where(x => x.IsSubtotal).ToList();
+
+            var dummyBalances = new Dictionary<string, double>();
+
+            while (start <= end)
+            {
+                container.Coloumns.Add(start.Month.ToString() + " - " + start.Year.ToString());
+
+                dummyBalances.Add(start.Month.ToString() + " - " + start.Year.ToString(), 0);
+
+                foreach (var account in accountsRequireBalance)
+                {
+                    var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == account.Id).ToList();
+
+                    var balance = 0.0;
+
+                    foreach (var link in links)
+                    {
+                        balance += GetTrialBalanceAccountBalanceByMonth(start.Year, start.Month, link.TbAccountId, organisation);
+                    }
+
+                    account.Balances.Add(start.Month.ToString() + " - " + start.Year.ToString(), balance);
+                }
+
+                foreach (var subTot in subtotals)
+                {
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).Select(x => x.Balances).ToList();
+
+                    var yearBalances = subTotAccounts.Where(x => x.ContainsKey(start.Month.ToString() + " - " + start.Year.ToString())).SelectMany(x => x.Values);
+
+                    subTot.Balances.Add(start.Month.ToString() + " - " + start.Year.ToString(), yearBalances.Sum());
+                }
+
+                start = start.AddMonths(1);
+                counter++;
+            }
+
+            foreach (var acc in data.Where(x => x.IsHeading))
+            {
+                acc.Balances = dummyBalances;
+            }
+
+            container.Items = data;
+
+            return container;
         }
+
 
         //public Result GetLinkedIsAccounts()
         //{
@@ -1256,12 +1347,31 @@ namespace SafriSoftv1._3.Services
 
             gls.AddRange(jeGls.Where(x => x.AccountNumber == tbItem.AccountNumber).ToList());
 
-            var total = 0.00;
+            foreach (var glAccount in gls)
+            {
+                balance += glAccount.Debit;
+                balance -= glAccount.Credit;
+            }
+
+            return balance;
+        }
+
+        public double GetTrialBalanceAccountBalanceByMonth(int year, int month, int accountId, int organisationId)
+        {
+            double balance = 0.0;
+
+            var tbItem = db.TrialBalanceAccounts.Where(x => x.Id == accountId).FirstOrDefault();
+
+            var gls = db.GeneralLedgers.Where(x => x.AccountNumber == tbItem.AccountNumber && x.AccountDate.Year == year && x.AccountDate.Month == month && x.OrganisationId == organisationId).ToList();
+
+            var jeGls = GetJournalEntriesAsGlsByMonth(year, month, organisationId);
+
+            gls.AddRange(jeGls.Where(x => x.AccountNumber == tbItem.AccountNumber).ToList());
 
             foreach (var glAccount in gls)
             {
-                total += glAccount.Debit;
-                total -= glAccount.Credit;
+                balance += glAccount.Debit;
+                balance -= glAccount.Credit;
             }
 
             return balance;

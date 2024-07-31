@@ -1,6 +1,7 @@
 ﻿using SafriSoftv1._3.Models.Data;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -47,6 +48,12 @@ namespace SafriSoftv1._3.Models.ViewModels
         public int Type { get; set; }
     }
 
+    public class BalanceSheetYearlyContainer
+    {
+        public List<string> Coloumns { get; set; } = new List<string>();
+        public List<BalanceSheetYearly> Items { get; set; }
+    }
+
     public class BalanceSheetYearly
     {
         public int Id { get; set; }
@@ -54,6 +61,7 @@ namespace SafriSoftv1._3.Models.ViewModels
         public bool IsHeading { get; set; }
         public bool IsSubtotal { get; set; }
         public int SubtotalAccountId { get; set; }
+        public Dictionary<string, double> Balances { get; set; } = new Dictionary<string, double>();
         public string YearOne { get; set; }
         public double YearOneBalance { get; set; }
         public string YearTwo { get; set;}
