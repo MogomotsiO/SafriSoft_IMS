@@ -1,4 +1,5 @@
 ﻿using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.SystemModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,7 @@ namespace SafriSoftv1._3.Models.ViewModels
         public string SubtotalAccountName { get; set; }
         public bool IsSubtotal { get; set; }
         public bool IsHeading { get; set; }
+        public bool IsEmptySpace { get; set; }
         public int Index { get; set; }
     }
 
@@ -38,5 +40,29 @@ namespace SafriSoftv1._3.Models.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public double Balance { get; set; }
+    }
+
+    public class IncomeStatementViewModel
+    {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public ReportViewType Type { get; set; }
+    }
+
+    public class IncomeStatementContainer
+    {
+        public List<string> Coloumns { get; set; } = new List<string>();
+        public List<IncomeStatement> Items { get; set; }
+    }
+
+    public class IncomeStatement
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool IsHeading { get; set; }
+        public bool IsSubtotal { get; set; }
+        public bool IsEmptySpace { get; set; }
+        public int SubtotalAccountId { get; set; }
+        public Dictionary<string, double> Balances { get; set; } = new Dictionary<string, double>();
     }
 }

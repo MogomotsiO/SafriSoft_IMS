@@ -1,5 +1,6 @@
 ﻿using ExcelDataReader;
 using SafriSoftv1._3.Models;
+using SafriSoftv1._3.Models.SystemModels;
 using SafriSoftv1._3.Models.ViewModels;
 using SafriSoftv1._3.Services;
 using System;
@@ -903,8 +904,8 @@ namespace SafriSoftv1._3.Controllers.API
             return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
         }
 
-        [HttpPost, Route("RunBalanceSheetYearly")]
-        public IHttpActionResult RunBalanceSheetYearly(BalanceSheetViewModel vm)
+        [HttpPost, Route("RunBalanceSheet")]
+        public IHttpActionResult RunBalanceSheet(BalanceSheetViewModel vm)
         {
             var result = new Result();
 
@@ -915,7 +916,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var service = new AccountingService();
 
-                if(vm.Type == 1)
+                if(vm.Type == ReportViewType.Yearly)
                 {
                     result.obj = service.RunBalanceSheetYearly(vm, organisationId);
                 }
@@ -924,6 +925,109 @@ namespace SafriSoftv1._3.Controllers.API
                     result.obj = service.RunBalanceSheetMonthly(vm, organisationId);
                 }
                 
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpPost, Route("RunIncomeStatement")]
+        public IHttpActionResult RunIncomeStatement(IncomeStatementViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                if (vm.Type == ReportViewType.Yearly)
+                {
+                    result.obj = service.RunIncomeStatementYearly(vm, organisationId);
+                }
+                else
+                {
+                    result.obj = service.RunIncomeStatementMonthly(vm, organisationId);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpPost, Route("GetDebtorsTransactions")]
+        public IHttpActionResult GetDebtorsTransactions(ReportParametersViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetDebtorsTransactions(vm, organisationId);
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpPost, Route("GetCreditorsTransactions")]
+        public IHttpActionResult GetCreditorsTransactions(ReportParametersViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetCreditorsTransactions(vm, organisationId);
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpPost, Route("GetVatTransactions")]
+        public IHttpActionResult GetVatTransactions(ReportParametersViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.GetVatTransactions(vm, organisationId);
+
             }
             catch (Exception ex)
             {

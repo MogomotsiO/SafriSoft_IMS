@@ -1,4 +1,5 @@
-﻿using SafriSoftv1._3.Models;
+﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Database;
+using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
 using SafriSoftv1._3.Models.ViewModels;
 using System;
@@ -36,11 +37,11 @@ namespace SafriSoftv1._3.Services
                 
                 var account = db.TrialBalanceAccounts.Where(x => x.Id == item.AccountId).FirstOrDefault();
                 
-                var vatAccount = db.TrialBalanceAccounts.Where(x => x.Id == item.VatAccountId).FirstOrDefault();
-                
                 var bankAccount = db.TrialBalanceAccounts.Where(x => x.Id == item.BankAccountId).FirstOrDefault();
 
                 var vat = db.VatOptions.Where(x => x.Id == item.VatOptionId).FirstOrDefault();
+
+                var vatAccount = db.TrialBalanceAccounts.Where(x => x.Id == vat.TaxAccountId).FirstOrDefault();
 
                 vm.Add(new ExpensesViewModelItems
                 {
@@ -48,6 +49,7 @@ namespace SafriSoftv1._3.Services
                     Amount = item.Amount,
                     Name = item.Name,
                     Category = category.Name,
+                    Type = item.Type.ToString(),
                     AccountName = $"{account.AccountNumber} - {account.AccountName}",
                     VatAccountName = $"{vatAccount.AccountNumber} - {vatAccount.AccountName}",
                     BankAccountName = $"{bankAccount.AccountNumber} - {bankAccount.AccountName}",
@@ -93,9 +95,9 @@ namespace SafriSoftv1._3.Services
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"{vm.Name} - {account.AccountName}",
+                            AccountName = $"EXP - {vm.Name} - {account.AccountName}",
                             AccountNumber = account.AccountNumber,
-                            Description = $"{vm.Name}",
+                            Description = $"EXP - {vm.Name}",
                             Debit = vm.Amount > 0 ? vm.Amount : 0,
                             Credit = vm.Amount < 0 ? vm.Amount : 0,
                             Date = vm.Date,
@@ -123,9 +125,9 @@ namespace SafriSoftv1._3.Services
 
                             var gl = new GlAccountViewModel
                             {
-                                AccountName = $"{vm.Name} - {vatAccount.AccountName}",
+                                AccountName = $"EXP - {vm.Name} - {vatAccount.AccountName}",
                                 AccountNumber = vatAccount.AccountNumber,
-                                Description = $"{vm.Name}",
+                                Description = $"EXP - {vm.Name}",
                                 Debit = vatAmount > 0 ? vatAmount : 0,
                                 Credit = vatAmount < 0 ? vatAmount : 0,
                                 Date = vm.Date,
@@ -134,6 +136,25 @@ namespace SafriSoftv1._3.Services
                             };
 
                             var glRes = aSvc.CreateUpdateGlAccount(gl, orgId);
+
+                            if(glRes.Success == true)
+                            {
+                                var vt = new VatTransaction()
+                                {
+                                    Date = vm.Date,
+                                    TypeId = vatOption.Id,
+                                    Account = vatAccount.AccountNumber,
+                                    Description = $"EXP - {vm.Name}",
+                                    Exclusive = vm.Amount,
+                                    Inclusive = vm.Amount + vatAmount,
+                                    TaxAmount = vatAmount,
+                                    Inserted = DateTime.Now,
+                                    Updated = DateTime.Now,
+                                    OrganisationId = orgId,
+                                };
+
+                                var vtRes = aSvc.SaveVatTransaction(vt, orgId);
+                            }
                         }
                     }
                     
@@ -146,17 +167,16 @@ namespace SafriSoftv1._3.Services
                     var vatOption = db.VatOptions.Where(x => x.Id == vm.VatOptionId).FirstOrDefault();
 
                     var totalAmount = vm.Amount + (vm.Amount * (vatOption.Percentage / 100));
-                    totalAmount *= -1;
-
+                    
                     if (bankAccount != null)
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"{vm.Name} - {bankAccount.AccountName}",
+                            AccountName = $"EXP - {vm.Name} - {bankAccount.AccountName}",
                             AccountNumber = bankAccount.AccountNumber,
-                            Description = $"{vm.Name}",
-                            Debit = totalAmount > 0 ? totalAmount : 0,
-                            Credit = totalAmount < 0 ? totalAmount : 0,
+                            Description = $"EXP - {vm.Name}",
+                            Debit = 0,
+                            Credit = totalAmount,
                             Date = vm.Date,
                             Month = vm.Date.Month,
                             Year = vm.Date.Year,
@@ -177,6 +197,145 @@ namespace SafriSoftv1._3.Services
             }
 
 
+
+            return result;
+        }
+
+        public Result SaveIncome(ExpensesViewModelItem vm, int orgId)
+        {
+            var result = new Result();
+
+            var aSvc = new AccountingService();
+
+            var item = new Expense
+            {
+                Date = vm.Date,
+                Name = vm.Name,
+                Amount = vm.Amount,
+                CategoryId = vm.CategoryId,
+                AccountId = vm.AccountId,
+                VatAccountId = vm.VatAccountId,
+                VatOptionId = vm.VatOptionId,
+                BankAccountId = vm.BankAccountId,
+                OrganisationId = orgId,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+            };
+
+            db.Expenses.Add(item);
+
+            var res = db.SaveChanges();
+
+            if (res > 0)
+            {
+                if (vm.AccountId != -100)
+                {
+                    var account = db.TrialBalanceAccounts.Where(x => x.Id == vm.AccountId).FirstOrDefault();
+
+                    if (account != null)
+                    {
+                        var gl = new GlAccountViewModel
+                        {
+                            AccountName = $"INC - {vm.Name} - {account.AccountName}",
+                            AccountNumber = account.AccountNumber,
+                            Description = $"INC - {vm.Name}",
+                            Debit = 0,
+                            Credit = vm.Amount,
+                            Date = vm.Date,
+                            Month = vm.Date.Month,
+                            Year = vm.Date.Year,
+                        };
+
+                        var glRes = aSvc.CreateUpdateGlAccount(gl, orgId);
+                    }
+
+
+                }
+
+                if (vm.VatOptionId != -100)
+                {
+                    var vatOption = db.VatOptions.Where(x => x.Id == vm.VatOptionId).FirstOrDefault();
+
+                    if (vatOption != null)
+                    {
+                        var vatAccount = db.TrialBalanceAccounts.Where(x => x.Id == vatOption.TaxAccountId).FirstOrDefault();
+
+                        if (vatAccount != null)
+                        {
+                            var vatAmount = vm.Amount * (vatOption.Percentage / 100);
+
+                            var gl = new GlAccountViewModel
+                            {
+                                AccountName = $"INC - {vm.Name} - {vatAccount.AccountName}",
+                                AccountNumber = vatAccount.AccountNumber,
+                                Description = $"INC - {vm.Name}",
+                                Debit = 0,
+                                Credit = vatAmount,
+                                Date = vm.Date,
+                                Month = vm.Date.Month,
+                                Year = vm.Date.Year,
+                            };
+
+                            var glRes = aSvc.CreateUpdateGlAccount(gl, orgId);
+
+                            if (glRes.Success == true)
+                            {
+                                var vt = new VatTransaction()
+                                {
+                                    Date = vm.Date,
+                                    TypeId = vatOption.Id,
+                                    Account = vatAccount.AccountNumber,
+                                    Description = $"INC - {vm.Name}",
+                                    Exclusive = vm.Amount,
+                                    Inclusive = vm.Amount + vatAmount,
+                                    TaxAmount = vatAmount,
+                                    Inserted = DateTime.Now,
+                                    Updated = DateTime.Now,
+                                    OrganisationId = orgId,
+                                };
+
+                                var vtRes = aSvc.SaveVatTransaction(vt, orgId);
+                            }
+                        }
+                    }
+
+                }
+
+                if (vm.BankAccountId != -100)
+                {
+                    var bankAccount = db.TrialBalanceAccounts.Where(x => x.Id == vm.BankAccountId).FirstOrDefault();
+
+                    var vatOption = db.VatOptions.Where(x => x.Id == vm.VatOptionId).FirstOrDefault();
+
+                    var totalAmount = vm.Amount + (vm.Amount * (vatOption.Percentage / 100));
+
+                    if (bankAccount != null)
+                    {
+                        var gl = new GlAccountViewModel
+                        {
+                            AccountName = $"INC - {vm.Name} - {bankAccount.AccountName}",
+                            AccountNumber = bankAccount.AccountNumber,
+                            Description = $"INC - {vm.Name}",
+                            Debit = totalAmount,
+                            Credit = 0,
+                            Date = vm.Date,
+                            Month = vm.Date.Month,
+                            Year = vm.Date.Year,
+                        };
+
+                        var glRes = aSvc.CreateUpdateGlAccount(gl, orgId);
+                    }
+                }
+
+                result.Success = true;
+                result.Message = "Successfully saved";
+
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save the expense details";
+            }
 
             return result;
         }

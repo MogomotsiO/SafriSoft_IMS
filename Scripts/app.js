@@ -35,3 +35,24 @@ function SafriSoftPostRequest(url, data, callback) {
         callback(data);
     });
 }
+
+$(document).ajaxStart(function () {
+    console.log('Ajax started');
+    const loader = document.querySelector(".loader");
+
+    loader.classList.remove("loader--hidden");
+});
+
+$(document).ajaxComplete(function () {
+    console.log('Ajax call completed');
+
+    const loader = document.querySelector(".loader");
+
+    loader.classList.add("loader--hidden");
+});
+
+$(function () {
+    const loader = document.querySelector(".loader");
+
+    loader.classList.add("loader--hidden");
+});

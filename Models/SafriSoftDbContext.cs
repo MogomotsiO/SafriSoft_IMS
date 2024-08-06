@@ -27,6 +27,7 @@ namespace SafriSoftv1._3.Models
         public virtual DbSet<SupplierInvoice> SupplierInvoices { get; set; }
         public virtual DbSet<SupplierTransaction> SupplierTransactions { get; set; }
         public virtual DbSet<VatOption> VatOptions { get; set; }
+        public virtual DbSet<VatTransaction> VatTransactions { get; set; }
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<Expense> Expenses { get; set; }
         public virtual DbSet<Journal> Journals { get; set; }

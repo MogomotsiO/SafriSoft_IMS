@@ -243,6 +243,7 @@
     <Compile Include="Models\Data\JournalEntry.cs" />
     <Compile Include="Models\Data\Setting.cs" />
     <Compile Include="Models\Data\SupplierTransaction.cs" />
+    <Compile Include="Models\Data\VatTransaction.cs" />
     <Compile Include="Models\SystemModels\Enums.cs" />
     <Compile Include="Models\ViewModels\AccountingViewModel.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="Models\SafriSoftDbContext.cs" />
     <Compile Include="Models\ViewModels\ReportBalanceSheetViewModel.cs" />
     <Compile Include="Models\ViewModels\ReportIncomeStatementViewModel.cs" />
+    <Compile Include="Models\ViewModels\ReportParametersViewModel.cs" />
     <Compile Include="Models\ViewModels\SettingViewModel.cs" />
     <Compile Include="Models\ViewModels\SupplierViewModel.cs" />
     <Compile Include="Models\ViewModels\SystemNotificationsViewModel.cs" />

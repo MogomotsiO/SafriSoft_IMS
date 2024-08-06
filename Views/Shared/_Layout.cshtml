@@ -96,7 +96,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
     <!-- pace-progress -->
-    <link rel="stylesheet" href="../../plugins/pace-progress/themes/black/pace-theme-flat-top.css">
+    @*<link rel="stylesheet" href="../../plugins/pace-progress/themes/black/pace-theme-flat-top.css">*@
 
     <!-- icheck -->
     <link href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" />
@@ -115,6 +115,7 @@
     <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <link href="~/plugins/datatables-fixedcolumns/css/fixedColumns.bootstrap4.min.css" rel="stylesheet" />
     <!-- Open Street Map Stylesheet-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
     <!-- Drag & Drop file upload -->
@@ -126,7 +127,7 @@
     <link href="../../assets/css/style.css" rel="stylesheet">
 
 </head>
-<body class="hold-transition sidebar-mini pace-info sidebar-collapse">
+<body class="hold-transition sidebar-mini sidebar-collapse">
     <input id="packageId" hidden value="@packageId"/>
     <div class="wrapper">
         <!-- Navbar -->
@@ -136,7 +137,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars text-info"></i></a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item mr-1">
                     @if (packageId == 1)
                     {
                         <button class="btn btn-outline-success"><i class="fas fa-crown"></i> SafriSoft - Free</button>
@@ -150,6 +151,9 @@
                         <button class="btn btn-outline-dark"><i class="fas fa-crown text-warning"></i> SafriSoft - Premium</button>
                     }
                 </li>
+                @*<li class="nav-item">
+                    <button class="btn btn-info" style="border-radius:50px;"><i class="fas fa-plus text-white"></i></button>
+                </li>*@
             </ul>
             <ul class="navbar-nav ml-auto">
                 @*<li class="nav-item dropdown">
@@ -176,6 +180,12 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item dropdown-footer" href="~/Inventory/Inbox"><i class="fas fa-comments text-info"></i> View All</a>
                     </div>
+                </li>*@
+                @*<li class="nav-item">
+                    <select id="" class="safriSelect2 form-control" style="min-width: 300px; width: 300px; min-height: 100px;">
+                        <option value="1">@organisation</option>
+                        <option value="2">Add Company</option>
+                    </select>
                 </li>*@
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
@@ -227,7 +237,7 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-    with font-awesome or any other icon font library -->
+                    with font-awesome or any other icon font library -->
                         <li class="nav-item">
                             <a id="Dashboard" href="~/Inventory/Index" class="nav-link">
                                 <i class="nav-icon fas fa-home text-white"></i>
@@ -317,19 +327,19 @@
 
                             @if (packageId == 3)
                             {
-                                <a id="Expenses" href="~/Expenses/Expenses" class="nav-link">
+                                <a id="Income/Expense" href="~/Expenses/Expenses" class="nav-link">
                                     <i class="nav-icon fas fa-money-check text-white"></i>
                                     <p class="text-white">
-                                        Expenses
+                                        Income/Expense
                                     </p>
                                 </a>
                             }
                             else
                             {
-                                <a id="Expenses" href="#" class="nav-link">
+                                <a id="Income/Expense" href="#" class="nav-link">
                                     <i class="fa fa-crown text-primary nav-icon"></i>
                                     <p class="text-white">
-                                        Expenses
+                                        Income/Expense
                                     </p>
                                 </a>
                             }
@@ -355,9 +365,21 @@
                             {
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
+                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">General Ledger</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
+                                            <i class="far fa-circle text-white nav-icon"></i>
+                                            <p class="text-white">Trial Balance</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
                                             <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">Chart Of Accounts</p>
+                                            <p class="text-white">Trial Balance Accounts</p>
                                         </a>
                                     </li>
 
@@ -371,18 +393,6 @@
                                         <a id="IncomeStatementAccounts" href="~/Accounting/IncomeStatementAccounts" class="nav-link">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Income Statement Accounts</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
-                                            <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">General Ledger</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
-                                            <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">Trial Balance</p>
                                         </a>
                                     </li>
                                 </ul>
@@ -399,7 +409,7 @@
                                     <li class="nav-item">
                                         <a id="TrialBalanceAccounts" href="#" class="nav-link">
                                             <i class="fa fa-crown text-primary nav-icon"></i>
-                                            <p class="text-white">Chart Of Accounts</p>
+                                            <p class="text-white">Trial Balance Accounts</p>
                                         </a>
                                     </li>
 
@@ -447,11 +457,11 @@
                                         </a>
                                     </li>
                                     @*<li class="nav-item">
-                        <a id="Inbox" href="~/Inventory/Inbox" class="nav-link">
-                            <i class="fa fa-circle text-info nav-icon"></i>
-                            <p>Inbox</p>
-                        </a>
-                    </li>*@
+                                        <a id="Inbox" href="~/Inventory/Inbox" class="nav-link">
+                                            <i class="fa fa-circle text-info nav-icon"></i>
+                                            <p>Inbox</p>
+                                        </a>
+                                    </li>*@
                                 </ul>
                             </li>
                         }
@@ -522,7 +532,7 @@
             <!-- Default to the left -->
             <strong>Copyright &copy; @DateTime.Now.Year <a href="#"><img src="../../assets/img/iconOnly.png" alt="" style="height:30px;"></a></strong> All rights reserved.
         </footer>
-
+        <div class="loader"></div>
         <div class="modal fade" id="change-package">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -651,6 +661,8 @@
         <script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
         <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
         <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+        <script src="~/plugins/datatables-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
+        <script src="~/plugins/datatables-fixedcolumns/js/fixedColumns.bootstrap4.min.js"></script>
 
         <!-- Toastr -->
         <script src="../../plugins/toastr/toastr.min.js"></script>
@@ -668,7 +680,7 @@
             $(document).ready(function () {
                 $('.safriSelect2').select2();
             });
-           
+
 
             var tabActive = $("#viewbag-title").text().trim();
             $("#" + tabActive).addClass("active");
@@ -681,7 +693,7 @@
                 $("#menu-open").addClass("menu-open");
             }
 
-            if (tabActive == "TrialBalanceAccounts" || tabActive == "GeneralLedger" || tabActive == "TrialBalanceReport") {
+            if (tabActive == "TrialBalanceAccounts" || tabActive == "GeneralLedger" || tabActive == "TrialBalanceReport" || tabActive == "BalanceSheetAccounts" || tabActive == "IncomeStatementAccounts") {
                 /*$("#main-users").addClass("active");*/
                 $("#" + tabActive).addClass("active");
                 $("#" + tabActive + " .nav-icon").addClass("text-white");
@@ -735,7 +747,7 @@
 
         @RenderSection("Scripts", false)
 
-        
+
         <script type="text/javascript">
             // Hide premium Buttons
             var packageId = $('#packageId').val();
@@ -754,10 +766,10 @@
                 $('#excel-download-lock-4').hide();
             }
 
-            //$(".buttons-csv").addClass("btn-outline-info");
-            //$(".buttons-csv").removeClass("btn-secondary");
-            //$(".buttons-excel").addClass("btn-outline-info");
-            //$(".buttons-excel").removeClass("btn-secondary");
+                                    //$(".buttons-csv").addClass("btn-outline-info");
+                                    //$(".buttons-csv").removeClass("btn-secondary");
+                                    //$(".buttons-excel").addClass("btn-outline-info");
+                                    //$(".buttons-excel").removeClass("btn-secondary");
 
         </script>
     </div>

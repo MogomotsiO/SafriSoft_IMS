@@ -138,6 +138,25 @@ namespace SafriSoftv1._3.Services
                         };
 
                         var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                        if(glRes.Success == true)
+                        {
+                            var vt = new VatTransaction()
+                            {
+                                Date = vm.InvoiceDetails.InvoiceDate,
+                                TypeId = vm.InvoiceDetails.VatOptionId,
+                                Account = account.AccountNumber,
+                                Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
+                                Exclusive = invoiceAmountExclVat,
+                                Inclusive = invoiceAmountExclVat + vatAmount,
+                                TaxAmount = vatAmount,
+                                Inserted = DateTime.Now,
+                                Updated = DateTime.Now,
+                                OrganisationId = organisationId,
+                            };
+
+                            var vtRes = aSvc.SaveVatTransaction(vt, organisationId);
+                        }
                         
                     }
                 }
@@ -155,24 +174,24 @@ namespace SafriSoftv1._3.Services
 
                 aSvc.SaveCustomerTransaction(ctRecord);
 
-                if(vm.InvoiceDetails.DebtorsAccountId != -100)
-                {
-                    var account = db.TrialBalanceAccounts.Where(x => x.Id == vm.InvoiceDetails.DebtorsAccountId).FirstOrDefault();
+                //if(vm.InvoiceDetails.DebtorsAccountId != -100)
+                //{
+                //    var account = db.TrialBalanceAccounts.Where(x => x.Id == vm.InvoiceDetails.DebtorsAccountId).FirstOrDefault();
 
-                    var gl = new GlAccountViewModel
-                    {
-                        AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
-                        AccountNumber = account.AccountNumber,
-                        Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
-                        Debit = vm.InvoiceDetails.Amount > 0 ? vm.InvoiceDetails.Amount : 0,
-                        Credit = vm.InvoiceDetails.Amount < 0 ? vm.InvoiceDetails.Amount : 0,
-                        Date = vm.InvoiceDetails.InvoiceDate,
-                        Month = vm.InvoiceDetails.InvoiceDate.Month,
-                        Year = vm.InvoiceDetails.InvoiceDate.Year,
-                    };
+                //    var gl = new GlAccountViewModel
+                //    {
+                //        AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
+                //        AccountNumber = account.AccountNumber,
+                //        Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
+                //        Debit = vm.InvoiceDetails.Amount > 0 ? vm.InvoiceDetails.Amount : 0,
+                //        Credit = vm.InvoiceDetails.Amount < 0 ? vm.InvoiceDetails.Amount : 0,
+                //        Date = vm.InvoiceDetails.InvoiceDate,
+                //        Month = vm.InvoiceDetails.InvoiceDate.Month,
+                //        Year = vm.InvoiceDetails.InvoiceDate.Year,
+                //    };
 
-                    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
-                }
+                //    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+                //}
 
                 foreach (var item in vm.InvoiceItems)
                 {
@@ -245,6 +264,25 @@ namespace SafriSoftv1._3.Services
                             };
 
                             var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                            if(glRes.Success == true)
+                            {
+                                var vt = new VatTransaction()
+                                {
+                                    Date = vm.InvoiceDetails.InvoiceDate,
+                                    TypeId = item.VatOptionId,
+                                    Account = account.AccountNumber,
+                                    Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
+                                    Exclusive = item.Amount,
+                                    Inclusive = item.Amount + vatAmount,
+                                    TaxAmount = vatAmount,
+                                    Inserted = DateTime.Now,
+                                    Updated = DateTime.Now,
+                                    OrganisationId = organisationId,
+                                };
+
+                                var vtRes = aSvc.SaveVatTransaction(vt, organisationId);
+                            }
 
                             //if(glRes.Success == true)
                             //{

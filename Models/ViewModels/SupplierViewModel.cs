@@ -67,4 +67,12 @@ namespace SafriSoftv1._3.Models
         public int SupplierInvoiceId { get; set;}
         public int CreditorsAccountId { get; set; }
     }
+
+    public class CreditorsViewModel
+    {
+        public string DateStr { get; set; }
+        public string Supplier { get; set; }
+        public string Description { get; set; }
+        public double Amount { get; set; }
+    }
 }

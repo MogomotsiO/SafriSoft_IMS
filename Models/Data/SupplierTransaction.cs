@@ -8,6 +8,7 @@ namespace SafriSoftv1._3.Models.Data
 {
     public class SupplierTransaction: BaseModel
     {
+        public DateTime? Date { get; set; }
         public string Description { get; set; }
         public double Amount { get; set; }
         public int SupplierInvoiceId { get; set; }

@@ -24,6 +24,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
 
                 var jSvc = new JournalService();
 
@@ -77,16 +78,17 @@ namespace SafriSoftv1._3.Controllers.API
                 var jnl = JsonConvert.DeserializeObject<JournalDetailViewModel>(vm.JsonString);
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
 
                 var jSvc = new JournalService();
 
                 if(jnl.Id == 0)
                 {
-                    result = jSvc.SaveJournal(jnl, organisationId);
+                    result = jSvc.SaveJournal(jnl, organisationId, userId);
                 }
                 else
                 {
-                    result = jSvc.UpdateJournal(jnl, organisationId);
+                    result = jSvc.UpdateJournal(jnl, organisationId, userId);
                 }
                 
 
@@ -111,10 +113,11 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
 
                 var jSvc = new JournalService();
 
-                result = jSvc.ActivateJournal(id, organisationId);
+                result = jSvc.ActivateJournal(id, organisationId, userId);
 
                 result.Success = true;
                 result.Message = "Journal activated";
@@ -137,10 +140,11 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
 
                 var jSvc = new JournalService();
 
-                result = jSvc.DeactivateJournal(id, organisationId);
+                result = jSvc.DeactivateJournal(id, organisationId, userId);
 
                 result.Success = true;
                 result.Message = "Journal deactivated";

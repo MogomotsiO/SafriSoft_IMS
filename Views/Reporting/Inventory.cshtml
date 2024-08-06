@@ -4,13 +4,26 @@
 }
 
 <style>
+    
     .balances-width{
         width:120px;
+        min-width:120px;
+        max-width:120px;
+    }
+
+    .name-width {
+        width: 250px;
+        min-width: 250px;
+        max-width:100%;
     }
 
     .total-row{
         border-top:1px solid #000 !important;
         border-bottom:1px solid #000 !important;
+    }
+
+    .empty-row{
+        height: 20px;
     }
 </style>
 
@@ -43,7 +56,7 @@
                             <div class="col-md-12">
                                 <a href="#" onclick="generateBalanceSheetReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-coins"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">Balance Sheet</span>
@@ -54,9 +67,9 @@
                                 </a>
                             </div>
                             <div class="col-md-12">
-                                <a href="#" onclick="generateCustomerReport()">
+                                <a href="#" onclick="generateIncomeStatementReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-coins"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">Income Statement</span>
@@ -67,9 +80,9 @@
                                 </a>
                             </div>
                             <div class="col-md-12">
-                                <a href="#" onclick="generateCustomerReport()">
+                                <a href="#" onclick="generateVatReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-coins"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">VAT Report</span>
@@ -80,26 +93,26 @@
                                 </a>
                             </div>
                             <div class="col-md-12">
-                                <a href="#" onclick="generateCustomerReport()">
+                                <a href="#" onclick="generateDebtorsReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-coins"></i></span>
 
                                         <div class="info-box-content">
-                                            <span class="info-box-number">Creditors Report</span>
-                                            <span class="info-box-text text-wrap">Generate creditors report.</span>
+                                            <span class="info-box-number">Debtors Report</span>
+                                            <span class="info-box-text text-wrap">Generate Debtors report.</span>
                                         </div>
                                         <!-- /.info-box-content -->
                                     </div>
                                 </a>
                             </div>
                             <div class="col-md-12">
-                                <a href="#" onclick="generateCustomerReport()">
+                                <a href="#" onclick="generateCreditorsReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-coins"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-coins"></i></span>
 
                                         <div class="info-box-content">
-                                            <span class="info-box-number">Debtors Report</span>
-                                            <span class="info-box-text text-wrap">Generate debtors report.</span>
+                                            <span class="info-box-number">Creditors Report</span>
+                                            <span class="info-box-text text-wrap">Generate Creditors report.</span>
                                         </div>
                                         <!-- /.info-box-content -->
                                     </div>
@@ -112,7 +125,7 @@
                             <div class="col-md-12">
                                 <a href="#" onclick="generateCustomerReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-user-friends"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-user-friends"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">Customer Report</span>
@@ -125,7 +138,7 @@
                             <div class="col-md-12">
                                 <a href="#" onclick="generateProductReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-dolly"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-dolly"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">Inventory Report</span>
@@ -138,7 +151,7 @@
                             <div class="col-md-12">
                                 <a href="#" onclick="generateOrderReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fas fa-shopping-cart"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fas fa-shopping-cart"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">Orders Report</span>
@@ -151,7 +164,7 @@
                             <div class="col-md-12">
                                 <a href="#" onclick="generateSystemReport()">
                                     <div class="info-box mt-3 bg-gradient-white cursor-pointer">
-                                        <span class="info-box-icon bg-light"><i class="fa fa-exclamation"></i></span>
+                                        <span class="info-box-icon bg-info"><i class="fa fa-exclamation"></i></span>
 
                                         <div class="info-box-content">
                                             <span class="info-box-number">Attention</span>
@@ -328,7 +341,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <button id="excel-download-lock-4" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Excel Download - Upgrade To Standard</button>
-                        <table id="system-reports-table" class="table table-bordered ">
+                        <table id="system-reports-table" class="table table-bordered " >
                             <thead>
                                 <tr>
                                     <th>Order #</th>
@@ -384,13 +397,13 @@
                                     <div class="mb-1 mt-3 col-md-12">
                                         <div class="input-group form-group bmd-form-group is-filled">
                                             <label class="bmd-label-floating">From</label>
-                                            <input id="start" class="form-control" type="date">
+                                            <input id="start" class="form-control" type="month">
                                         </div>
                                     </div>
                                     <div class="mb-1 mt-3 col-md-12">
                                         <div class="input-group form-group bmd-form-group is-filled">
                                             <label class="bmd-label-floating">To</label>
-                                            <input id="end" class="form-control" type="date">
+                                            <input id="end" class="form-control" type="month">
                                         </div>
                                     </div>
                                     <div class="mb-1 mt-3 col-md-12">
@@ -425,14 +438,356 @@
                             </div>
 
                             <div class="card-body" style="display: block;">
-                                <table id="balanceSheetTable" class="table table-bordered ">
-                                    @*<thead>
-                                        <tr>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>*@
+                                <table id="balanceSheetTable" class="table table-bordered " style="width: 100%">
+                                    
+                                </table>
+                            </div>
 
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<div class="modal fade" id="incomeStatementReportModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title"><strong>Income Statement</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Filter</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">From</label>
+                                            <input id="inStart" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">To</label>
+                                            <input id="inEnd" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating"></label>
+                                            <select id="inType" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                                <option value="-100">SELECT VIEW</option>
+                                                <option value="1">Yearly</option>
+                                                <option value="2">Monthly</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <button id="" type="submit" class="btn btn-block btn-outline-info" onclick="runIncomeStatement()">Run Income Statement</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Income Statement</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <table id="incomeStatementTable" class="table table-bordered " style="width: 100%">
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<div class="modal fade" id="debtorsReportModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title"><strong>Debtors Report</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Filter</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">From</label>
+                                            <input id="drStart" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">To</label>
+                                            <input id="drEnd" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    @*<div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating"></label>
+                                            <select id="inType" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                                <option value="-100">SELECT VIEW</option>
+                                                <option value="1">Yearly</option>
+                                                <option value="2">Monthly</option>
+                                            </select>
+                                        </div>
+                                    </div>*@
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <button id="" type="submit" class="btn btn-block btn-outline-info" onclick="runDebtorsReport()">Run Debtors Report</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Debtors Report</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <table id="debtorsReportTable" class="table table-bordered " style="width: 100%">
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<div class="modal fade" id="creditorsReportModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title"><strong>Creditors Report</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Filter</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">From</label>
+                                            <input id="crStart" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">To</label>
+                                            <input id="crEnd" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    @*<div class="mb-1 mt-3 col-md-12">
+                                            <div class="input-group form-group bmd-form-group is-filled">
+                                                <label class="bmd-label-floating"></label>
+                                                <select id="inType" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                                    <option value="-100">SELECT VIEW</option>
+                                                    <option value="1">Yearly</option>
+                                                    <option value="2">Monthly</option>
+                                                </select>
+                                            </div>
+                                        </div>*@
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <button id="" type="submit" class="btn btn-block btn-outline-info" onclick="runCreditorsReport()">Run Creditors Report</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Creditors Report</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <table id="creditorsReportTable" class="table table-bordered " style="width: 100%">
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<div class="modal fade" id="vatReportModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title"><strong>Vat Report</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Filter</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <div class="row">
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">From</label>
+                                            <input id="vtStart" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">To</label>
+                                            <input id="vtEnd" class="form-control" type="month">
+                                        </div>
+                                    </div>
+                                    @*<div class="mb-1 mt-3 col-md-12">
+                                            <div class="input-group form-group bmd-form-group is-filled">
+                                                <label class="bmd-label-floating"></label>
+                                                <select id="inType" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                                    <option value="-100">SELECT VIEW</option>
+                                                    <option value="1">Yearly</option>
+                                                    <option value="2">Monthly</option>
+                                                </select>
+                                            </div>
+                                        </div>*@
+                                    <div class="mb-1 mt-3 col-md-12">
+                                        <button id="" type="submit" class="btn btn-block btn-outline-info" onclick="runVatReport()">Run Vat Report</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Vat Report</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <div class="card-body" style="display: block;">
+                                <table id="vatReportTable" class="table table-bordered " style="width: 100%">
                                 </table>
                             </div>
 
@@ -471,6 +826,22 @@
         $('#balanceSheetReportModal').modal('show');
     }
 
+    function generateIncomeStatementReport() {
+        $('#incomeStatementReportModal').modal('show');
+    }
+
+    function generateDebtorsReport() {
+        $('#debtorsReportModal').modal('show');
+    }
+
+    function generateCreditorsReport() {
+        $('#creditorsReportModal').modal('show');
+    }
+
+    function generateVatReport() {
+        $('#vatReportModal').modal('show');
+    }
+
 </script>
 
 @section scripts{
@@ -485,7 +856,22 @@
             var end = $('#end').val();
             var type = $('#type').val();
 
-            var url = `/api/Accounting/RunBalanceSheetYearly`;
+            if (start == '') {
+                toastr.error('Please select a start date');
+                return;
+            }
+
+            if (end == '') {
+                toastr.error('Please select a end date');
+                return;
+            }
+
+            if (type == -100) {
+                toastr.error('Please select a balance report view type');
+                return;
+            }
+
+            var url = `/api/Accounting/RunBalanceSheet`;
 
             var data = {
                 Start: start,
@@ -498,7 +884,12 @@
             var firstCol = {
                 data: 'Name',
                 searchable: true,
+                className: 'name-width',
                 render: function (data, type, full, meta) {
+
+                    if (full.IsEmptySpace == true) {
+                        return '';
+                    }
 
                     if (full.IsHeading == true || full.IsSubtotal == true) {
                         return `<strong>${data}</strong>`;
@@ -512,8 +903,6 @@
 
             SafriSoftPostRequest(url, data, (response) => {
 
-                console.log(response);
-
                 for (var i = 0; i < response.obj.Coloumns.length; i++) {
                     var dataCol = 'Balances.' + response.obj.Coloumns[i];
                     var nextCol = {
@@ -523,6 +912,10 @@
                         searchable: true,
                         data: dataCol,
                         render: function (data, type, full, meta) {
+
+                            if (full.IsEmptySpace == true) {
+                                return '';
+                            }
 
                             if (full.IsHeading == false) {
                                 if (type === 'display')
@@ -539,6 +932,10 @@
                             if (full.IsSubtotal == true) {
                                 $(cell).addClass('total-row');
                             }
+
+                            if (full.IsEmptySpace == true) {
+                                $(cell).addClass('empty-row');
+                            }
                         }
                     }
                     coloumns.push(nextCol);
@@ -551,49 +948,409 @@
                 }               
 
                 var balanceSheetTable = $("#balanceSheetTable").DataTable({
-                    responsive: true,
-                    autoWidth: false,
-                    info: true,
                     ordering: false,
                     destroy: true,
+                    fixedColumns: {
+                        start: 1
+                    },
+                    paging: false,
+                    scrollCollapse: true,
+                    scrollX: true,
+                    scrollY: 470,
                     dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
                     buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
                     lengthMenu: [[-1], ["All"]],
                     columns: coloumns
-        });
+                });
 
                 balanceSheetTable.clear();
                 balanceSheetTable.rows.add(response.obj.Items);
                 balanceSheetTable.draw();
             });
         }
+
+        function runIncomeStatement() {
+
+            var inStart = $('#inStart').val();
+            var inEnd = $('#inEnd').val();
+            var inType = $('#inType').val();
+
+            if (inStart == '') {
+                toastr.error('Please select a start date');
+                return;
+            }
+
+            if (inEnd == '') {
+                toastr.error('Please select a end date');
+                return;
+            }
+
+            if (inType == -100) {
+                toastr.error('Please select a income statement report view type');
+                return;
+            }
+
+            var url = `/api/Accounting/RunIncomeStatement`;
+
+            var data = {
+                Start: inStart,
+                End: inEnd,
+                Type: inType
+            }
+
+            var coloumns = [];
+
+            var firstCol = {
+                data: 'Name',
+                searchable: true,
+                className: 'name-width',
+                render: function (data, type, full, meta) {
+
+                    if (full.IsEmptySpace == true) {
+                        return '';
+                    }
+
+                    if (full.IsHeading == true || full.IsSubtotal == true) {
+                        return `<strong>${data}</strong>`;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+
+            coloumns.push(firstCol);
+
+            SafriSoftPostRequest(url, data, (response) => {
+
+                for (var i = 0; i < response.obj.Coloumns.length; i++) {
+                    var dataCol = 'Balances.' + response.obj.Coloumns[i];
+                    var nextCol = {
+                        title: response.obj.Coloumns[i],
+                        searchable: true,
+                        className: 'text-right balances-width',
+                        searchable: true,
+                        data: dataCol,
+                        render: function (data, type, full, meta) {
+
+                            if (full.IsEmptySpace == true) {
+                                return '';
+                            }
+
+                            if (full.IsHeading == false) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+
+                            } else {
+                                return '';
+                            }
+                        },
+                        createdCell: function (cell, data, full, dataIndex) {
+
+                            if (full.IsSubtotal == true) {
+                                $(cell).addClass('total-row');
+                            }
+
+                            if (full.IsEmptySpace == true) {
+                                $(cell).addClass('empty-row');
+                            }
+                        }
+                    }
+                    coloumns.push(nextCol);
+                }
+
+                if ($.fn.DataTable.isDataTable('#incomeStatementTable')) {
+                    $('#incomeStatementTable').dataTable().fnClearTable();
+                    $('#incomeStatementTable').dataTable().fnDestroy();
+                    $('#incomeStatementTable').html('');
+                }
+
+                var incomeStatementTable = $("#incomeStatementTable").DataTable({
+                    ordering: false,
+                    destroy: true,
+                    fixedColumns: {
+                        start: 1
+                    },
+                    paging: false,
+                    scrollCollapse: true,
+                    scrollX: true,
+                    scrollY: 470,
+                    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+                    buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+                    lengthMenu: [[-1], ["All"]],
+                    columns: coloumns
+                });
+
+                incomeStatementTable.clear();
+                incomeStatementTable.rows.add(response.obj.Items);
+                incomeStatementTable.draw();
+            });
+        }
+
+        function runDebtorsReport() {
+
+            var start = $('#drStart').val();
+            var end = $('#drEnd').val();
+
+            if (start == '') {
+                toastr.error('Please select a start date');
+                return;
+            }
+
+            if (end == '') {
+                toastr.error('Please select a end date');
+                return;
+            }
+
+            var url = `/api/Accounting/GetDebtorsTransactions`;
+
+            var data = {
+                Start: start,
+                End: end
+            }
+
+            
+            SafriSoftPostRequest(url, data, (response) => {
+
+                if ($.fn.DataTable.isDataTable('#debtorsReportTable')) {
+                    $('#debtorsReportTable').dataTable().fnClearTable();
+                    $('#debtorsReportTable').dataTable().fnDestroy();
+                    $('#debtorsReportTable').html('');
+                }
+
+                var debtorsReportTable = $("#debtorsReportTable").DataTable({
+                    ordering: false,
+                    destroy: true,
+                    paging: false,
+                    scrollCollapse: true,
+                    scrollX: true,
+                    scrollY: 470,
+                    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+                    buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+                    lengthMenu: [[-1], ["All"]],
+                    columns: [
+                        {
+                            title: 'Date',
+                            data: 'DateStr',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Customer',
+                            data: 'Customer',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Description',
+                            data: 'Description',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Amount',
+                            data: 'Amount',
+                            searchable: true,
+                            className: 'text-right',
+                            render: function (data, type, full, meta) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        }
+                    ]
+                });
+
+                debtorsReportTable.clear();
+                debtorsReportTable.rows.add(response.obj);
+                debtorsReportTable.draw();
+            });
+        }
+
+        function runCreditorsReport() {
+
+            var start = $('#crStart').val();
+            var end = $('#crEnd').val();
+
+            if (start == '') {
+                toastr.error('Please select a start date');
+                return;
+            }
+
+            if (end == '') {
+                toastr.error('Please select a end date');
+                return;
+            }
+
+            var url = `/api/Accounting/GetCreditorsTransactions`;
+
+            var data = {
+                Start: start,
+                End: end
+            }
+
+
+            SafriSoftPostRequest(url, data, (response) => {
+
+                if ($.fn.DataTable.isDataTable('#creditorsReportTable')) {
+                    $('#creditorsReportTable').dataTable().fnClearTable();
+                    $('#creditorsReportTable').dataTable().fnDestroy();
+                    $('#creditorsReportTable').html('');
+                }
+
+                var creditorsReportTable = $("#creditorsReportTable").DataTable({
+                    ordering: false,
+                    destroy: true,
+                    paging: false,
+                    scrollCollapse: true,
+                    scrollX: true,
+                    scrollY: 470,
+                    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+                    buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+                    lengthMenu: [[-1], ["All"]],
+                    columns: [
+                        {
+                            title: 'Date',
+                            data: 'DateStr',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Supplier',
+                            data: 'Supplier',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Description',
+                            data: 'Description',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Amount',
+                            data: 'Amount',
+                            searchable: true,
+                            className: 'text-right',
+                            render: function (data, type, full, meta) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        }
+                    ]
+                });
+
+                creditorsReportTable.clear();
+                creditorsReportTable.rows.add(response.obj);
+                creditorsReportTable.draw();
+            });
+        }
+
+        function runVatReport() {
+
+            var start = $('#vtStart').val();
+            var end = $('#vtEnd').val();
+
+            if (start == '') {
+                toastr.error('Please select a start date');
+                return;
+            }
+
+            if (end == '') {
+                toastr.error('Please select a end date');
+                return;
+            }
+
+            var url = `/api/Accounting/GetVatTransactions`;
+
+            var data = {
+                Start: start,
+                End: end
+            }
+
+
+            SafriSoftPostRequest(url, data, (response) => {
+
+                if ($.fn.DataTable.isDataTable('#vatReportTable')) {
+                    $('#vatReportTable').dataTable().fnClearTable();
+                    $('#vatReportTable').dataTable().fnDestroy();
+                    $('#vatReportTable').html('');
+                }
+
+                var vatReportTable = $("#vatReportTable").DataTable({
+                    ordering: false,
+                    destroy: true,
+                    paging: false,
+                    scrollCollapse: true,
+                    scrollX: true,
+                    scrollY: 470,
+                    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+                    buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+                    lengthMenu: [[-1], ["All"]],
+                    columns: [
+                        {
+                            title: 'Date',
+                            data: 'Date',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Type',
+                            data: 'Type',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Account',
+                            data: 'Account',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Description',
+                            data: 'Description',
+                            searchable: true,
+                        },
+                        {
+                            title: 'Exclusive',
+                            data: 'Exclusive',
+                            searchable: true,
+                            className: 'text-right',
+                            render: function (data, type, full, meta) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        },
+                        {
+                            title: 'Inclusive',
+                            data: 'Inclusive',
+                            searchable: true,
+                            className: 'text-right',
+                            render: function (data, type, full, meta) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        },
+                        {
+                            title: 'Tax Amount',
+                            data: 'TaxAmount',
+                            searchable: true,
+                            className: 'text-right',
+                            render: function (data, type, full, meta) {
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        }
+                    ]
+                });
+
+                vatReportTable.clear();
+                vatReportTable.rows.add(response.obj);
+                vatReportTable.draw();
+            });
+        }
         
-
-        
-        //{
-        //    data: 'Amount',
-        //        className: 'text-right',
-        //            searchable: true,
-        //                render: function (data, type, full, meta) {
-
-        //                    if (type === 'display')
-        //                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
-        //                    else
-        //                        return data;
-        //                }
-        //},
-        //{
-        //    data: 'VatAmount',
-        //        className: 'text-right',
-        //            searchable: true,
-        //                render: function (data, type, full, meta) {
-
-        //                    if (type === 'display')
-        //                        return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
-        //                    else
-        //                        return data;
-        //                }
-        //},
     </script>
 
 

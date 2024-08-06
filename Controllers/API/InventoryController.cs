@@ -1731,7 +1731,6 @@ namespace SafriSoftv1._3.Controllers.API
             var amount = Convert.ToDouble(context.Request.Headers["amount"]);
             var vatAccountId = Convert.ToInt32(context.Request.Headers["vatAccountId"]);
             var invoiceAccountId = Convert.ToInt32(context.Request.Headers["invoiceAccountId"]);
-            var creditorsAccountId = Convert.ToInt32(context.Request.Headers["creditorsAccountId"]);
 
             if(postedFile == null)
             {
@@ -1761,7 +1760,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var iSvc = new InventoryService();
 
-                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, creditorsAccountId, organisationId, Id);
+                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, organisationId, Id);
 
                 if (result.Success == false)
                     return Json(result);

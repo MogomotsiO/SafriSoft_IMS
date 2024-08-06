@@ -8,6 +8,11 @@
     .buttonWidth {
         width: 100px;
     }
+
+    .filenameWidth{
+        width: 300px;
+    }
+
 </style>
 
 
@@ -261,7 +266,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-3 col-md-12">
+                            @*<div class="mb-3 col-md-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating"></label>
                                     <select id="selectedCreditorsAccount" class="safriSelect2 form-control" style="width: 100%;min-width: 100%; min-height: 100px;">
@@ -272,7 +277,7 @@
                                         }
                                     </select>
                                 </div>
-                            </div>
+                            </div>*@
                         </div>
                         <div id="dropzone" class="fade">
                             <h3 style="color: #17a2b8;">Drag & Drop File</h3>
@@ -282,11 +287,11 @@
                             </div>*@
                     </div>
                     <div class="card-body">
-                        <table id="supplierInvoicesDt" class="table">
+                        <table id="supplierInvoicesDt" class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Date Created</th>
-                                    <th style="width:400px;">Filename</th>
+                                    <th>Date</th>
+                                    <th>Filename</th>
                                     <th>Qty</th>
                                     <th>VatAmount</th>
                                     <th>Amount</th>
@@ -634,7 +639,6 @@
                     var amount = $("#amount").val();
                     var vatAccountId = $("#selectedVatAccount").val();
                     var invoiceAccountId = $("#selectedInvoiceAccount").val();
-                    var creditorsAccountId = $("#selectedCreditorsAccount").val();
 
                     request.setRequestHeader("safrisoft", date.replaceAll('-', '|'));
                     request.setRequestHeader("description", description);
@@ -643,7 +647,6 @@
                     request.setRequestHeader("amount", amount);
                     request.setRequestHeader("vatAccountId", vatAccountId);
                     request.setRequestHeader("invoiceAccountId", invoiceAccountId);
-                    request.setRequestHeader("creditorsAccountId", creditorsAccountId);
                 }
             }).on('fileuploadadd', function (e, data) {
 
@@ -659,7 +662,6 @@
                 var amount = $("#amount").val();
                 var vatAccountId = $("#selectedVatAccount").val();
                 var invoiceAccountId = $("#selectedInvoiceAccount").val();
-                var creditorsAccountId = $("#selectedCreditorsAccount").val();
 
                 if (date == '') {
                     toastr.error('Please provide the date of invoice');
@@ -686,18 +688,13 @@
                     error = true;
                 }
 
-                if (vatAccountId == '') {
+                if (vatAccountId == -100) {
                     toastr.error('Please provide the Invoice Vat Account Id');
                     error = true;
                 }
 
-                if (invoiceAccountId == '') {
+                if (invoiceAccountId == -100) {
                     toastr.error('Please provide the Invoice Account');
-                    error = true;
-                }
-
-                if (creditorsAccountId == '') {
-                    toastr.error('Please provide the Creditors Account');
                     error = true;
                 }
 
@@ -709,7 +706,6 @@
                     data.files[0]["amout"] = amount;
                     data.files[0]["vatAccountId"] = vatAccountId;
                     data.files[0]["invoiceAccountId"] = invoiceAccountId;
-                    data.files[0]["creditorsAccountId"] = creditorsAccountId;
                     console.log(data);
                     data.submit();
                 }
@@ -753,10 +749,12 @@
             'columns': [
                 {
                     'data': 'Date',
+                    'className': 'buttonWidth',
                     'searchable': true
                 },
                 {
                     'data': 'FileName',
+                    'className': 'filenameWidth',
                     'searchable': true,
                     'render': function (data, type, full, meta) {
                         return '<td id="' + data + '" >' + data + '</td>';
@@ -764,10 +762,12 @@
                 },
                 {
                     'data': 'Qty',
+                    'className': 'buttonWidth',
                     'searchable': true
                 },
                 {
                     'data': 'VatAmount',
+                    'className': 'buttonWidth',
                     'searchable': true,
                     'render': function (data, type, full, meta) {
 
@@ -779,6 +779,7 @@
                 },
                 {
                     'data': 'Amount',
+                    'className': 'buttonWidth',
                     'searchable': true,
                     'render': function (data, type, full, meta) {
 
@@ -790,6 +791,7 @@
                 },
                 {
                     'data': 'Id',
+                    'className': 'buttonWidth',
                     'render': function (data, type, full, meta) {
                         return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="DownloadFile?Id=' + full.Id + '"><i class="fas fa-download text-info"></i></a> </div> </td>'
                     }

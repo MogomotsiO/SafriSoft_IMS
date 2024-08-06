@@ -1,5 +1,7 @@
-﻿using SafriSoftv1._3.Models;
+﻿using Microsoft.Ajax.Utilities;
+using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.SystemModels;
 using SafriSoftv1._3.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -44,7 +46,9 @@ namespace SafriSoftv1._3.Services
                 AccountNumber = accountNumber.ToString(),
                 AccountName = vm.AccountName,
                 Index = existingTb != null ? existingTb.Index + 1 : 1,
-                OrganisationId = organisationId
+                OrganisationId = organisationId,
+                Updated = DateTime.Now,
+                Inserted = DateTime.Now
             };
 
             db.TrialBalanceAccounts.Add(tb);
@@ -444,6 +448,8 @@ namespace SafriSoftv1._3.Services
         {
             var result = new Result();
 
+            ct.Date = DateTime.Now;
+
             db.CustomerTransactions.Add(ct);
             var res = db.SaveChanges();
 
@@ -584,6 +590,7 @@ namespace SafriSoftv1._3.Services
                     SubtotalAccountName = subtotal?.Name,
                     IsHeading = item.IsHeading,
                     IsSubtotal = item.IsSubtotal,
+                    IsEmptySpace = item.IsEmptySpace,
                     Index = item.Index,
                 });
             }
@@ -636,6 +643,7 @@ namespace SafriSoftv1._3.Services
                 SubtotalAccountId = vm.SubtotalAccountId,
                 IsHeading = vm.IsHeading,
                 IsSubtotal = vm.IsSubtotal,
+                IsEmptySpace = vm.IsEmptySpace,
                 Index = lastItem != null ? lastItem.Index + 1 : 1,
                 Inserted = DateTime.Now,
                 Updated = DateTime.Now,
@@ -676,6 +684,7 @@ namespace SafriSoftv1._3.Services
                 Index = lastItem != null ? lastItem.Index + 1 : 1,
                 Inserted = DateTime.Now,
                 Updated = DateTime.Now,
+                IsEmptySpace = vm.IsEmptySpace,
                 OrganisationId = organisationId
             };
 
@@ -708,6 +717,7 @@ namespace SafriSoftv1._3.Services
             item.SubtotalAccountId = vm.SubtotalAccountId;
             item.IsHeading = vm.IsHeading;
             item.IsSubtotal = vm.IsSubtotal;
+            item.IsEmptySpace = vm.IsEmptySpace;
             item.Updated = DateTime.Now;
 
             var saveRes = db.SaveChanges();
@@ -737,6 +747,7 @@ namespace SafriSoftv1._3.Services
             item.SubtotalAccountId = vm.SubtotalAccountId;
             item.IsHeading = vm.IsHeading;
             item.IsSubtotal = vm.IsSubtotal;
+            item.IsEmptySpace = vm.IsEmptySpace;
             item.Updated = DateTime.Now;
 
             var saveRes = db.SaveChanges();
@@ -1163,14 +1174,18 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public BalanceSheetYearlyContainer RunBalanceSheetYearly(BalanceSheetViewModel vm, int organisation)
+        public BalanceSheetContainer RunBalanceSheetYearly(BalanceSheetViewModel vm, int organisation)
         {
-            var container = new BalanceSheetYearlyContainer();
+            var container = new BalanceSheetContainer();
 
-            var data = new List<BalanceSheetYearly>();
+            var data = new List<BalanceSheet>();
 
             var startYear = vm.Start.Year;
             var endYear = vm.End.Year;
+            var startDate = vm.Start;
+            var endDate = vm.End;
+            var sDate = vm.Start.Year;
+            var eDate = vm.End.Year;
 
             var counter = 1;
 
@@ -1178,13 +1193,15 @@ namespace SafriSoftv1._3.Services
 
             foreach(var account in accounts)
             {
-                data.Add(new BalanceSheetYearly()
+                data.Add(new BalanceSheet()
                 {
                     Id = account.Id,
                     Name = account.Name,
                     IsHeading = account.IsHeading,
                     IsSubtotal = account.IsSubtotal,
-                    SubtotalAccountId = account.SubtotalAccountId
+                    IsEmptySpace = account.IsEmptySpace,
+                    SubtotalAccountId = account.SubtotalAccountId,
+                    
                 });
             }
 
@@ -1193,32 +1210,48 @@ namespace SafriSoftv1._3.Services
             var subtotals = data.Where(x => x.IsSubtotal).ToList();
 
             var dummyBalances = new Dictionary<string, double>();
-
+            var newStartDate = vm.Start;
             while (startYear <= endYear)
             {
                 container.Coloumns.Add(startYear.ToString());
 
                 dummyBalances.Add(startYear.ToString(), 0);
 
+                var innerLoopStartDate = new DateTime(startYear, startDate.Month, 1); ;
+                var innerLoopEndDate = endDate;
+
+                if(startYear < endYear)
+                {
+                    innerLoopEndDate = new DateTime(startYear, 12, 1);
+                }
+
                 foreach (var account in accountsRequireBalance)
                 {
                     var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == account.Id).ToList();
 
                     var balance = 0.0;
-
-                    foreach(var link in links)
+                                        
+                    foreach (var link in links)
                     {
-                        balance += GetTrialBalanceAccountBalanceByYear(startYear, link.TbAccountId, organisation);
+                        var tempStartDate = innerLoopStartDate;
+                        var tempEndDate = innerLoopEndDate;
+
+                        while(tempStartDate <= tempEndDate)
+                        {
+                            balance += GetTrialBalanceAccountBalanceByMonth(tempStartDate.Year, tempStartDate.Month, link.TbAccountId, organisation);
+                            tempStartDate = tempStartDate.AddMonths(1);
+                        }
+                        
                     }
 
                     account.Balances.Add(startYear.ToString(), balance);
                 }
                 
-                foreach(var subTot in subtotals)
+                foreach (var subTot in subtotals)
                 {
-                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).Select(x => x.Balances).ToList();
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
 
-                    var yearBalances = subTotAccounts.Where(x => x.ContainsKey(startYear.ToString())).SelectMany(x => x.Values);
+                    var yearBalances = subTotAccounts.Where(x => x.Key.Contains(startYear.ToString())).Select(x => x.Value);
 
                     subTot.Balances.Add(startYear.ToString(), yearBalances.Sum());
                 }
@@ -1237,11 +1270,11 @@ namespace SafriSoftv1._3.Services
             return container;
         }
 
-        public BalanceSheetYearlyContainer RunBalanceSheetMonthly(BalanceSheetViewModel vm, int organisation)
+        public BalanceSheetContainer RunBalanceSheetMonthly(BalanceSheetViewModel vm, int organisation)
         {
-            var container = new BalanceSheetYearlyContainer();
+            var container = new BalanceSheetContainer();
 
-            var data = new List<BalanceSheetYearly>();
+            var data = new List<BalanceSheet>();
 
             var start = new DateTime(vm.Start.Year, vm.Start.Month, 1);
             var end = new DateTime(vm.End.Year, vm.End.Month, 1);
@@ -1252,12 +1285,13 @@ namespace SafriSoftv1._3.Services
 
             foreach (var account in accounts)
             {
-                data.Add(new BalanceSheetYearly()
+                data.Add(new BalanceSheet()
                 {
                     Id = account.Id,
                     Name = account.Name,
                     IsHeading = account.IsHeading,
                     IsSubtotal = account.IsSubtotal,
+                    IsEmptySpace = account.IsEmptySpace,
                     SubtotalAccountId = account.SubtotalAccountId
                 });
             }
@@ -1270,9 +1304,9 @@ namespace SafriSoftv1._3.Services
 
             while (start <= end)
             {
-                container.Coloumns.Add(start.Month.ToString() + " - " + start.Year.ToString());
+                container.Coloumns.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString());
 
-                dummyBalances.Add(start.Month.ToString() + " - " + start.Year.ToString(), 0);
+                dummyBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), 0);
 
                 foreach (var account in accountsRequireBalance)
                 {
@@ -1285,16 +1319,18 @@ namespace SafriSoftv1._3.Services
                         balance += GetTrialBalanceAccountBalanceByMonth(start.Year, start.Month, link.TbAccountId, organisation);
                     }
 
-                    account.Balances.Add(start.Month.ToString() + " - " + start.Year.ToString(), balance);
+                    account.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balance);
                 }
 
                 foreach (var subTot in subtotals)
                 {
-                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).Select(x => x.Balances).ToList();
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
 
-                    var yearBalances = subTotAccounts.Where(x => x.ContainsKey(start.Month.ToString() + " - " + start.Year.ToString())).SelectMany(x => x.Values);
+                    var yearBalances = subTotAccounts.Where(x => x.Key.Contains(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString())).Select(x => x.Value);
 
-                    subTot.Balances.Add(start.Month.ToString() + " - " + start.Year.ToString(), yearBalances.Sum());
+                    var balanceSum = yearBalances.Sum();
+
+                    subTot.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balanceSum);
                 }
 
                 start = start.AddMonths(1);
@@ -1310,6 +1346,365 @@ namespace SafriSoftv1._3.Services
 
             return container;
         }
+
+        public IncomeStatementContainer RunIncomeStatementYearly(IncomeStatementViewModel vm, int organisation)
+        {
+            var container = new IncomeStatementContainer();
+
+            var data = new List<IncomeStatement>();
+
+            var startYear = vm.Start.Year;
+            var endYear = vm.End.Year;
+            var startDate = vm.Start;
+            var endDate = vm.End;
+            var sDate = vm.Start.Year;
+            var eDate = vm.End.Year;
+
+            var counter = 1;
+
+            var accounts = db.ReportIncomeStatementAccounts.Where(x => x.OrganisationId == organisation || x.IsGlobal).OrderBy(x => x.Index).ToList();
+
+            foreach (var account in accounts)
+            {
+                data.Add(new IncomeStatement()
+                {
+                    Id = account.Id,
+                    Name = account.Name,
+                    IsHeading = account.IsHeading,
+                    IsSubtotal = account.IsSubtotal,
+                    IsEmptySpace = account.IsEmptySpace,
+                    SubtotalAccountId = account.SubtotalAccountId
+                });
+            }
+
+            var accountsRequireBalance = data.Where(x => x.IsHeading == false && x.IsSubtotal == false).ToList();
+
+            var subtotals = data.Where(x => x.IsSubtotal).ToList();
+
+            var dummyBalances = new Dictionary<string, double>();
+            var newStartDate = vm.Start;
+            while (startYear <= endYear)
+            {
+                container.Coloumns.Add(startYear.ToString());
+
+                dummyBalances.Add(startYear.ToString(), 0);
+
+                var innerLoopStartDate = new DateTime(startYear, startDate.Month, 1); ;
+                var innerLoopEndDate = endDate;
+
+                if (startYear < endYear)
+                {
+                    innerLoopEndDate = new DateTime(startYear, 12, 1);
+                }
+
+                foreach (var account in accountsRequireBalance)
+                {
+                    var links = db.ReportIncomeStatementAccountLinks.Where(x => x.IsAccountId == account.Id).ToList();
+
+                    var balance = 0.0;
+
+                    foreach (var link in links)
+                    {
+                        var tempStartDate = innerLoopStartDate;
+                        var tempEndDate = innerLoopEndDate;
+
+                        while (tempStartDate <= tempEndDate)
+                        {
+                            balance += GetTrialBalanceAccountBalanceByMonth(tempStartDate.Year, tempStartDate.Month, link.TbAccountId, organisation);
+                            tempStartDate = tempStartDate.AddMonths(1);
+                        }
+
+                    }
+
+                    account.Balances.Add(startYear.ToString(), balance);
+                }
+
+                foreach (var subTot in subtotals)
+                {
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
+
+                    var yearBalances = subTotAccounts.Where(x => x.Key.Contains(startYear.ToString())).Select(x => x.Value);
+
+                    subTot.Balances.Add(startYear.ToString(), yearBalances.Sum());
+                }
+
+                startYear += 1;
+                counter++;
+            }
+
+            foreach (var acc in data.Where(x => x.IsHeading))
+            {
+                acc.Balances = dummyBalances;
+            }
+
+            container.Items = data;
+
+            return container;
+        }
+
+        public IncomeStatementContainer RunIncomeStatementMonthly(IncomeStatementViewModel vm, int organisation)
+        {
+            var container = new IncomeStatementContainer();
+
+            var data = new List<IncomeStatement>();
+
+            var start = new DateTime(vm.Start.Year, vm.Start.Month, 1);
+            var end = new DateTime(vm.End.Year, vm.End.Month, 1);
+
+            var counter = 1;
+
+            var accounts = db.ReportIncomeStatementAccounts.Where(x => x.OrganisationId == organisation || x.IsGlobal).OrderBy(x => x.Index).ToList();
+
+            foreach (var account in accounts)
+            {
+                data.Add(new IncomeStatement()
+                {
+                    Id = account.Id,
+                    Name = account.Name,
+                    IsHeading = account.IsHeading,
+                    IsSubtotal = account.IsSubtotal,
+                    IsEmptySpace = account.IsEmptySpace,
+                    SubtotalAccountId = account.SubtotalAccountId
+                });
+            }
+
+            var accountsRequireBalance = data.Where(x => x.IsHeading == false && x.IsSubtotal == false).ToList();
+
+            var subtotals = data.Where(x => x.IsSubtotal).ToList();
+
+            var dummyBalances = new Dictionary<string, double>();
+
+            while (start <= end)
+            {
+                container.Coloumns.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString());
+
+                dummyBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), 0);
+
+                foreach (var account in accountsRequireBalance)
+                {
+                    var links = db.ReportIncomeStatementAccountLinks.Where(x => x.IsAccountId == account.Id).ToList();
+
+                    var balance = 0.0;
+
+                    foreach (var link in links)
+                    {
+                        balance += GetTrialBalanceAccountBalanceByMonth(start.Year, start.Month, link.TbAccountId, organisation);
+                    }
+
+                    account.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balance);
+                }
+
+                foreach (var subTot in subtotals)
+                {
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
+
+                    var yearBalances = subTotAccounts.Where(x => x.Key.Contains(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString())).Select(x => x.Value);
+
+                    var balanceSum = yearBalances.Sum();
+
+                    subTot.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balanceSum);
+                }
+
+                start = start.AddMonths(1);
+                counter++;
+            }
+
+            foreach (var acc in data.Where(x => x.IsHeading))
+            {
+                acc.Balances = dummyBalances;
+            }
+
+            container.Items = data;
+
+            return container;
+        }
+
+        public Result GetDebtorsTransactions(ReportParametersViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var list = new List<DebtorsViewModel>();
+
+            var startDate = vm.Start;
+            var endDate = new DateTime(vm.End.Year, vm.End.Month, DateTime.DaysInMonth(vm.End.Year, vm.End.Month));
+
+            var items = db.CustomerTransactions.Where(x => x.Date >= startDate && x.Date <= endDate && x.OrganisationId == organisationId).ToList();
+
+            foreach (var item in items)
+            {
+                var customer = db.Customers.Where(x => x.Id == item.CustomerId).FirstOrDefault();
+
+                list.Add(new DebtorsViewModel()
+                {
+                    DateStr = item.Date.HasValue ? item.Date.GetValueOrDefault().ToString("dd/MM/yyyy") : string.Empty,
+                    Description = item.Description,
+                    Amount = item.Amount,
+                    Customer = customer.CustomerName
+                });
+            }
+
+            result.obj = list;
+
+            return result;
+        }
+
+        public Result GetCreditorsTransactions(ReportParametersViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var list = new List<CreditorsViewModel>();
+
+            var startDate = vm.Start;
+            var endDate = new DateTime(vm.End.Year, vm.End.Month, DateTime.DaysInMonth(vm.End.Year, vm.End.Month));
+
+            var items = db.SupplierTransactions.Where(x => x.Date >= startDate && x.Date <= endDate && x.OrganisationId == organisationId).ToList();
+
+            foreach (var item in items)
+            {
+                var supplier = db.Suppliers.Where(x => x.Id == item.SupplierId).FirstOrDefault();
+
+                list.Add(new CreditorsViewModel()
+                {
+                    DateStr = item.Date.HasValue ? item.Date.GetValueOrDefault().ToString("dd/MM/yyyy") : string.Empty,
+                    Description = item.Description,
+                    Amount = item.Amount,
+                    Supplier = supplier.CompanyName
+                });
+            }
+
+            result.obj = list;
+
+            return result;
+        }
+
+        public Result GetVatTransactions(ReportParametersViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            var list = new List<VatReport>();
+
+            var startDate = vm.Start;
+            var endDate = new DateTime(vm.End.Year, vm.End.Month, DateTime.DaysInMonth(vm.End.Year, vm.End.Month));
+
+            var items = db.VatTransactions.Where(x => x.Date >= startDate && x.Date <= endDate && x.OrganisationId == organisationId).ToList();
+
+            foreach (var item in items)
+            {
+                var vat = db.VatOptions.Where(x => x.Id == item.TypeId).FirstOrDefault();
+
+                list.Add(new VatReport()
+                {
+                    Date = item.Date.ToString("dd/MM/yyyy"),
+                    Type = vat.Description,
+                    Account = item.Account,
+                    Description = item.Description,
+                    Exclusive = item.Exclusive,
+                    Inclusive = item.Inclusive,
+                    TaxAmount = item.TaxAmount,
+                });
+            }
+
+            result.obj = list;
+
+            return result;
+        }
+        public Result SaveVatTransaction(VatTransaction vt, int organisationId)
+        {
+            var result = new Result();
+
+            db.VatTransactions.Add(vt);
+
+            var res = db.SaveChanges();
+
+            if(res > 0)
+            {
+                result.Success = true;
+                result.Message = "Successfully saved transaction";
+            }
+            else
+            {
+                result.Success = true;
+                result.Message = "Could not save transaction";
+            }
+
+            return result;
+        }
+
+        //public BalanceSheetYearlyContainer RunIncomeStatementMonthly(IncomeStatementViewModel vm, int organisation)
+        //{
+        //    var container = new BalanceSheetYearlyContainer();
+
+        //    var data = new List<BalanceSheetYearly>();
+
+        //    var start = new DateTime(vm.Start.Year, vm.Start.Month, 1);
+        //    var end = new DateTime(vm.End.Year, vm.End.Month, 1);
+
+        //    var counter = 1;
+
+        //    var accounts = db.ReportBalanceSheetAccounts.Where(x => x.OrganisationId == organisation || x.IsGlobal).OrderBy(x => x.Index).ToList();
+
+        //    foreach (var account in accounts)
+        //    {
+        //        data.Add(new BalanceSheetYearly()
+        //        {
+        //            Id = account.Id,
+        //            Name = account.Name,
+        //            IsHeading = account.IsHeading,
+        //            IsSubtotal = account.IsSubtotal,
+        //            SubtotalAccountId = account.SubtotalAccountId
+        //        });
+        //    }
+
+        //    var accountsRequireBalance = data.Where(x => x.IsHeading == false && x.IsSubtotal == false).ToList();
+
+        //    var subtotals = data.Where(x => x.IsSubtotal).ToList();
+
+        //    var dummyBalances = new Dictionary<string, double>();
+
+        //    while (start <= end)
+        //    {
+        //        container.Coloumns.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString());
+
+        //        dummyBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), 0);
+
+        //        foreach (var account in accountsRequireBalance)
+        //        {
+        //            var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == account.Id).ToList();
+
+        //            var balance = 0.0;
+
+        //            foreach (var link in links)
+        //            {
+        //                balance += GetTrialBalanceAccountBalanceByMonth(start.Year, start.Month, link.TbAccountId, organisation);
+        //            }
+
+        //            account.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balance);
+        //        }
+
+        //        foreach (var subTot in subtotals)
+        //        {
+        //            var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
+
+        //            var yearBalances = subTotAccounts.Where(x => x.Key.Contains(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString())).Select(x => x.Value);
+
+        //            var balanceSum = yearBalances.Sum();
+
+        //            subTot.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balanceSum);
+        //        }
+
+        //        start = start.AddMonths(1);
+        //        counter++;
+        //    }
+
+        //    foreach (var acc in data.Where(x => x.IsHeading))
+        //    {
+        //        acc.Balances = dummyBalances;
+        //    }
+
+        //    container.Items = data;
+
+        //    return container;
+        //}
 
 
         //public Result GetLinkedIsAccounts()

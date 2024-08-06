@@ -53,7 +53,15 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var eSvc = new ExpensesService();
 
-                result = eSvc.SaveExpense(vm, organisationId);
+                if(vm.Type == Models.SystemModels.NominalAccountType.Expense)
+                {
+                    result = eSvc.SaveExpense(vm, organisationId);
+                }
+                else
+                {
+                    result = eSvc.SaveIncome(vm, organisationId);
+                }
+                
 
                 return Json(result);
             }

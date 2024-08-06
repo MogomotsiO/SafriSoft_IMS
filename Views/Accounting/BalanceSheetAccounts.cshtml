@@ -1,7 +1,7 @@
 ﻿@model SafriSoftv1._3.Models.ViewModels.ReportBalanceSheetViewModel
 
 @{
-    ViewBag.Title = "BalanceSheetStructure";
+    ViewBag.Title = "BalanceSheetAccounts";
 }
 
 <style>
@@ -118,8 +118,11 @@
                     <div class="mb-3 col-md-12">
                         <div class="icheck-info d-inline"> <input type="checkbox" id="isHeading" onclick="$(this).attr('value',this.checked);"> <label for="isHeading"> Is Heading? </label> </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-3">
                         <div class="icheck-info d-inline"> <input type="checkbox" id="isSubtotal" onclick="$(this).attr('value',this.checked);"> <label for="isSubtotal"> Is Subtotal? </label> </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="icheck-info d-inline"> <input type="checkbox" id="isEmptySpace" onclick="$(this).attr('value',this.checked);"> <label for="isEmptySpace"> Is Empty Space? </label> </div>
                     </div>
                 </div>
             </div>
@@ -185,9 +188,7 @@
     <script type="text/javascript">
 
         var balanceSheetAccountsDT = $("#balanceSheetAccountsDT").DataTable({
-            responsive: true,
-            autoWidth: false,
-            info: true,
+            scrollY: 450,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[-1], ["All"]],
@@ -200,7 +201,19 @@
             columns: [
                 {
                     data: 'Name',
-                    searchable: true
+                    searchable: true,
+                    render: function (data, type, full, meta) {
+
+                        if (full.IsEmptySpace == true)
+                            return '';
+
+                        if (full.IsHeading == true || full.IsSubtotal == true) {
+                            return `<td><strong>${data}</strong></td>`;
+                        } else {
+                            return `<td>${data}</td>`;
+                        }
+                        
+                    }
                 },
                 {
                     data: 'HeadingAccountName',
@@ -229,7 +242,7 @@
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
 
-                        if (full.IsHeading == true || full.IsSubtotal == true) {
+                        if (full.IsHeading == true || full.IsSubtotal == true || full.IsEmptySpace == true) {
                             return '';
                         }
 
@@ -363,6 +376,9 @@
 
             $('#isSubtotal').val(false);
             $('#isSubtotal').iCheck('uncheck');
+
+            $('#isEmptySpace').val(false);
+            $('#isEmptySpace').iCheck('uncheck');
             $("#createBsAccountModal").modal('show');
         }
 
@@ -392,6 +408,13 @@
                 } else {
                     $('#isSubtotal').iCheck('uncheck');
                 }
+
+                $('#isEmptySpace').val(response.obj.IsEmptySpace);
+                if (response.obj.IsEmptySpace == true) {
+                    $('#isEmptySpace').iCheck('check');
+                } else {
+                    $('#isEmptySpace').iCheck('uncheck');
+                }
                 $("#createBsAccountModal").modal('show');
             });
         }
@@ -402,8 +425,9 @@
             var subtotalAccount = $('#selectSubtotalAccount').val();
             var isHeading = $('#isHeading').val();
             var isSubtotal = $('#isSubtotal').val();
+            var isEmptySpace = $('#isEmptySpace').val();
 
-            if (name == '') {
+            if (name == '' && isEmptySpace == false) {
                 toastr.error('Name needs to be completed');
                 return;
             }
@@ -415,6 +439,7 @@
                 SubtotalAccountId: subtotalAccount,
                 IsHeading: isHeading,
                 IsSubtotal: isSubtotal,
+                IsEmptySpace: isEmptySpace,
             }
             console.log(data);
             var url = `/api/Accounting/SaveBalanceSheetAccount`;

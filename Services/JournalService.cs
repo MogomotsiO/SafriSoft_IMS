@@ -29,6 +29,10 @@ namespace SafriSoftv1._3.Services
 
                 var balance = debits + (credits * -1);
 
+                var createdBy = dbSafriSoftApp.Users.Where(x => x.Id == item.CreatedBy).FirstOrDefault();
+
+                var activatedBy = dbSafriSoftApp.Users.Where(x => x.Id == item.ActivatedBy).FirstOrDefault();
+
                 vm.Add(new JournalListViewModel()
                 {
                     Id = item.Id,
@@ -37,6 +41,10 @@ namespace SafriSoftv1._3.Services
                     DateStr = item.Date.ToString("dd/MM/yyyy"),
                     Balance = balance,
                     IsActive = item.IsActive,
+                    CreatedDateStr = item.Inserted.ToString("dd/MM/yyyy"),
+                    CreatedBy = createdBy != null ? createdBy.UserName : string.Empty,
+                    ActivatedDateStr = item.ActivatedDate.HasValue ? item.ActivatedDate.GetValueOrDefault().ToString("dd/MM/yyyy") : string.Empty,
+                    ActivatedBy = activatedBy != null ? activatedBy.UserName : string.Empty,
                     //Entries = entries,
                 });
             }
@@ -75,7 +83,7 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public Result SaveJournal(JournalDetailViewModel vm,int organisationId)
+        public Result SaveJournal(JournalDetailViewModel vm,int organisationId, string userId)
         {
             var result = new Result();
 
@@ -87,6 +95,7 @@ namespace SafriSoftv1._3.Services
                 OrganisationId = organisationId,
                 Inserted = DateTime.Now,
                 Updated = DateTime.Now,
+                CreatedBy = userId
             };
 
             var res = db.Journals.Add(journal);
@@ -117,7 +126,7 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public Result UpdateJournal(JournalDetailViewModel vm, int organisationId)
+        public Result UpdateJournal(JournalDetailViewModel vm, int organisationId, string userId)
         {
             var result = new Result();
 
@@ -174,7 +183,7 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public Result ActivateJournal(int jnlId, int organisationId)
+        public Result ActivateJournal(int jnlId, int organisationId, string userId)
         {
             var result = new Result();
 
@@ -183,13 +192,16 @@ namespace SafriSoftv1._3.Services
             if (item != null)
             {
                 item.IsActive = true;
+                item.ActivatedBy = userId;
+                item.ActivatedDate = DateTime.Now;
+
                 db.SaveChanges();
             }
 
             return result;
         }
 
-        public Result DeactivateJournal(int jnlId, int organisationId)
+        public Result DeactivateJournal(int jnlId, int organisationId, string userId)
         {
             var result = new Result();
 

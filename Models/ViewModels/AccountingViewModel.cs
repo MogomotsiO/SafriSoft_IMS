@@ -77,4 +77,17 @@ namespace SafriSoftv1._3.Models
         public string AccountName { get; set; }
         public double Amount { get; set; }
     }
+
+    //move to report view model when created
+    public class VatReport
+    {
+        public string Date { get; set; }
+        public string Type { get; set; }
+        public string Account { get; set; }
+        public string Reference { get; set; }
+        public string Description { get; set; }
+        public double Exclusive { get; set; }
+        public double Inclusive { get; set; }
+        public double TaxAmount { get; set; }
+    }
 }

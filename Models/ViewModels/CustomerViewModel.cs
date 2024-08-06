@@ -1,4 +1,5 @@
 ﻿using SafriSoftv1._3.Models.Data;
+using System;
 using System.Collections.Generic;
 
 namespace SafriSoftv1._3.Models
@@ -18,5 +19,13 @@ namespace SafriSoftv1._3.Models
         public string DateCustomerCreated { get; set; }
         public int NumberOfOrders { get; set; }
         public double Balance { get; set; }
+    }
+
+    public class DebtorsViewModel
+    {
+        public string DateStr { get; set; }
+        public string Customer { get; set; }
+        public string Description { get; set; }
+        public double Amount { get; set; }
     }
 }

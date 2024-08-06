@@ -1,7 +1,7 @@
 ﻿@model SafriSoftv1._3.Models.ViewModels.ExpensesViewModel
 
 @{
-    ViewBag.Title = "Expenses";
+    ViewBag.Title = "Income/Expense";
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -24,7 +24,7 @@
             <div class="row">
                 <div class="card">
                     <div class="card-header card-header-info">
-                        <h4 class="card-title"><i class="fa fa-file"></i> Expenses</h4>
+                        <h4 class="card-title"><i class="fa fa-file"></i> Income/Expense</h4>
                     </div>
                     <div class="card-body">
                         <span class="text-right mr-1"><button id="" type="submit" class="btn btn-light" style="text-align:right !important;" onclick="addExpenseModal()"><i class="fa fa-plus text-info"></i> Add Expense</button></span>
@@ -38,6 +38,7 @@
                                     <th>Date</th>
                                     <th>Name</th>
                                     <th>Category</th>
+                                    <th>Account Type</th>
                                     <th>Amount Account</th>
                                     <th>Vat Account</th>
                                     <th>Bank Account</th>
@@ -62,7 +63,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 id="" class="modal-title">Add Expense</h5>
+                <h5 id="" class="modal-title">Add Income/Expense</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -71,7 +72,7 @@
                 <div class="card">
 
                     <div class="card-header card-header-info">
-                        <h5 class="card-title"><i class="fa fa-pencil-square"></i> Add Expense</h5>
+                        <h5 class="card-title"><i class="fa fa-pencil-square"></i> Add Income/Expense</h5>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -115,6 +116,16 @@
                             <div class="mb-3 col-md-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating"></label>
+                                    <select id="selectedType" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                                        <option value="-100">SELECT NOMINAL ACCOUNT</option>
+                                        <option value="1">Income</option>
+                                        <option value="2">Expense</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
                                     <select id="selectedAmountAccount" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
                                         <option value="-100">SELECT ACCOUNT</option>
                                         @foreach (var account in Model.Accounts)
@@ -137,17 +148,17 @@
                                 </div>
                             </div>
                             @*<div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedVatAccount" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
-                                        <option value="-100">SELECT VAT ACCOUNT</option>
-                                        @foreach (var account in Model.Accounts)
-                                        {
-                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>*@
+            <div class="input-group form-group bmd-form-group is-filled">
+                <label class="bmd-label-floating"></label>
+                <select id="selectedVatAccount" class="safriSelect2 form-control" style="min-width:100%; width:100%; min-height:100px;">
+                    <option value="-100">SELECT VAT ACCOUNT</option>
+                    @foreach (var account in Model.Accounts)
+                    {
+                        <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                    }
+                </select>
+            </div>
+        </div>*@
                             <div class="mb-3 col-md-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating"></label>
@@ -167,7 +178,7 @@
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button id="" type="button" class="btn btn-light" onclick="addExpense()"><i class="fa fa-plus text-info"></i> Add Expense</button>
+                <button id="" type="button" class="btn btn-light" onclick="addExpense()"><i class="fa fa-plus text-info"></i> Add Income/Expense</button>
             </div>
         </div>
 
@@ -206,6 +217,10 @@
                 },
                 {
                     data: 'Category',
+                    searchable: true
+                },
+                {
+                    data: 'Type',
                     searchable: true
                 },
                 {
@@ -257,9 +272,15 @@
             //var taxAccountId = $('#selectedVatAccount').val();
             var vatOption = $('#selectedVatOptionId').val();
             var bankAccount = $('#selectedBankAccount').val();
+            var type = $('#selectedType').val();
 
             if (name === '') {
                 toastr.error('Name cannot be empty');
+                return;
+            }
+
+            if (type === -100) {
+                toastr.error('Nominal account type needs to be selected');
                 return;
             }
 
@@ -301,7 +322,8 @@
                 AccountId: amountAccount,
                 //VatAccountId: taxAccountId,
                 VatOptionId: vatOption,
-                BankAccountId: bankAccount
+                BankAccountId: bankAccount,
+                Type: type
             }
 
             var url = "/api/Expenses/SaveExpense";

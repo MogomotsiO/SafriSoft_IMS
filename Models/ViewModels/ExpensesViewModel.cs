@@ -1,4 +1,5 @@
 ﻿using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.SystemModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +20,7 @@ namespace SafriSoftv1._3.Models.ViewModels
         public string Date { get; set; }
         public string Name { get; set; }        
         public string Category { get; set; }
+        public string Type { get; set; }
         public double Amount { get; set; }
         public string AccountName { get; set; }
         public double VatAmount { get; set; }
@@ -36,5 +38,6 @@ namespace SafriSoftv1._3.Models.ViewModels
         public int VatAccountId { get; set; }
         public int VatOptionId { get; set; }
         public int BankAccountId { get; set; }
+        public NominalAccountType Type { get; set; }
     }
 }

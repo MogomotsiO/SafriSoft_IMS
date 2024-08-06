@@ -47,9 +47,13 @@
                             <table id="journalsDt" class="table table-bordered ">
                                 <thead>
                                     <tr>
+                                        <th>Created Date</th>
+                                        <th>Created By</th>
                                         <th>Journal Date</th>
                                         <th>Number</th>
                                         <th>Narration</th>
+                                        <th>Activated Date</th>
+                                        <th>Activated By</th>
                                         <th>Active</th>
                                         <th>Actions</th>
                                     </tr>
@@ -222,6 +226,14 @@
             },
             columns: [
                 {
+                    data: 'CreatedDateStr',
+                    searchable: true
+                },
+                {
+                    data: 'CreatedBy',
+                    searchable: true
+                },
+                {
                     data: 'DateStr',
                     searchable: true
                 },
@@ -232,6 +244,14 @@
                 {
                     data: 'Description',
                     searchable: true,
+                },
+                {
+                    data: 'ActivatedDateStr',
+                    searchable: true
+                },
+                {
+                    data: 'ActivatedBy',
+                    searchable: true
                 },
                 {
                     data: 'IsActive',
