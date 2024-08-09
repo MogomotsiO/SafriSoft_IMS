@@ -12,9 +12,7 @@
 });
 
 var generalLedgerTable = $("#generalLedgerTable").DataTable({
-    "responsive": true,
-    "autoWidth": false,
-    "info": true,
+    scrollY: 550,
     dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
     "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
     lengthMenu: [[-1], ["All"]],
@@ -41,6 +39,10 @@ var generalLedgerTable = $("#generalLedgerTable").DataTable({
         },
         {
             'data': 'AccountName',
+            'searchable': true
+        },
+        {
+            'data': 'AccountReference',
             'searchable': true
         },
         {

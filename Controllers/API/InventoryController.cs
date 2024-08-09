@@ -1359,6 +1359,7 @@ namespace SafriSoftv1._3.Controllers.API
 
             try
             {
+                Organisation.UserId = userId;
                 SafriSoft.Entry(Organisation).State = EntityState.Modified;
                 SafriSoft.SaveChanges();
 

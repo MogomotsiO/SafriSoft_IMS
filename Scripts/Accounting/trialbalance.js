@@ -148,7 +148,9 @@ function moveDown(tbId) {
         traditional: true
     }).done(function (data) {
         if (data.Success) {
-            trialBalanceTable.ajax.reload();
+            trialBalanceTable.ajax.reload(function (res) {
+                console.log(res);
+            }, false);
             setTimeout(function () {
                 $("#" + tbId).closest("tr").addClass("bg-info");
             }, 50);

@@ -99,7 +99,8 @@ namespace SafriSoftv1._3.Services
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
+                            AccountReference = "REF(ID) - INV",
+                            AccountName = $"{account.AccountName}",
                             AccountNumber = account.AccountNumber,
                             Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
                             Debit = invoiceAmountExclVat > 0 ? invoiceAmountExclVat : 0,
@@ -127,7 +128,8 @@ namespace SafriSoftv1._3.Services
 
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
+                            AccountReference = "REF(ID) - INV",
+                            AccountName = $"{account.AccountName}",
                             AccountNumber = account.AccountNumber,
                             Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
                             Debit = vatAmount > 0 ? vatAmount : 0,
@@ -210,7 +212,8 @@ namespace SafriSoftv1._3.Services
                         {
                             var gl = new GlAccountViewModel
                             {
-                                AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
+                                AccountReference = "REF(ID) - INV",
+                                AccountName = $"{account.AccountName}",
                                 AccountNumber = account.AccountNumber,
                                 Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
                                 Debit = item.Amount > 0 ? item.Amount : 0,
@@ -253,7 +256,8 @@ namespace SafriSoftv1._3.Services
 
                             var gl = new GlAccountViewModel
                             {
-                                AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
+                                AccountReference = "REF(ID) - INV",
+                                AccountName = $"{account.AccountName}",
                                 AccountNumber = account.AccountNumber,
                                 Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
                                 Debit = vatAmount > 0 ? vatAmount : 0,
@@ -405,7 +409,8 @@ namespace SafriSoftv1._3.Services
                         {
                             var gl = new GlAccountViewModel
                             {
-                                AccountName = $"PR - {invoiceDetails.InvoiceNumber} - {account.AccountName}",
+                                AccountReference = "REF(ID) - PR",
+                                AccountName = $"{account.AccountName}",
                                 AccountNumber = account.AccountNumber,
                                 Description = $"PR - {invoiceDetails.InvoiceNumber} - {invoiceDetails.InvoiceDescription}",
                                 Debit = vm.Amount > 0 ? vm.Amount * -1 : 0,

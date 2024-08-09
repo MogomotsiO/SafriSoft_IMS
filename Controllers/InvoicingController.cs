@@ -40,9 +40,12 @@ namespace SafriSoftv1._3.Controllers
         {
             var vm = new InvoicingViewModel();
 
+            var organisationName = GetOrganisationName();
+            var organisationId = BaseService.GetOrganisationId(organisationName);
+
             var aSvc = new AccountingService();
 
-            var accounts = aSvc.GetTrialBalanceAccounts().obj;
+            var accounts = aSvc.GetTrialBalanceAccounts(organisationId);
 
             var json = JsonConvert.SerializeObject(accounts);
 

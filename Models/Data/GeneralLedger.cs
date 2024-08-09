@@ -11,6 +11,7 @@ namespace SafriSoftv1._3.Models.Data
         [Key]
         public int Id { get; set; }
         public string AccountNumber { get; set; }
+        public string AccountReference { get; set; }
         public string AccountName { get; set; }
         public string AccountDescription { get; set; }
         public double Amount { get; set; }

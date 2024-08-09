@@ -14,7 +14,7 @@
             'data': 'OrderId',
             'searchable': true,
             'render': function (data, type, full, meta) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" href="#" onclick="viewOrder(this.id)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a id="' + full.OrderId + '" style="display:none;" class="btn btn-white" href="#" onclick="invoiceViewModal(this.id)"><i class="fas fa-file-invoice text-info"></i></a></div> </td>';
+                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" href="#" data-toggle="tooltip" data-placement="left" title="Order Audit" onclick="viewOrder(this.id)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a id="' + full.OrderId + '" style="display:none;" class="btn btn-white" href="#" onclick="invoiceViewModal(this.id)"><i class="fas fa-file-invoice text-info"></i></a></div> </td>';
             }
         },
         {
@@ -112,10 +112,14 @@
         {
             'data': 'OrderId',
             'render': function (data, type, full, meta) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="orderDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a><a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="createOrderEmail(this.id)"><i class="fa fa-envelope text-info"></i></a> </div> </td>'
+                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="orderDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a><a id="' + full.OrderId + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Email Customer" onclick="createOrderEmail(this.id)"><i class="fa fa-envelope text-info"></i></a> </div> </td>'
             }
         }
     ]
+});
+
+orderDataTable.on('draw', function () {
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 $('#order-create-view').on('click', function () {

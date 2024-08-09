@@ -74,11 +74,15 @@
             {
                 'data': 'Id',
                 'render': function (data, type, full, meta) {
-                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="#" onclick="editProductDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a> <a id="' + full.Id +'" class="btn btn-white" href="#" onclick="productDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
+                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" data-toggle="tooltip" data-placement="left" title="Edit Product Details" class="btn btn-white" href="#" onclick="editProductDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a> <a id="' + full.Id +'" class="btn btn-white" href="#" onclick="productDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
                 }
             }
         ]
     });
+
+productDataTable.on('draw', function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});
 
     var date = new Date();
     var productDate = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();

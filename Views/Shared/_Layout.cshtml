@@ -13,6 +13,7 @@
     var userEmail = "";
     var packageId = 0;
     var organisationLogo = "";
+    var companies = new List<string>();
 
     NumberFormatInfo cZA = new CultureInfo("en-ZA", false).NumberFormat;
     cZA.CurrencyPositivePattern = 2;
@@ -77,6 +78,19 @@
                 packageId = identityPackageReader.GetInt32(0);
                 organisationLogo = identityPackageReader.GetString(1);
             }
+
+            //Companies 
+            var companiesCmd = identityConn.CreateCommand();
+            companiesCmd.CommandText = string.Format("SELECT OrganisationId, OrganisationName from [{0}].[dbo].[Organisations] WHERE UserId = '{1}'", identityConn.Database, userId);
+            var companiesReader = companiesCmd.ExecuteReader();
+
+
+            while (companiesReader.Read())
+            {
+                companies.Add(companiesReader.GetString(1));
+            }
+
+            companiesReader.Close();
         }
         catch (Exception Ex)
         {
@@ -187,6 +201,18 @@
                         <option value="2">Add Company</option>
                     </select>
                 </li>*@
+                <li class="nav-item dropdown">
+                    <button class="btn btn-outline-info" data-toggle="dropdown">@organisation.ToUpper()</button>
+                    @*<a class="nav-link" data-toggle="dropdown" href="#"></a>*@
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    @foreach (var company in companies)
+                    {
+                        <a href="#" class="dropdown-item" onclick="switchCompany('@company')">@company.ToUpper()</a>
+                    }
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item" onclick="addNewCompany()"><i class="fa fa-plus text-info"></i> Add Company</a>
+                </div>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <img style="height:100%;border-radius:50%;" src="~/dist/img/new.png" />
@@ -327,7 +353,7 @@
 
                             @if (packageId == 3)
                             {
-                                <a id="Income/Expense" href="~/Expenses/Expenses" class="nav-link">
+                                <a id="Income-Expense" href="~/Expenses/Expenses" class="nav-link">
                                     <i class="nav-icon fas fa-money-check text-white"></i>
                                     <p class="text-white">
                                         Income/Expense
@@ -336,7 +362,7 @@
                             }
                             else
                             {
-                                <a id="Income/Expense" href="#" class="nav-link">
+                                <a id="Income-Expense" href="#" class="nav-link">
                                     <i class="fa fa-crown text-primary nav-icon"></i>
                                     <p class="text-white">
                                         Income/Expense
@@ -511,6 +537,58 @@
 
         </aside>
 
+        <!-- Modal -->
+        <div class="modal fade" id="companyRegister">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="companyRegister" class="modal-title">New Company</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12" style="padding: 15px !important;">
+                                <input type="text" id="companyName" class="form-control mb-4" placeholder="Company Name" required />
+                                <input type="email" id="companyEmail" class="form-control mb-4" placeholder="Company Email" required />
+                                <input type="number" id="companyTel" class="form-control mb-4" placeholder="Company Telephone" required />
+                                <input type="text" id="companyFirstlineAddress" class="form-control mb-4" placeholder="Line Address" required />
+                                <input type="number" min="0" max="10000" id="companyPostalCode" class="form-control mb-4" placeholder="Postal Code" required />
+                                <div class="mb-4">
+                                    <select id="companyProvince" class="safriSelect2 form-control mt-5" style="min-width:100%; width:100%; min-height:100px;" onchange="provinceChange(this.value)">
+                                        <option value="-100">SELECT PROVINCE</option>
+                                        <option value="EasternCape">Eastern Cape</option>
+                                        <option value="FreeState">Free State</option>
+                                        <option value="Gauteng">Gauteng</option>
+                                        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                                        <option value="Limpopo">Limpopo</option>
+                                        <option value="Mpumalanga">Mpumalanga</option>
+                                        <option value="NorthernCape">Northern Cape</option>
+                                        <option value="NorthWest">North West</option>
+                                        <option value="WesternCape">Western Cape</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <select id="companyCity" class="safriSelect2 form-control mt-5" style="min-width:100%; width:100%; min-height:100px;">
+                                        
+                                    </select>
+                                </div>
+
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-right">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                        <button id="get-started-btn" type="button" class="btn btn-info" onclick="saveNewCompany()"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
 
         @RenderBody()
 
@@ -644,7 +722,7 @@
         <script src="../../plugins/chart.js/Chart.min.js"></script>
         <!-- Bootstrap 4 -->
         <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="~/creativetim/js/core/popper.min.js"></script>
+        @*<script src="~/creativetim/js/core/popper.min.js"></script>*@
         @*<script src="~/creativetim/js/core/bootstrap-material-design.min.js"></script>*@
         <script src="~/creativetim/js/plugins/perfect-scrollbar.jquery.min.js"></script>
         @*<script src="~/creativetim/js/material-dashboard.js"></script>*@
@@ -677,10 +755,195 @@
         <!-- Handle active tab and other layout js stuff -->
         <script>
             $('#summernote').summernote();
+
             $(document).ready(function () {
                 $('.safriSelect2').select2();
             });
 
+            function addNewCompany() {
+                $('#companyRegister').modal('show');
+            }
+
+            var easternCape = "Alice,Butterworth,East London,Graaff-Reinet,Grahamstown,King William’s Town,Mthatha,Port Elizabeth,Queenstown,Uitenhage,Zwelitsha";
+            var freeState = "Bethlehem,Bloemfontein,Jagersfontein,Kroonstad,Odendaalsrus,Parys,Phuthaditjhaba,Sasolburg,Virginia,Welkom";
+            var gauteng = "Benoni,Boksburg,Brakpan,Carletonville,Germiston,Johannesburg,Krugersdorp,Pretoria,Randburg,Randfontein,Roodepoort,Soweto,Springs,Vanderbijlpark,Vereeniging";
+            var kzn = "Durban,Empangeni,Ladysmith,Newcastle,Pietermaritzburg,Pinetown,Ulundi,Umlazi";
+            var limpopo = "Giyani,Lebowakgomo,Musina,Phalaborwa,Polokwane,Seshego,Sibasa,Thabazimbi";
+            var nw = "Klerksdorp,Mahikeng,Mmabatho,Potchefstroom,Rustenburg";
+            var nc = "Kimberley,Kuruman,Port Nolloth";
+            var wc = "Bellville,Cape Town,Constantia,George,Hopefield,Oudtshoorn,Paarl,Simon’s Town,Stellenbosch,Swellendam,Worcester";
+            var mp = "Emalahleni,Nelspruit,Secunda";
+
+            var listEC = easternCape.split(",");
+            $('#companyCity').append('<option value="-100">SELECT CITY</option>');
+            for (var i = 0; i < listEC.length; i++) {
+                $('#companyCity').append('<option value="' + listEC[i] + '">' + listEC[i] + '</option>');
+            }
+
+            function provinceChange(val) {
+                $('#companyCity').text('');
+                $('#companyCity').append('<option value="-100">SELECT CITY</option>');
+                if (val === 'EasternCape') {
+                    var listEC = easternCape.split(",");
+
+                    for (var i = 0; i < listEC.length; i++) {
+                        $('#companyCity').append('<option value="' + listEC[i] + '">' + listEC[i] + '</option>');
+                    }
+                }
+                if (val === 'FreeState') {
+                    var list = freeState.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'Gauteng') {
+                    var list = gauteng.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'KwaZulu-Natal') {
+                    var list = kzn.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'Limpopo') {
+                    var list = limpopo.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'Mpumalanga') {
+                    var list = mp.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'NorthernCape') {
+                    var list = nc.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'NorthWest') {
+                    var list = nw.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+                if (val === 'WesternCape') {
+                    var list = wc.split(",");
+
+                    for (var i = 0; i < list.length; i++) {
+                        $('#companyCity').append('<option value="' + list[i] + '">' + list[i] + '</option>');
+                    }
+                }
+            }
+
+            function saveNewCompany() {
+                var companyName = $('#companyName').val();
+                var companyEmail = $('#companyEmail').val();
+                var companyTel = $('#companyTel').val();
+                var companyFirstLineAddress = $('#companyFirstLineAddress').val();
+                var companyPostalCode = $('#companyPostalCode').val();
+                var companyProvince = $('#companyProvince').val();
+                var companyCity = $('#companyCity').val();
+
+                if (companyName == '') {
+                    toastr.error('Company name required');
+                    return;
+                }
+
+                if (companyEmail == '') {
+                    toastr.error('Company email required');
+                    return;
+                }
+
+                if (companyTel == '') {
+                    toastr.error('Company phone number required');
+                    return;
+                }
+
+                if (companyFirstLineAddress == '') {
+                    toastr.error('Company address required');
+                    return;
+                }
+
+                if (companyPostalCode == '') {
+                    toastr.error('Company postal code required required');
+                    return;
+                }
+
+                if (companyProvince == '') {
+                    toastr.error('Company province required');
+                    return;
+                }
+
+                if (companyCity == '') {
+                    toastr.error('Company city required');
+                    return;
+                }
+
+                var data = {
+                    CompanyName: companyName,
+                    CompanyEmail: companyEmail,
+                    CompanyTel: companyTel,
+                    CompanyAddress: companyFirstLineAddress,
+                    CompanyPostalCode: companyPostalCode,
+                    CompanyProvince: companyProvince,
+                    CompanyCity: companyCity
+                }
+
+                var url = '/api/Accounting/AddNewCompany';
+
+                SafriSoftPostRequest(url, data, (response) => {
+
+                    if (response.Success == true) {
+
+                        toastr.success('New company added, page will refresh shortly');
+
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+                        
+                    } else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                });
+
+            }
+
+            function switchCompany(companyName) {
+                var url = `/api/Base/SwitchCompany/${companyName}`;
+
+                SafriSoftGetRequest(url, (response) => {
+
+                    if (response.Success == true) {
+
+                        toastr.success(response.Message);
+
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+
+                    } else {
+
+                        toastr.error(response.Message);
+                    }
+
+                });
+            }
 
             var tabActive = $("#viewbag-title").text().trim();
             $("#" + tabActive).addClass("active");
@@ -766,10 +1029,12 @@
                 $('#excel-download-lock-4').hide();
             }
 
-                                    //$(".buttons-csv").addClass("btn-outline-info");
-                                    //$(".buttons-csv").removeClass("btn-secondary");
-                                    //$(".buttons-excel").addClass("btn-outline-info");
-                                    //$(".buttons-excel").removeClass("btn-secondary");
+
+
+                                            //$(".buttons-csv").addClass("btn-outline-info");
+                                            //$(".buttons-csv").removeClass("btn-secondary");
+                                            //$(".buttons-excel").addClass("btn-outline-info");
+                                            //$(".buttons-excel").removeClass("btn-secondary");
 
         </script>
     </div>

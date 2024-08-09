@@ -447,7 +447,7 @@
             SafriSoftPostRequest(url, data, (response) => {
                 if (response.Success == true) {
                     toastr.success(response.Message);
-                    balanceSheetAccountsDT.ajax.reload();
+                    balanceSheetAccountsDT.ajax.reload(function (res) { }, false);
                     $("#createBsAccountModal").modal('hide');
                 } else {
                     toastr.error(response.Message);
@@ -460,7 +460,7 @@
             var url = `/api/Accounting/MoveUpBalanceSheetAccount/${id}`;
 
             SafriSoftGetRequest(url, (response) => {
-                balanceSheetAccountsDT.ajax.reload();
+                balanceSheetAccountsDT.ajax.reload(function (res) {}, false);
             });
 
         }
@@ -469,7 +469,7 @@
             var url = `/api/Accounting/MoveDownBalanceSheetAccount/${id}`;
 
             SafriSoftGetRequest(url, (response) => {
-                balanceSheetAccountsDT.ajax.reload();
+                balanceSheetAccountsDT.ajax.reload(function (res) { }, false);
             });
         }
 

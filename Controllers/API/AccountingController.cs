@@ -24,9 +24,12 @@ namespace SafriSoftv1._3.Controllers.API
 
             try
             {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
                 var service = new AccountingService();
 
-                result = service.GetTrialBalanceAccounts();
+                result.obj = service.GetTrialBalanceAccounts(organisationId);
 
             }
             catch (Exception ex)
@@ -1037,6 +1040,7 @@ namespace SafriSoftv1._3.Controllers.API
 
             return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
         }
+
     }
 
 

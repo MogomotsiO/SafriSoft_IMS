@@ -270,10 +270,14 @@
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
 
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="viewJournal(this.id)"><i class="fas fa-balance-scale text-info"></i></a> </div> </td>'
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Journal" onclick="viewJournal(this.id)"><i class="fas fa-balance-scale text-info"></i></a> </div> </td>'
                     }
                 }
             ]
+        });
+
+        journalsDt.on('draw', function () {
+            $('[data-toggle="tooltip"]').tooltip();
         });
 
         function deactivate(id) {

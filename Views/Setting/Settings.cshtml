@@ -58,7 +58,7 @@
                                         <th>Description</th>
                                         <th>Amount (%)</th>
                                         <th>VAT Account</th>
-                                        <th>Actions</th>
+                                        @*<th>Actions</th>*@
                                     </tr>
                                 </thead>
 
@@ -82,7 +82,7 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Description</th>
-                                        <th>Actions</th>
+                                        @*<th>Actions</th>*@
                                     </tr>
                                 </thead>
 
@@ -260,14 +260,14 @@
                         data: 'TaxAccount',
                         searchable: true
                     },
-                    {
-                        data: 'Id',
-                        searchable: true,
-                        className: 'buttonWidth',
-                        render: function (data, type, full, meta) {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="removeVatOption(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
-                        }
-                    }
+                    //{
+                    //    data: 'Id',
+                    //    searchable: true,
+                    //    className: 'buttonWidth',
+                    //    render: function (data, type, full, meta) {
+                    //        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="removeVatOption(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
+                    //    }
+                    //}
                 ]
             });
 
@@ -292,14 +292,14 @@
                         data: 'Description',
                         searchable: true
                     },
-                    {
-                        data: 'Id',
-                        searchable: true,
-                        className: 'buttonWidth',
-                        render: function (data, type, full, meta) {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="removeExpenseCategory(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
-                        }
-                    }
+                    //{
+                    //    data: 'Id',
+                    //    searchable: true,
+                    //    className: 'buttonWidth',
+                    //    render: function (data, type, full, meta) {
+                    //        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="removeExpenseCategory(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
+                    //    }
+                    //}
                 ]
             });
 

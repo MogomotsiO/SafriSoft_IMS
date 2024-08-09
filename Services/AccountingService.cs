@@ -72,7 +72,7 @@ namespace SafriSoftv1._3.Services
         {
             var result = new Result();
 
-            var items = db.TrialBalanceAccounts.ToList().OrderBy(x => x.Index);
+            var items = db.TrialBalanceAccounts.Where(x => x.IsGlobal == true).ToList().OrderBy(x => x.Index);
 
             if(items.Count() > 0)
             {
@@ -203,7 +203,7 @@ namespace SafriSoftv1._3.Services
 
             if(account != null)
             {
-                var gls = db.GeneralLedgers.Where(x => x.AccountNumber == account.AccountNumber).ToList();
+                var gls = db.GeneralLedgers.Where(x => x.AccountNumber == account.AccountNumber && x.OrganisationId == organisationId).ToList();
 
                 foreach(var item in gls)
                 {
@@ -305,8 +305,12 @@ namespace SafriSoftv1._3.Services
                 gl.Credit = vm.Credit;
                 gl.OrganisationId = organisationId;
 
-                db.GeneralLedgers.Add(gl);
-                id = db.SaveChanges();
+                var newId = db.GeneralLedgers.Add(gl);
+                var res = db.SaveChanges();
+
+                gl.AccountReference = vm.AccountReference.Replace("(ID)", newId.Id.ToString());
+
+                db.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -773,7 +777,7 @@ namespace SafriSoftv1._3.Services
 
         public List<TrialBalanceAccount> GetTrialBalanceAccounts(int organisationId)
         {
-            return db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
+            return db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).ToList();
         }
 
         public ReportBalanceSheetViewModel GetBalanceSheetAccountList(int organisationId)

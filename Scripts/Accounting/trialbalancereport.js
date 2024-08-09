@@ -21,11 +21,7 @@ let exportFormatter = {
 };
 
 var trialBalanceReportTable = $("#trialBalanceReportTable").DataTable({
-    "responsive": true,
-    "autoWidth": false,
-    "info": true,
-    
-    
+    scrollY: 550,
     dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
     lengthMenu: [[-1], ["All"]],
     "buttons": [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],

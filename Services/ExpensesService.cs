@@ -79,6 +79,7 @@ namespace SafriSoftv1._3.Services
                 OrganisationId = orgId,
                 Inserted = DateTime.Now,
                 Updated = DateTime.Now,
+                Type = vm.Type,
             };
 
             db.Expenses.Add(item);
@@ -95,7 +96,8 @@ namespace SafriSoftv1._3.Services
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"EXP - {vm.Name} - {account.AccountName}",
+                            AccountReference = "REF(ID) - EXP",
+                            AccountName = $"{account.AccountName}",
                             AccountNumber = account.AccountNumber,
                             Description = $"EXP - {vm.Name}",
                             Debit = vm.Amount > 0 ? vm.Amount : 0,
@@ -125,7 +127,8 @@ namespace SafriSoftv1._3.Services
 
                             var gl = new GlAccountViewModel
                             {
-                                AccountName = $"EXP - {vm.Name} - {vatAccount.AccountName}",
+                                AccountReference = "REF(ID) - EXP",
+                                AccountName = $"{vatAccount.AccountName}",
                                 AccountNumber = vatAccount.AccountNumber,
                                 Description = $"EXP - {vm.Name}",
                                 Debit = vatAmount > 0 ? vatAmount : 0,
@@ -172,7 +175,8 @@ namespace SafriSoftv1._3.Services
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"EXP - {vm.Name} - {bankAccount.AccountName}",
+                            AccountReference = "REF(ID) - EXP",
+                            AccountName = $"{bankAccount.AccountName}",
                             AccountNumber = bankAccount.AccountNumber,
                             Description = $"EXP - {vm.Name}",
                             Debit = 0,
@@ -220,6 +224,7 @@ namespace SafriSoftv1._3.Services
                 OrganisationId = orgId,
                 Inserted = DateTime.Now,
                 Updated = DateTime.Now,
+                Type = vm.Type,
             };
 
             db.Expenses.Add(item);
@@ -236,7 +241,8 @@ namespace SafriSoftv1._3.Services
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"INC - {vm.Name} - {account.AccountName}",
+                            AccountReference = "REF(ID) - INC",
+                            AccountName = $"{account.AccountName}",
                             AccountNumber = account.AccountNumber,
                             Description = $"INC - {vm.Name}",
                             Debit = 0,
@@ -266,7 +272,8 @@ namespace SafriSoftv1._3.Services
 
                             var gl = new GlAccountViewModel
                             {
-                                AccountName = $"INC - {vm.Name} - {vatAccount.AccountName}",
+                                AccountReference = "REF(ID) - INC",
+                                AccountName = $"{vatAccount.AccountName}",
                                 AccountNumber = vatAccount.AccountNumber,
                                 Description = $"INC - {vm.Name}",
                                 Debit = 0,
@@ -313,7 +320,8 @@ namespace SafriSoftv1._3.Services
                     {
                         var gl = new GlAccountViewModel
                         {
-                            AccountName = $"INC - {vm.Name} - {bankAccount.AccountName}",
+                            AccountReference = "REF(ID) - INC",
+                            AccountName = $"{bankAccount.AccountName}",
                             AccountNumber = bankAccount.AccountNumber,
                             Description = $"INC - {vm.Name}",
                             Debit = totalAmount,

@@ -469,10 +469,14 @@
                     searchable: true,
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="getSupplierDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Supplier Details" onclick="getSupplierDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a><a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Load Supplier Invoice" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a><a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Pay Supplier" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
                     }
                 }
             ]
+        });
+
+        suppliersDt.on('draw', function () {
+            $('[data-toggle="tooltip"]').tooltip();
         });
 
         loadProducts();

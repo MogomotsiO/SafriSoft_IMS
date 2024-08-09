@@ -16,4 +16,15 @@ namespace SafriSoftv1._3.Models
         public string EmailSubject { get; set; }
         public string EmailBody { get; set; }
     }
+
+    public class AddNewCompanyViewModel
+    {
+        public string CompanyName { get; set; }
+        public string CompanyEmail { get; set; }
+        public string CompanyTel { get; set; }
+        public string CompanyAddress { get; set; }
+        public int CopmanyPostalCode { get; set; }
+        public string CompanyProvince { get; set; }
+        public string CompanyCity { get; set; }
+    }
 }

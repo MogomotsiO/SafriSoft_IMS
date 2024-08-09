@@ -1,4 +1,8 @@
 ﻿//$(function () {
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+
     var customerDataTable = $("#customer-table").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -41,7 +45,7 @@
                 'data': 'NumberOfOrders',
                 'searchable': true,
                 'render': function (data, type, full, meta) {
-                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" name="' + full.CustomerName + '" href="#" onclick="customerFeatures(this.id, this.name)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a class="btn btn-white" href="#">' + data + '</a> </div> </td>';
+                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <button id="' + full.Id + '" name="' + full.CustomerName + '" data-toggle="tooltip" data-placement="left" title="View customer orders" type="button" onclick="customerFeatures(this.id, this.name)" class="btn btn-white"><i class="fa fa-eye text-info"></i></button> <a class="btn btn-white" href="#">' + data + '</a> </div> </td>';
                 }
             },
             {
@@ -59,10 +63,14 @@
             {
                 'data': 'Id',
                 'render': function (data, type, full, meta) {
-                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="#" onclick="editCustomerDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a> <a id="' + full.Id +'" class="btn btn-white" href="#" onclick="customerDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
+                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Edit customer details" onclick="editCustomerDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a> <a id="' + full.Id +'" class="btn btn-white" href="#" onclick="customerDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a> </div> </td>'
                 }
             }
         ]
+    });
+
+    customerDataTable.on('draw', function () {
+        $('[data-toggle="tooltip"]').tooltip();
     });
     
     var date = new Date();
@@ -316,4 +324,3 @@ function editCustomerDetails(id) {
     });
 
 }
-
