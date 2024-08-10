@@ -214,6 +214,24 @@ namespace SafriSoftv1._3.Services
                         AccountName = item.AccountName
                     });
                 }
+
+                var jnls = db.Journals.Where(x => x.OrganisationId == organisationId && x.IsActive == true).ToList();
+
+                foreach (var jnl in jnls)
+                {
+                    var entries = db.JournalEntries.Where(x => x.JournalId == jnl.Id && x.AccountId == account.Id).ToList();
+
+                    foreach (var entry in entries)
+                    {
+                        items.Add(new MappedGlAccounts()
+                        {
+                            Id = jnl.Id,
+                            AccountNumber = account.AccountNumber,
+                            AccountName = $"{jnl.Number} - {account.AccountName}"
+                    });
+                    }
+                    
+                }
             }
 
             //var mappedGlItems = db.TrialBalanceGeneralLedgerMappings.Where(x => x.TrialBalanceAccountId == id && x.OrganisationId == organisationId).ToList();
@@ -364,7 +382,9 @@ namespace SafriSoftv1._3.Services
 
             var glAccountsForPeriod = db.GeneralLedgers.Where(x => x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).ToList();
 
-            if (glAccountsForPeriod.Count() == 0)
+            var jeGls = GetJournalEntriesAsGls(vm, organisationId);
+
+            if (glAccountsForPeriod.Count() == 0 && jeGls.Count() == 0)
             {
                 result.Success = false;
                 result.Message = "No data for period";
@@ -372,7 +392,7 @@ namespace SafriSoftv1._3.Services
                 return result;
             }
 
-            var trialBalanceItems = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
+            var trialBalanceItems = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).ToList();
 
             var items = new List<TrialBalanceContainer>();
 
@@ -382,9 +402,7 @@ namespace SafriSoftv1._3.Services
             {
 
                 var gls = db.GeneralLedgers.Where(x => x.AccountNumber == tbItem.AccountNumber && x.AccountDate >= vm.Start && x.AccountDate <= vm.End && x.OrganisationId == organisationId).ToList();
-
-                var jeGls = GetJournalEntriesAsGls(vm, organisationId);
-
+                
                 gls.AddRange(jeGls.Where(x => x.AccountNumber == tbItem.AccountNumber).ToList());
 
                 var total = 0.00;
@@ -487,8 +505,9 @@ namespace SafriSoftv1._3.Services
 
                     var jeGl = new GeneralLedger()
                     {
+                        AccountReference = $"REF{journal.Number}",
                         AccountNumber = account.AccountNumber,
-                        AccountName = $"{journal.Number} - {account.AccountNumber} - {account.AccountName}",
+                        AccountName = $"{journal.Number} - {account.AccountName}",
                         AccountDescription = $"{journal.Number} - {entry.Narration}",
                         AccountDate = journal.Date,
                         Month = journal.Date.Month,
@@ -777,7 +796,7 @@ namespace SafriSoftv1._3.Services
 
         public List<TrialBalanceAccount> GetTrialBalanceAccounts(int organisationId)
         {
-            return db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).ToList();
+            return db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).OrderBy(x => x.Index).ToList();
         }
 
         public ReportBalanceSheetViewModel GetBalanceSheetAccountList(int organisationId)
@@ -1082,7 +1101,7 @@ namespace SafriSoftv1._3.Services
 
             var vm = new List<ReportBalanceSheetLinkedAccounts>();
 
-            var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == bsAccountId).ToList();
+            var links = db.ReportBalanceSheetAccountLinks.Where(x => x.BsAccountId == bsAccountId && x.OrganisationId == organisationId).ToList();
 
             foreach (var link in links)
             {
@@ -1110,7 +1129,7 @@ namespace SafriSoftv1._3.Services
 
             foreach (var tbItem in tbAccounts)
             {
-                var link = db.ReportBalanceSheetAccountLinks.Where(x => x.TbAccountId == tbItem.Id).FirstOrDefault();
+                var link = db.ReportBalanceSheetAccountLinks.Where(x => x.TbAccountId == tbItem.Id && x.OrganisationId == organisationId).FirstOrDefault();
 
                 if(link == null)
                 {
@@ -1133,7 +1152,7 @@ namespace SafriSoftv1._3.Services
 
             var vm = new List<ReportIncomeStatementLinkedAccounts>();
 
-            var links = db.ReportIncomeStatementAccountLinks.Where(x => x.IsAccountId == bsAccountId).ToList();
+            var links = db.ReportIncomeStatementAccountLinks.Where(x => x.IsAccountId == bsAccountId && x.OrganisationId == organisationId).ToList();
 
             foreach (var link in links)
             {
@@ -1161,7 +1180,7 @@ namespace SafriSoftv1._3.Services
 
             foreach (var tbItem in tbAccounts)
             {
-                var link = db.ReportIncomeStatementAccountLinks.Where(x => x.TbAccountId == tbItem.Id).FirstOrDefault();
+                var link = db.ReportIncomeStatementAccountLinks.Where(x => x.TbAccountId == tbItem.Id && x.OrganisationId == organisationId).FirstOrDefault();
 
                 if (link == null)
                 {

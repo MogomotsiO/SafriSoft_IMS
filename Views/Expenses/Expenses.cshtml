@@ -279,22 +279,22 @@
                 return;
             }
 
-            if (type === -100) {
+            if (type == -100) {
                 toastr.error('Nominal account type needs to be selected');
                 return;
             }
 
-            if (category === -100) {
+            if (category == -100) {
                 toastr.error('Category needs to be selected');
                 return;
             }
 
-            if (amount === '') {
+            if (amount == '') {
                 toastr.error('Amount cannot be empty');
                 return;
             }
 
-            if (amountAccount === -100) {
+            if (amountAccount == -100) {
                 toastr.error('Amount account needs to be selected');
                 return;
             }
@@ -304,12 +304,12 @@
             //    return;
             //}
 
-            if (vatOption === -100) {
+            if (vatOption == -100) {
                 toastr.error('Vat option needs to be selected');
                 return;
             }
 
-            if (bankAccount === -100) {
+            if (bankAccount == -100) {
                 toastr.error('Bank account needs to be selected');
                 return;
             }
