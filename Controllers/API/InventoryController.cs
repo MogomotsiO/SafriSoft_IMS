@@ -150,7 +150,7 @@ namespace SafriSoftv1._3.Controllers.API
                 var saveUsernameClaim = await userManager.AddClaimAsync(user.Id, UsernameClaim);
                 var saveRole = userManager.AddToRole(user.Id, UserData.Role);
                 var subject = "SafriSoft - Access";
-                var emailBody = $"You have been granted access to the SafriSoft Inventory Management Software by your Organisation Admin. <br/><br/> Please use the below details to access the software: <br/> Username: {user.UserName} <br/> Password: {UserData.Password}";
+                var emailBody = $"You have been granted access to the SafriSoft Business Management Software by your Organisation Admin. <br/><br/> Please use the below details to access the software: <br/> Username: {user.UserName} <br/> Password: {UserData.Password}";
 
                 var toAddress = new List<string>();
                 var toCCAddress = new List<string>();
@@ -1483,7 +1483,7 @@ namespace SafriSoftv1._3.Controllers.API
                 toAddress.Add("support@safrisoft.com");
 
                 var subject = "Order Request - " + orderRequest.UserOrganisation;
-                var emailBody = "An order has been request for: " + orderRequest.Package + "-Inventory <br/><br/> This email has been sent by: " + orderRequest.UserEmail;
+                var emailBody = "An order has been request for: " + orderRequest.Package + "-Business <br/><br/> This email has been sent by: " + orderRequest.UserEmail;
                 createEmail.SaveEmail(subject, emailBody, "support@safrisoft.com", toAddress.ToArray(), toCCAddress.ToArray());
                 return Json(new { Success = true, Message = "Order request has been sent"});
             }
@@ -1574,39 +1574,49 @@ namespace SafriSoftv1._3.Controllers.API
 
             //if (excelReader.re)
             var fieldCount = excelReader.FieldCount;
-
-            while (excelReader.Read())
+            try
             {
-                string productCode = excelReader.GetString(0);
-                string productCategory = excelReader.GetString(1);
-                string productName = excelReader.GetString(2);
-                string NOIA = excelReader.GetDouble(3).ToString();
-                string productPrice = excelReader.GetDouble(5).ToString();
-                string cost = excelReader.GetDouble(4).ToString();
-                string productReference = productCode + "-" + DateTime.Now.ToString("yyyy/MM/dd");
-
-                SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
-
-                var product = SafriSoft.Products.FirstOrDefault(x => x.ProductReference == productReference || x.ProductCode == productCode);
-
-                if (product == null)
+                while (excelReader.Read())
                 {
-                    using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
+                    var productCode = excelReader.GetValue(0).ToString();
+                    var productCategory = excelReader.GetValue(1).ToString();
+                    var productName = excelReader.GetValue(2).ToString();
+                    var NOIA = excelReader.GetValue(3).ToString();
+                    var productPrice = excelReader.GetValue(5).ToString();
+                    var cost = excelReader.GetValue(4).ToString();
+                    var productReference = productCode + "-" + DateTime.Now.ToString("yyyy/MM/dd");
+
+                    SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
+
+                    var product = SafriSoft.Products.FirstOrDefault(x => x.ProductReference == productReference || x.ProductCode == productCode);
+
+                    if (product == null)
                     {
-                        conn.Open();
-                        var cmd = conn.CreateCommand();
-                        cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCode],[ProductCategory],[ProductImage], [OrganisationId], [Cost]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}', '{11}')", conn.Database, productName, productReference, productPrice, 0, NOIA, "Active", productCode, productCategory, "None", organisationId, cost);
-                        await cmd.ExecuteNonQueryAsync();
-                        conn.Close();
+                        using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
+                        {
+                            conn.Open();
+                            var cmd = conn.CreateCommand();
+                            cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCode],[ProductCategory],[ProductImage], [OrganisationId], [Cost]) VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}', '{11}')", conn.Database, productName, productReference, productPrice, 0, NOIA, "Active", productCode, productCategory, "None", organisationId, cost);
+                            await cmd.ExecuteNonQueryAsync();
+                            conn.Close();
+                        }
                     }
+
+                    //excelReader.NextResult();
                 }
 
-                excelReader.NextResult();
+                excelReader.Close();
+
+                return Json(new { Success = true });
             }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                return Json(new { Success = true });
+            }
+            
 
-            excelReader.Close();
-
-            return Json(new { Success = true });
+            
         }
 
         [HttpGet, Route("GetSuppliers")]
@@ -1732,6 +1742,7 @@ namespace SafriSoftv1._3.Controllers.API
             var amount = Convert.ToDouble(context.Request.Headers["amount"]);
             var vatAccountId = Convert.ToInt32(context.Request.Headers["vatAccountId"]);
             var invoiceAccountId = Convert.ToInt32(context.Request.Headers["invoiceAccountId"]);
+            var productId = Convert.ToInt32(context.Request.Headers["productId"]);
 
             if(postedFile == null)
             {
@@ -1743,7 +1754,9 @@ namespace SafriSoftv1._3.Controllers.API
             string fileName = postedFile.FileName;
             string fileContentType = postedFile.ContentType;
 
-            var saveFileDir = $"{AppDomain.CurrentDomain.BaseDirectory}/Documents/SupplierInvoices";
+            var saveFileDir = System.Web.Hosting.HostingEnvironment.MapPath("~/Documents/SupplierInvoices");
+
+            //var saveFileDir = $"{AppDomain.CurrentDomain.BaseDirectory}/Documents/SupplierInvoices";
 
             if(Directory.Exists(saveFileDir) == false)
             {
@@ -1761,7 +1774,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var iSvc = new InventoryService();
 
-                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, organisationId, Id);
+                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, organisationId, Id, productId);
 
                 if (result.Success == false)
                     return Json(result);

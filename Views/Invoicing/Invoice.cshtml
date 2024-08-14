@@ -125,7 +125,11 @@
                                     <tr>
                                         @{
                                             var invoiceVat = Model.VatOptions.Where(x => x.Id == Model.InvoiceDetails.VatOptionId).FirstOrDefault();
-                                            var vatAmount = subtotal * (invoiceVat.Percentage / 100);
+                                            var vatAmount = subtotal * (0 / 100);
+                                            if(invoiceVat != null)
+                                            {
+                                                vatAmount = subtotal * (invoiceVat.Percentage / 100);
+                                            }
                                         }
                                         <td></td>
                                         <td></td>

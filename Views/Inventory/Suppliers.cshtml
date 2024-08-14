@@ -60,7 +60,7 @@
                                         <th>C Person Position</th>
                                         <th>C Person Phone</th>
                                         <th>C Person Email</th>
-                                        <th>Product</th>
+                                        @*<th>Product</th>*@
                                         <th>Balance</th>
                                         <th>Actions</th>
                                     </tr>
@@ -95,7 +95,7 @@
                         <div class="mb-3 col-md-12">
                             <div class="input-group form-group bmd-form-group is-filled">
                                 <label class="bmd-label-floating">Company Name</label>
-                                <input id="companyName" class="form-control" type="text">
+                                <input id="supCompanyName" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="mb-3 col-md-12">
@@ -173,12 +173,12 @@
                                 <input id="contactPersonEmail" class="form-control" type="text">
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        @*<div class="col-md-12">
                             <div class="input-group form-group bmd-form-group is-filled">
                                 <label class="bmd-label-floating"></label>
                                 <select id="selectedOption" class="safriSelect2 form-control" style="max-width:100%;width:100%; min-height:100px;"></select>
                             </div>
-                        </div>
+                        </div>*@
                     </div>
 
                 </div>
@@ -195,7 +195,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="supplierInvoices">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Supplier Invoices</h5>
@@ -205,104 +205,116 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h4 class="card-title"><i class="fa fa-paste"></i> Add Invoice</h4>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <div class="col-md-12">
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Date</label>
-                                    <input id="date" class="form-control" type="date">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title"><i class="fa fa-paste"></i> Add Invoice</h4>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Date</label>
+                                            <input id="date" class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Description</label>
+                                            <input id="description" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">QTY</label>
+                                            <input id="qty" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Vat Amount</label>
+                                            <input id="vatAmount" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Invoice Amount (Excl VAT)</label>
+                                            <input id="amount" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating"></label>
+                                            <select id="selectedProduct" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                                <option value="-100">SELECT PRODUCT</option>
+                                                @foreach (var product in Model.Products)
+                                                {
+                                                    <option value="@product.Id">@product.ProductName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating"></label>
+                                            <select id="selectedVatAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                                <option value="-100">SELECT VAT ACCOUNT</option>
+                                                @foreach (var account in Model.TrialBalanceAccounts)
+                                                {
+                                                    <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating"></label>
+                                            <select id="selectedInvoiceAccount" class="safriSelect2 form-control" style="width: 100%;min-width: 100%; min-height: 100px;">
+                                                <option value="-100">SELECT INVOICE ACCOUNT</option>
+                                                @foreach (var account in Model.TrialBalanceAccounts)
+                                                {
+                                                    <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="dropzone" class="fade">
+                                    <h3 style="color: #17a2b8;">Drag & Drop File</h3>
                                 </div>
                             </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Description</label>
-                                    <input id="description" class="form-control" type="text">
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">QTY</label>
-                                    <input id="qty" class="form-control" type="text">
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Vat Amount</label>
-                                    <input id="vatAmount" class="form-control" type="text">
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Invoice Amount (Excl VAT)</label>
-                                    <input id="amount" class="form-control" type="text">
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedVatAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
-                                        <option value="-100">SELECT VAT ACCOUNT</option>
-                                        @foreach (var account in Model.TrialBalanceAccounts)
-                                        {
-                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedInvoiceAccount" class="safriSelect2 form-control" style="width: 100%;min-width: 100%; min-height: 100px;">
-                                        <option value="-100">SELECT INVOICE ACCOUNT</option>
-                                        @foreach (var account in Model.TrialBalanceAccounts)
-                                        {
-                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            @*<div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedCreditorsAccount" class="safriSelect2 form-control" style="width: 100%;min-width: 100%; min-height: 100px;">
-                                        <option value="-100">SELECT CREDITORS ACCOUNT</option>
-                                        @foreach (var account in Model.TrialBalanceAccounts)
-                                        {
-                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>*@
-                        </div>
-                        <div id="dropzone" class="fade">
-                            <h3 style="color: #17a2b8;">Drag & Drop File</h3>
-                        </div>
-                        @*<div id="dropzone-upgrade">
-                                <h5><i class="fa fa-lock"></i> Import Documents - Upgrade Package</h5>
-                            </div>*@
-                    </div>
-                    <div class="card-body">
-                        <table id="supplierInvoicesDt" class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Filename</th>
-                                    <th>Qty</th>
-                                    <th>VatAmount</th>
-                                    <th>Amount</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
 
-                        </table>
+                            <!-- /.card-body -->
+                        </div>
                     </div>
-                    <!-- /.card-body -->
+                    <div class="col-md-7">
+                        <div class="card">
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title"><i class="fa fa-paste"></i> Invoices</h4>
+                            </div>
+                            <div class="card-body">
+                                <table id="supplierInvoicesDt" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Filename</th>
+                                            <th>Product</th>
+                                            <th>Qty</th>
+                                            <th>VatAmount</th>
+                                            <th>Amount</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
+                
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
@@ -402,6 +414,7 @@
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[-1], ["All"]],
+            order: [[11, "asc"]],
             ajax: {
                 url: '/api/Inventory/GetSuppliers/',
                 method: 'GET',
@@ -448,10 +461,10 @@
                     data: 'ContactPersonEmail',
                     searchable: true,
                 },
-                {
-                    data: 'ProductName',
-                    searchable: true,
-                },
+                //{
+                //    data: 'ProductName',
+                //    searchable: true,
+                //},
                 {
                     'data': 'Balance',
                     'searchable': true,
@@ -479,22 +492,22 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
-        loadProducts();
+        //loadProducts();
 
-        function loadProducts() {
+        //function loadProducts() {
 
-            var url = "/api/Inventory/GetProducts";
+        //    var url = "/api/Inventory/GetProducts";
 
-            SafriSoftGetRequest(url, (response) => {
-                if (response.length > 0) {
-                    $("#selectedOption").append('<option value="-100">Select Product</option>');
+        //    SafriSoftGetRequest(url, (response) => {
+        //        if (response.length > 0) {
+        //            $("#selectedOption").append('<option value="-100">Select Product</option>');
 
-                    for (var i = 0; i < response.length; i++) {
-                        $("#selectedOption").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
-                    }
-                }
-            });
-        }
+        //            for (var i = 0; i < response.length; i++) {
+        //                $("#selectedOption").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
+        //            }
+        //        }
+        //    });
+        //}
 
         var _supplierId = 0;
 
@@ -510,7 +523,7 @@
         }
 
         function addSupplier() {
-            var companyName = $('#companyName').val();
+            var companyName = $('#supCompanyName').val();
             var tradingAs = $('#tradingAs').val();
             var phone = $('#phone').val();
             var email = $('#email').val();
@@ -523,7 +536,7 @@
             var contactPersonPosition = $('#contactPersonPosition').val();
             var contactPersonPhone = $('#contactPersonPhone').val();
             var contactPersonEmail = $('#contactPersonEmail').val();
-            var productId = $("#selectedOption").val();
+            //var productId = $("#selectedOption").val();
 
             if (companyName === '') {
                 toastr.error('Company Name cannot be empty');
@@ -550,7 +563,7 @@
                 ContactPersonEmail: contactPersonEmail,
                 ContactPersonPosition: contactPersonPosition,
                 ContactPersonPhone: contactPersonPhone,
-                ProductId: productId
+                //ProductId: productId
             }
 
             var vm = {
@@ -584,7 +597,7 @@
 
             SafriSoftGetRequest(url, (response) => {
                 _supplierId = response.obj.Id;
-                $('#companyName').val(response.obj.CompanyName);
+                $('#supCompanyName').val(response.obj.CompanyName);
                 $('#tradingAs').val(response.obj.TradingAs);
                 $('#phone').val(response.obj.Phone);
                 $('#email').val(response.obj.Email);
@@ -597,8 +610,8 @@
                 $('#contactPersonPosition').val(response.obj.ContactPersonPosition);
                 $('#contactPersonPhone').val(response.obj.ContactPersonPhone);
                 $('#contactPersonEmail').val(response.obj.ContactPersonEmail);
-                $("#selectedOption").val(response.obj.ProductId);
-                $("#selectedOption").trigger("change");
+                //$("#selectedOption").val(response.obj.ProductId);
+                //$("#selectedOption").trigger("change");
             });
 
             $("#supplierModalTitle").text('Update Supplier');
@@ -608,7 +621,7 @@
         }
 
         function resetSupplierDetailsModal() {
-            $('#companyName').val('');
+            $('#supCompanyName').val('');
             $('#tradingAs').val('');
             $('#phone').val('');
             $('#email').val('');
@@ -621,8 +634,8 @@
             $('#contactPersonPosition').val('');
             $('#contactPersonPhone').val('');
             $('#contactPersonEmail').val('');
-            $("#selectedOption").val(-100);
-            $("#selectedOption").trigger("change");
+            //$("#selectedOption").val(-100);
+            //$("#selectedOption").trigger("change");
         }
 
         function uploadSupplierInvoices(id) {
@@ -643,6 +656,7 @@
                     var amount = $("#amount").val();
                     var vatAccountId = $("#selectedVatAccount").val();
                     var invoiceAccountId = $("#selectedInvoiceAccount").val();
+                    var productId = $("#selectedProduct").val();
 
                     request.setRequestHeader("safrisoft", date.replaceAll('-', '|'));
                     request.setRequestHeader("description", description);
@@ -651,6 +665,7 @@
                     request.setRequestHeader("amount", amount);
                     request.setRequestHeader("vatAccountId", vatAccountId);
                     request.setRequestHeader("invoiceAccountId", invoiceAccountId);
+                    request.setRequestHeader("productId", productId);
                 }
             }).on('fileuploadadd', function (e, data) {
 
@@ -763,6 +778,10 @@
                     'render': function (data, type, full, meta) {
                         return '<td id="' + data + '" >' + data + '</td>';
                     }
+                },
+                {
+                    'data': 'Product',
+                    'searchable': true
                 },
                 {
                     'data': 'Qty',

@@ -162,7 +162,7 @@
                     }
                     else if (packageId == 3)
                     {
-                        <button class="btn btn-outline-dark"><i class="fas fa-crown text-warning"></i> SafriSoft - Premium</button>
+                        <button class="btn btn-outline-dark"><i class="fas fa-crown text-warning"></i> SafriSoft - Business</button>
                     }
                 </li>
                 @*<li class="nav-item">
@@ -202,7 +202,7 @@
                     </select>
                 </li>*@
                 <li class="nav-item dropdown">
-                    <button class="btn btn-outline-info" data-toggle="dropdown">@organisation.ToUpper()</button>
+                    <button class="btn btn-outline-dark" data-toggle="dropdown"><i class="fas fa-building text-info"></i> @organisation.ToUpper()</button>
                     @*<a class="nav-link" data-toggle="dropdown" href="#"></a>*@
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     @foreach (var company in companies)
@@ -290,7 +290,7 @@
                         </li>
                         <li class="nav-item">
                             <a id="Products" href="~/Inventory/Stock" class="nav-link">
-                                <i class="nav-icon fas fa-dolly text-white"></i>
+                                <i class="nav-icon fas fa-boxes text-white"></i>
                                 <p class="text-white">
                                     Products
                                 </p>

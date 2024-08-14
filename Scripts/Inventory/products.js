@@ -307,7 +307,7 @@ $('#ImportProduct').on('click', function () {
     }).on('fileuploadadd', function (e, data) {
         data.submit();
     }).on('fileuploadalways', function (e, data) {
-        console.log(data);
+        console.log(e);
         productDataTable.ajax.reload();
         $('#upload-excel').modal('hide');
         toastr.success("Your data has been uploaded successfully");

@@ -223,13 +223,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202303292200127_safrisoftIms.cs" />
-    <Compile Include="Migrations\202303292200127_safrisoftIms.Designer.cs">
-      <DependentUpon>202303292200127_safrisoftIms.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202404162053203_safrisoftaccounting.cs" />
-    <Compile Include="Migrations\202404162053203_safrisoftaccounting.Designer.cs">
-      <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
+    <Compile Include="Migrations\202408111204551_safrisoft_Ims2.cs" />
+    <Compile Include="Migrations\202408111204551_safrisoft_Ims2.Designer.cs">
+      <DependentUpon>202408111204551_safrisoft_Ims2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\ReportBalanceSheetAccount.cs" />
@@ -2832,11 +2828,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202303292200127_safrisoftIms.resx">
-      <DependentUpon>202303292200127_safrisoftIms.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202404162053203_safrisoftaccounting.resx">
-      <DependentUpon>202404162053203_safrisoftaccounting.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202408111204551_safrisoft_Ims2.resx">
+      <DependentUpon>202408111204551_safrisoft_Ims2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

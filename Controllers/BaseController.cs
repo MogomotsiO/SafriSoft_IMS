@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -28,6 +29,17 @@ namespace SafriSoftv1._3.Controllers
             string userId = IdentityExtensions.GetUserId(User.Identity);
 
             return userId;
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            if(filterContext.Exception != null)
+            {
+                using(var writer = new StreamWriter("Error.txt"))
+                {
+                    writer.WriteLine(filterContext.Exception.Message);
+                }
+            }
         }
     }
 }

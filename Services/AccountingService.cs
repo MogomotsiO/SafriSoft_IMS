@@ -326,28 +326,32 @@ namespace SafriSoftv1._3.Services
                 var newId = db.GeneralLedgers.Add(gl);
                 var res = db.SaveChanges();
 
-                gl.AccountReference = vm.AccountReference.Replace("(ID)", newId.Id.ToString());
+                if(vm.AccountReference != null)
+                {
+                    gl.AccountReference = vm.AccountReference.Replace("(ID)", newId.Id.ToString());
+                }
 
                 db.SaveChanges();
+
+                if (newId.Id > 0) //created
+                {
+                    result.Success = true;
+                    result.Message = $"Successfully Saved General Ledger Account {vm.AccountName}";
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = $"Could not save Gl {vm.AccountName}";
+                }
+
+                return result;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = $"Could not save Gl {vm.AccountName} - {ex.Message}";
+                return result;
             }            
-
-            if (id > 0) //created
-            {
-                result.Success = true;
-                result.Message = $"Successfully Saved General Ledger Account {vm.AccountName}";
-            }
-            else
-            {
-                result.Success = false;
-                result.Message = $"Could not save Gl {vm.AccountName}";
-            }
-
-            return result;
         }
 
         public Result GetGeneralLedgerAccounts(DateParameters vm, int organisationId)
@@ -410,7 +414,7 @@ namespace SafriSoftv1._3.Services
                 foreach (var glAccount in gls)
                 {
                     total += glAccount.Debit;
-                    total -= glAccount.Credit;
+                    total += glAccount.Credit;
                 }
 
                 trialBalanceTotal += total;

@@ -15,13 +15,17 @@ namespace SafriSoftv1._3.Services
         {
             var vm = new InvoicingViewModel();
 
+            var aSvc = new AccountingService();
+
             vm.Organisation = GetOrganisationDetails(organisationId);
 
             vm.Customers = db.Customers.Where(x => x.OrganisationId == organisationId).ToList();
 
             vm.VatOptions = db.VatOptions.Where(x => x.OrganisationId == organisationId).ToList();
 
-            vm.TrialBalanceAccounts = db.TrialBalanceAccounts.Where(x => x.OrganisationId == organisationId).ToList();
+            vm.TrialBalanceAccounts = aSvc.GetTrialBalanceAccounts(organisationId);
+
+            vm.Products = db.Products.Where(x => x.OrganisationId == organisationId).ToList();
 
             return vm;
         }
@@ -176,25 +180,6 @@ namespace SafriSoftv1._3.Services
 
                 aSvc.SaveCustomerTransaction(ctRecord);
 
-                //if(vm.InvoiceDetails.DebtorsAccountId != -100)
-                //{
-                //    var account = db.TrialBalanceAccounts.Where(x => x.Id == vm.InvoiceDetails.DebtorsAccountId).FirstOrDefault();
-
-                //    var gl = new GlAccountViewModel
-                //    {
-                //        AccountName = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
-                //        AccountNumber = account.AccountNumber,
-                //        Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
-                //        Debit = vm.InvoiceDetails.Amount > 0 ? vm.InvoiceDetails.Amount : 0,
-                //        Credit = vm.InvoiceDetails.Amount < 0 ? vm.InvoiceDetails.Amount : 0,
-                //        Date = vm.InvoiceDetails.InvoiceDate,
-                //        Month = vm.InvoiceDetails.InvoiceDate.Month,
-                //        Year = vm.InvoiceDetails.InvoiceDate.Year,
-                //    };
-
-                //    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
-                //}
-
                 foreach (var item in vm.InvoiceItems)
                 {
                     item.InvoiceId = vm.InvoiceDetails.Id;
@@ -225,21 +210,6 @@ namespace SafriSoftv1._3.Services
 
                             var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
 
-                            //if (glRes.Success == true)
-                            //{
-                            //    var ct = new CustomerTransaction
-                            //    {
-                            //        Description = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
-                            //        Amount = vm.InvoiceDetails.Amount,
-                            //        InvoiceId = vm.InvoiceDetails.Id,
-                            //        OrganisationId = organisationId,
-                            //        CustomerId = vm.InvoiceDetails.CustomerId,
-                            //        Inserted = DateTime.Now,
-                            //        Updated = DateTime.Now,
-                            //    };
-
-                            //    aSvc.SaveCustomerTransaction(ct);
-                            //}
                         }
                     }
 
@@ -287,23 +257,20 @@ namespace SafriSoftv1._3.Services
 
                                 var vtRes = aSvc.SaveVatTransaction(vt, organisationId);
                             }
+                                                        
+                        }
+                    }
 
-                            //if(glRes.Success == true)
-                            //{
-                            //    var ct = new CustomerTransaction
-                            //    {
-                            //        Description = $"{vm.InvoiceDetails.InvoiceNumber} - {account.AccountName}",
-                            //        Amount = vm.InvoiceDetails.Amount,
-                            //        InvoiceId = vm.InvoiceDetails.Id,
-                            //        OrganisationId = organisationId,
-                            //        CustomerId = vm.InvoiceDetails.CustomerId,
-                            //        Inserted = DateTime.Now,
-                            //        Updated = DateTime.Now,
-                            //    };
+                    if(item.ProductId > 0)
+                    {
+                        var product = db.Products.Where(x => x.Id == item.ProductId).FirstOrDefault();
 
-                            //    aSvc.SaveCustomerTransaction(ct);
-                            //}
-                            
+                        if (product != null)
+                        {
+                            product.ItemsAvailable -= item.Qty;
+                            product.ItemsSold += item.Qty;
+
+                            db.SaveChanges();
                         }
                     }
                 }

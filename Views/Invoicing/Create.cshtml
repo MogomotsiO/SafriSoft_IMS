@@ -130,26 +130,19 @@
                         </div>
 
                         <div class="card-body" style="display: block;">
-                            <div class="mt-4 mb-3">
+                            <div class="mb-3">
                                 <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Product Description:</label>
-                                    <input id="productDescription" data-bind="textInput: description" class="form-control" type="text">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedProduct" class="safriSelect2 form-control" data-bind="value: selectedProductId, event: {change: productChanged}" style="min-width:100%; min-height:100px;">
+                                        <option value="-100">SELECT PRODUCT</option>
+                                        @foreach (var product in Model.Products)
+                                        {
+                                            <option value="@product.Id">@product.ProductName</option>
+                                        }
+                                    </select>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Qty:</label>
-                                    <input id="qty" data-bind="textInput: qty" class="form-control" type="number">
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Price:</label>
-                                    <input id="amount" data-bind="textInput: amount" class="form-control" type="number">
-                                </div>
-                            </div>
                             <div class="mb-3">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating"></label>
@@ -174,16 +167,38 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="mt-4 mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Product Description:</label>
+                                    <input id="productDescription" data-bind="textInput: description" class="form-control" type="text">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Qty:</label>
+                                    <input id="qty" data-bind="textInput: qty" class="form-control" type="number">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Price:</label>
+                                    <input id="amount" data-bind="textInput: amount" class="form-control" type="number">
+                                </div>
+                            </div>
+
                             <button class="btn btn-light" data-bind="click: addLineItem"><span class="fa fa-plus text-info"></span> Add Line</button>
                             @*<div class="row">
-                                <div class="col-md-6">
+            <div class="col-md-6">
 
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <button class="btn btn-light" data-bind="click: saveInvoice"><span class="fa fa-save text-info"></span> Save Invoice</button>
-                                </div>
+            </div>
+            <div class="col-md-6 text-right">
+                <button class="btn btn-light" data-bind="click: saveInvoice"><span class="fa fa-save text-info"></span> Save Invoice</button>
+            </div>
 
-                            </div>*@
+        </div>*@
                         </div>
                     </div>
 
@@ -364,6 +379,7 @@
 
         var customers = JSON.parse('@Html.Raw(Json.Encode(Model.Customers))');
         var vatOptions = JSON.parse('@Html.Raw(Json.Encode(Model.VatOptions))');
+        var products = JSON.parse('@Html.Raw(Json.Encode(Model.Products))');
 
         function customer(id, name, address, cell, email) {
             this.name = name;
@@ -373,8 +389,9 @@
             this.email = email;
         }
 
-        function item(description, qty, amount, vatPercentage, vatOptionId, itemAccountId) {
+        function item(description, qty, amount, vatPercentage, vatOptionId, itemAccountId, productId) {
             debugger;
+            amount *= qty;
             this.Description = description;
             this.Qty = qty;
             this.Amount = amount;
@@ -387,6 +404,7 @@
             this.itemTotalAmount = totalAmount;
             this.itemVatAmountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(itemVatAmount);
             this.itemTotalAmountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(totalAmount);
+            this.ProductId = productId;
         }
 
         var InvoiceViewModel = function () {
@@ -419,7 +437,24 @@
             self.invoiceAccountId = ko.observable(-100);
             self.itemAccountId = ko.observable(0);
             self.vatOptions = ko.observable(vatOptions);
-            
+            self.selectedProductId = ko.observable(-100);
+
+            self.productChanged = function () {
+
+                var id = $('#selectedProduct').val();
+
+                var product = products.find(x => x.Id == id);
+
+                if (product != null && product != undefined) {
+                    self.description(product.ProductName);
+                    self.amount(product.SellingPrice);
+                } else {
+                    self.description('');
+                    self.amount('');
+                }
+                
+            }
+
             self.totalStr = ko.computed(function () {
 
                 var total = parseFloat(self.subtotal()) + parseFloat(self.shipping()) + parseFloat(self.vat());
@@ -496,6 +531,21 @@
             self.addLineItem = function () {
                 debugger;
 
+                if (self.description() == '') {
+                    toastr.error('Please enter a description');
+                    return;
+                }
+
+                if (self.qty() == '') {
+                    toastr.error('Please enter a qty');
+                    return;
+                }
+
+                if (self.amount() == '') {
+                    toastr.error('Please enter a amount');
+                    return;
+                }
+
                 var vatPercent = 0;
 
                 var vatItem = self.vatOptions().find(x => x.Id == parseInt(self.itemVatOptionId()));
@@ -504,7 +554,7 @@
                     vatPercent = vatItem.Percentage;
                 }
 
-                var itemVm = new item(self.description(), self.qty(), self.amount(), vatPercent, self.itemVatOptionId(), self.itemAccountId());
+                var itemVm = new item(self.description(), self.qty(), self.amount(), vatPercent, self.itemVatOptionId(), self.itemAccountId(), self.selectedProductId());
                 console.log(itemVm);
                 self.lineItems.push(itemVm);
 
@@ -520,13 +570,39 @@
             }
 
             self.removeItem = function (e) {
-                var subtotal = parseFloat(self.subtotal()) - parseFloat(e.amount);
+                var subtotal = parseFloat(self.subtotal()) - parseFloat(e.Amount);
+
                 self.subtotal(subtotal);
                 self.lineItems.remove(e);
             }
 
             self.saveInvoice = function () {
-                self.validations();
+
+                var custId = $("#selectedOption").val();
+                if (custId == -100) {
+                    toastr.error('Please select a Customer');
+                    return;
+                }
+
+                if (self.InvoiceName() == '') {
+                    toastr.error('Please complete Invoice Name');
+                    return;
+                }
+
+                if (self.DateIssued() == '') {
+                    toastr.error('Please complete Date Issued');
+                    return;
+                }
+
+                if (self.DateDue() == '') {
+                    toastr.error('Please complete Date Due');
+                    return;
+                }
+
+                if (self.lineItems().length == 0) {
+                    toastr.error('Please add at least 1 line item');
+                    return;
+                }
 
                 var invoiceDetails = {
                     InvoiceDate: self.DateIssued(),
@@ -560,49 +636,13 @@
                         toastr.error(response.Message);
                     }
                 });
-
                 
             }
 
             self.saveAndEmailInvoice = function () {
-                self.validations();
+
 
             }
-
-            self.validations = function (e) {
-                var custId = $("#selectedOption").val();
-                if (custId == -100) {
-                    toastr.error('Please select a Customer');
-                    return;
-                }
-
-                //if (self.InvoiceNumber() == '') {
-                //    toastr.error('Please complete Invoice Number');
-                //    return;
-                //}
-
-                if (self.InvoiceName() == '') {
-                    toastr.error('Please complete Invoice Name');
-                    return;
-                }                
-
-                if (self.DateIssued() == '') {
-                    toastr.error('Please complete Date Issued');
-                    return;
-                }
-
-                if (self.DateDue() == '') {
-                    toastr.error('Please complete Date Due');
-                    return;
-                }
-
-                if (self.lineItems().length == 0) {
-                    toastr.error('Please add at least 1 line item');
-                    return;
-                }
-
-            }
-
 
         }
 

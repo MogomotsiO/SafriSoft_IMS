@@ -97,8 +97,8 @@ $('#final-create').on('click', function () {
                 toastr.success('Successfully created user, search user table for confirmation!');
                 userDataTable.ajax.reload();
             } else {
-                console.log(data);
-                toastr.error('An error occured while trying to save user, contact administrator!');
+                console.log(data.Errors[0]);
+                toastr.error(data.Errors[0]);
             }
 
         });

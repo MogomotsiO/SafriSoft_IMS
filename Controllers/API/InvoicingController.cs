@@ -147,7 +147,9 @@ namespace SafriSoftv1._3.Controllers.API
             string fileName = postedFile.FileName;
             string fileContentType = postedFile.ContentType;
 
-            var saveFileDir = $"{AppDomain.CurrentDomain.BaseDirectory}/Documents/InvoicesProofOfPayment";
+            var saveFileDir = System.Web.Hosting.HostingEnvironment.MapPath("~/Documents/InvoicesProofOfPayment");
+
+            //var saveFileDir = $"{AppDomain.CurrentDomain.BaseDirectory}/Documents/InvoicesProofOfPayment";
 
             if (Directory.Exists(saveFileDir) == false)
             {

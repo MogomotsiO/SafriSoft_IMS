@@ -17,6 +17,7 @@ namespace SafriSoftv1._3.Models
         public List<VatOption> VatOptions { get; set; } = new List<VatOption>();
         public List<TrialBalanceAccount> TrialBalanceAccounts { get; set; } = new List<TrialBalanceAccount>();
         public List<InvoiceTransaction> InvoiceTransactions { get; set; } = new List<InvoiceTransaction>();
+        public List<Product> Products { get; set; } = new List<Product>();
     }
 
     public class InvoiceDetalsVm

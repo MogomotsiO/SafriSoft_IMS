@@ -16,9 +16,11 @@ namespace SafriSoftv1._3.Services
         {
             var vm = new ExpensesViewModel();
 
+            var aSvc = new AccountingService();
+
             vm.categories = db.Settings.Where(x => x.SettingType == Models.SystemModels.SettingType.ExpenseCategories && x.OrganisationId == orgId).ToList();
 
-            vm.Accounts = db.TrialBalanceAccounts.Where(x => x.OrganisationId == orgId).ToList();
+            vm.Accounts = aSvc.GetTrialBalanceAccounts(orgId);
 
             vm.VatOptions = db.VatOptions.Where(x => x.OrganisationId == orgId).ToList();
 

@@ -13,6 +13,7 @@ namespace SafriSoftv1._3.Models
         public Supplier Supplier { get; set; }
         public SupplierInvoice SupplierInvoice { get; set; }
         public List<TrialBalanceAccount> TrialBalanceAccounts { get; set; }
+        public List<Product> Products { get; set; }
     }
 
     public class SupplierDetailsViewModel
@@ -41,6 +42,7 @@ namespace SafriSoftv1._3.Models
     {
         public int Id { get; set; }
         public string Date { get; set; }
+        public string Product { get; set; }
         public string FileName { get; set; }
         public string FileContentType { get; set; }
         public int Qty { get; set; }
