@@ -10,6 +10,20 @@ namespace SafriSoftv1._3.Models.SystemModels
     {
     }
 
+    public enum UserRoles
+    {
+        Admin = 1,
+        Bookkeeping = 2,
+        Sales = 3,
+        Suppliers = 4        
+    }
+
+    public enum ProductType
+    {
+        Inventory = 1,
+        Consumable = 2,
+    }
+
     public enum NominalAccountType
     {
         Income = 1,

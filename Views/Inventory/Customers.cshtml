@@ -37,6 +37,12 @@
     ViewBag.Title = "Customers";
 }
 
+<style>
+    .fileDate{
+        width:80px;
+    }
+</style>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -71,8 +77,8 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <span class="text-right mr-1"><button id="CreateCustomer" type="submit" class="btn btn-light" style="text-align:right !important;"><i class="fa fa-user text-info"></i> Create customer</button></span>
-                            <span class="text-right"><button id="order-create-view" type="button" class="btn btn-light"><i class="fa fa-shopping-cart text-info"></i> Create Order</button></span>
+                            <span class="text-right mr-1"><button id="CreateCustomer" type="submit" class="btn btn-light" style="text-align:right !important;display:none;"><i class="fa fa-user text-info"></i> Create customer</button></span>
+                            @*<span class="text-right"><button id="order-create-view" type="button" class="btn btn-light" style="display:none;"><i class="fa fa-shopping-cart text-info"></i> Create Order</button></span>*@
                         </div>
                         <div class="card-body">
                             <table id="customer-table" class="table table-bordered ">
@@ -114,32 +120,43 @@
                 </button>
             </div>
             <div class="modal-body login-card-body">
-                <div class="row">
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Name</label>
-                            <input id="customer-name" class="form-control" type="text">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-pencil"></i> Create Customer</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Name</label>
+                                    <input id="customer-name" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Email</label>
+                                    <input id="customer-email" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Cell#</label>
+                                    <input id="customer-cell" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Address</label>
+                                    <input id="customer-address" class="form-control" type="text">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Email</label>
-                            <input id="customer-email" class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Cell#</label>
-                            <input id="customer-cell" class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Address</label>
-                            <input id="customer-address" class="form-control" type="text">
-                        </div>
-                    </div>
+
+
                 </div>
+
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
@@ -162,33 +179,44 @@
                 </button>
             </div>
             <div class="modal-body login-card-body">
-                <div class="row">
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Name</label>
-                            <input id="edit-customer-id" hidden class="form-control" type="text">
-                            <input id="edit-customer-name" class="form-control" type="text">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-pencil"></i> Edit Customer</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Name</label>
+                                    <input id="edit-customer-id" hidden class="form-control" type="text">
+                                    <input id="edit-customer-name" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Email</label>
+                                    <input id="edit-customer-email" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Cell#</label>
+                                    <input id="edit-customer-cell" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Customer Address</label>
+                                    <input id="edit-customer-address" class="form-control" type="text">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Email</label>
-                            <input id="edit-customer-email" class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Cell#</label>
-                            <input id="edit-customer-cell" class="form-control" type="text">
-                        </div>
-                    </div>
-                    <div class="mb-3 col-md-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Customer Address</label>
-                            <input id="edit-customer-address" class="form-control" type="text">
-                        </div>
-                    </div>
+
+
                 </div>
+
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
@@ -366,9 +394,483 @@
     <!-- /.modal-dialog -->
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="customerFiles">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="customerFilesTitle" class="modal-title">@*<i class="fa fa-plus"></i>*@</h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-paste"></i> Add documents</h4>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div id="dropzone" class="fade">
+                            <h3>Drag & Drop File</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table id="customerFilesTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date Created</th>
+                                    <th style="width:400px;">Filename</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
 @section scripts{
 
-    <script src="~/Scripts/Inventory/customers.js"></script>
+    <script>
+        //$(function () {
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+            if (userWrite == 'true') {
+                $('#CreateCustomer').show();
+                $('#order-create-view').show();
+            }
+        })
+
+        var customerDataTable = $("#customer-table").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "info": true,
+            lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
+            ajax: {
+                url: '/api/Inventory/GetCustomers/',
+                method: 'GET',
+                "dataSrc": ""
+            },
+            'columns': [
+                //{
+                //    'data': 'Id',
+                //    'searchable': true
+                //},
+                {
+                    'data': 'DateCustomerCreated',
+                    'searchable': true
+                },
+                {
+                    'data': 'CustomerName',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        return '<td id="' + data + '" >' + data + '</td>';
+                    }
+                },
+                {
+                    'data': 'CustomerEmail',
+                    'searchable': true
+                },
+                {
+                    'data': 'CustomerCell',
+                    'searchable': true
+                },
+                {
+                    'data': 'CustomerAddress',
+                    'searchable': true
+                },
+                {
+                    'data': 'NumberOfOrders',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <button id="' + full.Id + '" name="' + full.CustomerName + '" data-toggle="tooltip" data-placement="left" title="View customer orders" type="button" onclick="customerFeatures(this.id, this.name)" class="btn btn-white"><i class="fa fa-eye text-info"></i></button> <a class="btn btn-white" href="#">' + data + '</a> </div> </td>';
+                    }
+                },
+                {
+                    'data': 'Balance',
+                    'searchable': true,
+                    'className': 'text-right',
+                    'render': function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
+                    'data': 'Id',
+                    'render': function (data, type, full, meta) {
+
+                        if (userWrite == 'true') {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Edit customer details" onclick="editCustomerDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ' +
+                                `<a id="${full.Id}" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Attach files" onclick="attachCustomerFiles(this.id, '${full.CustomerName}')"><i class="fas fa-file text-info"></i></a> </div> </td>`
+                        } else {
+                            return '';
+                        }
+
+                    }
+                }
+            ]
+        });
+
+        var _editId = 0;
+
+        function attachCustomerFiles(id,name) {
+            _editId = id;
+            $('#customerFilesTitle').text(name);
+            $('#customerFiles').modal('show');
+            customerFilesTable.ajax.url('/api/Inventory/GetCustomerDocuments/' + id).load();
+
+            $('#dropzone').fileupload({
+                dropZone: $('#dropzone'),
+                dataType: "application/json",
+                url: '/api/Inventory/UploadDocument/' + id
+            }).on('fileuploadadd', function (e, data) {
+                data.submit();
+            }).on('fileuploadalways', function (e, data) {
+                customerFilesTable.ajax.url('/api/Inventory/GetCustomerDocuments/' + id).load();
+
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+            });
+
+            $(document).bind('dragover', function (e) {
+                var dropZone = $('#dropzone');
+                dropZone.addClass('hover');
+            });
+
+            $(document).bind('dragleave', function (e) {
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+            });
+
+            $(document).bind('drop dragover', function (e) {
+                e.preventDefault();
+            });
+        }
+
+        var customerFilesTable = $("#customerFilesTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "success": true,
+            lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
+            ajax: {
+                url: '/api/Inventory/GetCustomerDocuments/0',
+                method: 'GET',
+                "dataSrc": "obj"
+            },
+            'columns': [
+                {
+                    'data': 'DateFileCreated',
+                    className: 'fileDate',
+                    'searchable': true
+                },
+                {
+                    'data': 'FileName',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        return '<td id="' + data + '" >' + data + '</td>';
+                    }
+                },
+                {
+                    'data': 'Id',
+                    className: 'fileDate',
+                    'render': function (data, type, full, meta) {
+                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="DownloadFile?fileId=' + full.Id + '"><i class="fas fa-download text-info"></i></a> </div> </td>'
+                    }
+                }
+            ]
+        });
+
+        function downloadFile(fileId) {
+
+            if (fileId != "") {
+                $.ajax({
+                    url: '/Inventory/DownloadCustomerFile?fileId=' + fileId,
+                    method: 'POST',
+                    dataType: 'binary',
+                    processData: false
+                }).done(function (data) {
+                    console.log(data);
+
+                });
+            }
+
+        }
+
+        customerDataTable.on('draw', function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        var date = new Date();
+        var createdDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
+        $('#CreateCustomer').on('click', function () {
+            $('#creat-customer-modal').modal('show');
+        });
+
+        $('#customer-final-create').on('click', function () {
+            var customerName = $("#customer-name").val();
+            var customerEmail = $("#customer-email").val();
+            var customerCell = $("#customer-cell").val();
+            var customerAddress = $("#customer-address").val();
+            var dateCustomerCreated = createdDate;
+
+            if (customerName != "" && customerAddress != "" && (customerEmail != "" || customerCell != "")) {
+
+                var customer = {
+                    'CustomerName': customerName,
+                    'CustomerEmail': customerEmail,
+                    'CustomerCell': customerCell,
+                    'CustomerAddress': customerAddress,
+                    'DateCustomerCreated': dateCustomerCreated
+                };
+
+                $.ajax({
+                    url: '/api/Inventory/CustomerCreate',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: customer,
+                    contextType: "application/json",
+                    traditional: true
+                }).done(function (data) {
+                    if (data.Success) {
+                        console.log(data);
+                        $('#creat-customer-modal').modal('hide');
+                        toastr.success('Successfully created customer search customer table for confirmation!');
+                        setTimeout(function () { location.reload() }, 500);
+                        //customerDataTable.ajax.reload();
+                    } else {
+                        console.log(data);
+                        toastr.error(data.Error);
+                    }
+
+                });
+            } else {
+                if (customerName == "") {
+                    toastr.error('Customer name cannot be empty!');
+                }
+                if (customerAddress == "") {
+                    toastr.error('Customer address cannot be empty!');
+                }
+                if (customerEmail == "" || customerCell == "") {
+                    toastr.error('Customer email or cell number cannot be empty!');
+                }
+            }
+
+        });
+
+        function customerDeleteDetails(id) {
+            var customer = {
+                'Id': id
+            };
+
+            $.ajax({
+                url: '/api/Inventory/CustomerDelete',
+                method: 'POST',
+                dataType: 'json',
+                data: customer,
+                contextType: "application/json",
+                traditional: true
+            }).done(function (data) {
+                if (data.Success) {
+                    toastr.success('Successfully deleted customer search customer table for confirmation!');
+                    customerDataTable.ajax.reload();
+                } else {
+                    console.log(data);
+                    toastr.error('An error occured while trying to delete customer contact administrator!');
+                }
+
+            });
+        }
+
+        $('#customer-final-update').on('click', function () {
+            var customerName = $("#edit-customer-name").val();
+            var customerEmail = $("#edit-customer-email").val();
+            var customerCell = $("#edit-customer-cell").val();
+            var customerAddress = $("#edit-customer-address").val();
+            var customerId = $("#edit-customer-id").val();
+
+            if (customerName != "" && customerAddress != "" && (customerEmail != "" || customerCell != "")) {
+
+                var customer = {
+                    'Id': customerId,
+                    'CustomerName': customerName,
+                    'CustomerEmail': customerEmail,
+                    'CustomerCell': customerCell,
+                    'CustomerAddress': customerAddress
+                };
+
+                $.ajax({
+                    url: '/api/Inventory/CustomerUpdate',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: customer,
+                    contextType: "application/json",
+                    traditional: true
+                }).done(function (data) {
+                    if (data.Success) {
+                        console.log(data);
+                        $('#edit-customer-modal').modal('hide');
+                        toastr.success('Successfully updated customer search customer table for confirmation!');
+                        customerDataTable.ajax.reload();
+                    } else {
+                        console.log(data);
+                        toastr.error('An error occured while trying to save customer contact administrator!');
+                    }
+
+                });
+            } else {
+                if (customerName == "") {
+                    toastr.error('Customer name cannot be empty!');
+                }
+                if (customerAddress == "") {
+                    toastr.error('Customer address cannot be empty!');
+                }
+                if (customerEmail == "" || customerCell == "") {
+                    toastr.error('Customer email or cell number cannot be empty!');
+                }
+            }
+
+        });
+
+
+        //});
+
+        var customerOrderDataTable = $("#customer-order-table").DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
+            ajax: {
+                url: '/api/Inventory/GetOrders/',
+                method: 'GET',
+                "dataSrc": ""
+            },
+            'columns': [
+                {
+                    'data': 'OrderId',
+                    'searchable': true
+                },
+                {
+                    'data': 'ProductName',
+                    'searchable': true
+                },
+                {
+                    'data': 'ExpectedDeliveryDate',
+                    'searchable': true
+                },
+                {
+                    'data': 'OrderWorth',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        return new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data);
+                    }
+                },
+                {
+                    'data': 'OrderStatus',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        if (full.OrderStatus == "Processed") {
+                            return '<span class="badge bg-danger">' + data + '</span>'
+                        }
+                        if (full.OrderStatus == "Packaged") {
+                            return '<span class="badge bg-warning">' + data + '</span>'
+                        }
+                        if (full.OrderStatus == "InTransit") {
+                            return '<span class="badge bg-info">' + data + '</span>'
+                        }
+                        if (full.OrderStatus == "Delivered") {
+                            return '<span class="badge bg-success">' + data + '</span>'
+                        }
+                    }
+                },
+                {
+                    'data': 'OrderProgress',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        if (full.OrderStatus == "Processed") {
+                            return '<div class="progress"> <div class="progress-bar progress-bar-striped bg-danger" style="width:' + data + '%"></div> </div><div class="progress"> <div class="progress-bar progress-bar-striped bg-danger" style="width:' + data + '%"></div> </div>'
+                        }
+                        if (full.OrderStatus == "Packaged") {
+                            return '<div class="progress"> <div class="progress-bar progress-bar-striped bg-warning" style="width:' + data + '%"></div> </div><div class="progress"> <div class="progress-bar progress-bar-striped bg-warning" style="width:' + data + '%"></div> </div>'
+                        }
+                        if (full.OrderStatus == "InTransit") {
+                            return '<div class="progress"> <div class="progress-bar progress-bar-striped bg-info" style="width:' + data + '%"></div> </div><div class="progress"> <div class="progress-bar progress-bar-striped bg-info" style="width:' + data + '%"></div> </div>'
+                        }
+                        if (full.OrderStatus == "Delivered") {
+                            return '<div class="progress"> <div class="progress-bar progress-bar-striped bg-success" style="width:' + data + '%"></div> </div><div class="progress"> <div class="progress-bar progress-bar-striped bg-success" style="width:' + data + '%"></div> </div>'
+                        }
+                    }
+                },
+                {
+                    'data': 'OrderProgress',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+                        if (full.OrderStatus == "Processed") {
+                            return '<span class="badge bg-danger">' + data + '%</span>'
+                        }
+                        if (full.OrderStatus == "Packaged") {
+                            return '<span class="badge bg-warning">' + data + '%</span>'
+                        }
+                        if (full.OrderStatus == "InTransit") {
+                            return '<span class="badge bg-info">' + data + '%</span>'
+                        }
+                        if (full.OrderStatus == "Delivered") {
+                            return '<span class="badge bg-success">' + data + '%</span>'
+                        }
+                    }
+                }
+            ]
+        });
+
+        function customerFeatures(id, name) {
+            customerOrderDataTable.ajax.url('/api/Inventory/GetOrders/' + id).load();
+            $("#customer-orders-title").text(name + " Orders");
+            $('#customer-orders').modal('show');
+        }
+
+
+        function editCustomerDetails(id) {
+
+            $.ajax({
+                url: '/api/Inventory/GetCustomer/' + id,
+                method: 'GET',
+                dataType: 'json'
+            }).done(function (data) {
+                console.log(data);
+                $('#edit-customer-modal').modal('show');
+                $('#edit-customer-name').val(data[0].CustomerName);
+                $('#edit-customer-email').val(data[0].CustomerEmail);
+                $('#edit-customer-cell').val(data[0].CustomerCell);
+                $('#edit-customer-address').val(data[0].CustomerAddress);
+                $('#edit-customer-id').val(id);
+
+            });
+
+        }
+
+    </script>
+
+
     <script src="~/Scripts/Inventory/orders.js"></script>
     <script src="~/Scripts/Inventory/app.inbox.js"></script>
 }

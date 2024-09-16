@@ -22,5 +22,6 @@ namespace SafriSoftv1._3.Models.Data
         public bool Repeating { get; set; }
         public string ProofOfPoayment { get; set; }
         public int InvoiceAccountId { get; set; }
+        public string UserId { get; set; }
     }
 }

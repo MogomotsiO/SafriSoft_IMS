@@ -25,6 +25,7 @@ namespace SafriSoftv1._3.Models.Data
         public int PackageId { get; set; }
         public string OrganisationProvince { get; set; }
         public string UserId { get; set; }
+        public string Currency { get; set; }
 
     }
 }

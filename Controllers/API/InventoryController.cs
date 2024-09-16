@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.SystemModels;
+using SafriSoftv1._3.Models.ViewModels;
 using SafriSoftv1._3.Services;
 using System;
 using System.Collections.Generic;
@@ -18,9 +20,13 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Results;
+using System.Web.UI;
 
 namespace SafriSoftv1._3.Controllers.API
 {
@@ -74,7 +80,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT u.[Id],[Email],[UserName] from [dbo].[AspNetUsers] u, [dbo].[AspNetUserClaims] c WHERE u.Id = c.UserId AND c.ClaimType = 'Organisation' AND c.ClaimValue = '{1}'", conn.Database, getOrgClaim);
+                cmd.CommandText = string.Format("SELECT u.[Id],[Email],[UserName], [FirstName], [LastName], [Read], [Write] from [dbo].[AspNetUsers] u, [dbo].[AspNetUserClaims] c WHERE u.Id = c.UserId AND c.ClaimType = 'Organisation' AND c.ClaimValue = '{1}'", conn.Database, getOrgClaim);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -99,13 +105,20 @@ namespace SafriSoftv1._3.Controllers.API
                             userState = "";
                         }
 
+                        var getUserId = reader.GetString(0);
+                        var userRoles = userManager.GetRoles(getUserId).ToList();
+
                         var Users = new UserViewModel();
                         countUsers += 1;
                         Users.Id = countUsers;
-                        Users.UserId = reader.GetString(0);
+                        Users.UserId = getUserId;
+                        Users.FirstName = Convert.ToString(reader.GetValue(3));
+                        Users.LastName = Convert.ToString(reader.GetValue(4));
+                        Users.Read = Convert.ToBoolean(reader.GetValue(5));
+                        Users.Write = Convert.ToBoolean(reader.GetValue(6));
                         Users.Email = reader.GetString(1);
                         Users.Username = username;
-                        Users.UserRole = userManager.GetRoles(Users.UserId).First();
+                        Users.UserRoles = userRoles;
                         Users.UserState = userState;
                         var numberOfOrdersCmd = conn.CreateCommand();
                         numberOfOrdersCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE UserId = '{1}'", safriDbConn.Database, reader.GetString(0));
@@ -114,7 +127,7 @@ namespace SafriSoftv1._3.Controllers.API
                         randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] WHERE UserId = '{1}'", safriDbConn.Database, reader.GetString(0));
                         try
                         {
-                            Users.RandValueSold = (Decimal)randValueSoldCmd.ExecuteScalar();
+                            Users.RandValueSold = (double)randValueSoldCmd.ExecuteScalar();
                         }
                         catch (Exception Ex)
                         {
@@ -132,6 +145,94 @@ namespace SafriSoftv1._3.Controllers.API
             }
         }
 
+        [HttpGet, Route("GetUserDetails/{id}")]
+        public async Task<IHttpActionResult> GetUserDetails(string id)
+        {
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            string userId = IdentityExtensions.GetUserId(User.Identity);
+            var countUsers = 0;
+            var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
+            var getOrgClaim = organisationClaim.Value;
+            var username = "";
+            var userState = "";
+
+            var appDbContext = new ApplicationDbContext();
+
+            var safriDbConn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString());
+            safriDbConn.Open();
+
+            using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString()))
+            {
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format("SELECT u.[Id],[Email],[UserName], [FirstName], [LastName], [Read], [Write] from [dbo].[AspNetUsers] u, [dbo].[AspNetUserClaims] c WHERE u.Id = '{2}' AND c.ClaimType = 'Organisation' AND c.ClaimValue = '{1}'", conn.Database, getOrgClaim, id);
+
+                var Users = new UserViewModel();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        try
+                        {
+                            var usernameClaim = userManager.GetClaims(reader.GetString(0)).First(x => x.Type == "Username");
+                            username = usernameClaim.Value;
+                        }
+                        catch (Exception Ex)
+                        {
+                            username = reader.GetString(1);
+                        }
+                        try
+                        {
+                            var usernameState = userManager.GetClaims(reader.GetString(0)).First(x => x.Type == "AccountLocked");
+                            userState = usernameState.Value;
+                        }
+                        catch (Exception Ex)
+                        {
+                            userState = "";
+                        }
+
+                        Users.UserId = reader.GetString(0);
+
+                        var userRoles = userManager.GetRoles(Users.UserId).ToList();
+                        var userRolesDetails = appDbContext.Roles.Where(x => userRoles.Contains(x.Name)).Select(x => x.Id).ToList();
+                                                
+                        countUsers += 1;
+                        Users.Id = countUsers;
+                        
+                        Users.Email = reader.GetString(1);
+                        Users.Username = username;
+                        Users.UserRoles = userRoles;
+                        Users.UserRoleIds = userRolesDetails;
+                        Users.UserState = userState;
+                        Users.FirstName = Convert.ToString(reader.GetValue(3));
+                        Users.LastName = Convert.ToString(reader.GetValue(4));
+                        Users.Read = Convert.ToBoolean(reader.GetValue(5));
+                        Users.Write = Convert.ToBoolean(reader.GetValue(6));
+                        var numberOfOrdersCmd = conn.CreateCommand();
+                        numberOfOrdersCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE UserId = '{1}'", safriDbConn.Database, reader.GetString(0));
+                        Users.NumberOfOrders = (Int32)numberOfOrdersCmd.ExecuteScalar();
+                        var randValueSoldCmd = conn.CreateCommand();
+                        randValueSoldCmd.CommandText = string.Format("SELECT sum([OrderWorth]) from [{0}].[dbo].[Orders] WHERE UserId = '{1}'", safriDbConn.Database, reader.GetString(0));
+                        try
+                        {
+                            Users.RandValueSold = (double)randValueSoldCmd.ExecuteScalar();
+                        }
+                        catch (Exception Ex)
+                        {
+                            Users.RandValueSold = 0;
+                        }
+
+                    }
+                    reader.NextResult();
+                    reader.Close();
+                }
+                safriDbConn.Close();
+                conn.Close();
+                return Json(Users);
+            }
+        }
+
         [HttpPost, Route("UserCreate")]
         public async Task<IHttpActionResult> UserCreate(RegisterViewModel UserData)
         {
@@ -139,7 +240,7 @@ namespace SafriSoftv1._3.Controllers.API
             string userId = IdentityExtensions.GetUserId(User.Identity);
             var UserViewModel = new List<UserViewModel>();
 
-            var user = new ApplicationUser { UserName = UserData.Email, Email = UserData.Email };
+            var user = new ApplicationUser { UserName = UserData.Email, Email = UserData.Email, FirstName = UserData.FirstName, LastName = UserData.LastName, Read = UserData.Read, Write = UserData.Write };
             var result = await userManager.CreateAsync(user, UserData.Password);
 
             if (result.Succeeded)
@@ -148,7 +249,16 @@ namespace SafriSoftv1._3.Controllers.API
                 var saveClaim = await userManager.AddClaimAsync(user.Id, OrganisationClaim);
                 Claim UsernameClaim = new Claim("Username", UserData.Username);
                 var saveUsernameClaim = await userManager.AddClaimAsync(user.Id, UsernameClaim);
-                var saveRole = userManager.AddToRole(user.Id, UserData.Role);
+
+                var appDbContext = new ApplicationDbContext();
+
+                foreach (var role in UserData.Roles)
+                {
+                    var userRoleDetails = appDbContext.Roles.Where(x => x.Id == role).FirstOrDefault();
+
+                    var saveRole = userManager.AddToRole(user.Id, userRoleDetails.Name);
+                }                
+
                 var subject = "SafriSoft - Access";
                 var emailBody = $"You have been granted access to the SafriSoft Business Management Software by your Organisation Admin. <br/><br/> Please use the below details to access the software: <br/> Username: {user.UserName} <br/> Password: {UserData.Password}";
 
@@ -168,6 +278,32 @@ namespace SafriSoftv1._3.Controllers.API
             }
 
             return Json(result);
+        }
+
+        [HttpPost, Route("UpdateUser")]
+        public async Task<IHttpActionResult> UpdateUser(RegisterViewModel UserData)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var iSvc = new InventoryService();
+
+                result.obj = iSvc.UpdateUser(UserData, organisationId);
+
+                result.Success = true;
+                result.Message = "User updated";
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
         }
 
         [HttpPost, Route("UserLock")]
@@ -235,7 +371,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database, Id, organisationId);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost],[InventoryAccountId],[ProductType] from [{0}].[dbo].[Product] where Id = {1} AND OrganisationId = '{2}'", conn.Database, Id, organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -253,6 +389,26 @@ namespace SafriSoftv1._3.Controllers.API
                         Products.ProductCategory = reader.GetString(7);
                         Products.ProductImage = reader.GetString(8);
                         Products.ProductCode = reader.GetString(9);
+                        Products.InventoryAccountId = reader.GetInt32(11);
+                        Products.ProductType = (ProductType)reader.GetInt32(12);
+                        Products.ProductTypeStr = Products.ProductType.ToString() == "0" ? string.Empty : Products.ProductType.ToString();
+
+                        var requirements = SafriSoftDb.ProductRequirements.Where(x => x.ProductId == Id).ToList();
+
+                        foreach (var req in requirements)
+                        {
+                            Products.Requirements.Add(new RequirementViewModel{
+                                Id = req.RequiredProductId,
+                                Name = req.ProductName,
+                                Qty = req.QtyRequired
+                            });
+                        }
+
+                        if(Products.Requirements != null && Products.Requirements.Count() > 0)
+                        {
+                            Products.Products = Products.Requirements.Select(x => x.Id).ToArray();
+                        }                       
+
                         ProductViewModel.Add(Products);
                     }
                     reader.NextResult();
@@ -274,12 +430,13 @@ namespace SafriSoftv1._3.Controllers.API
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
             var organisationId = GetOrganisationId(getOrgClaim);
+            var aSvc = new AccountingService();
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
+                cmd.CommandText = string.Format("SELECT [Id],[ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[Cost],[InventoryAccountId],[ProductType] from [{0}].[dbo].[Product] where Status = '{1}' AND OrganisationId = '{2}'", conn.Database, "Active", organisationId);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -297,6 +454,10 @@ namespace SafriSoftv1._3.Controllers.API
                         Products.ProductCategory = reader.GetString(7);
                         Products.ProductImage = reader.GetString(8);
                         Products.ProductCode = reader.GetString(9);
+                        Products.InventoryAccountId = reader.GetInt32(11);
+                        Products.InventoryAccountName = aSvc.GetTrialBalanceAccountDetails(Products.InventoryAccountId, organisationId);
+                        Products.ProductType = (ProductType)reader.GetInt32(12);
+                        Products.ProductTypeStr = Products.ProductType.ToString() == "0" ? string.Empty : Products.ProductType.ToString();
 
                         // calculations very serious stuff
                         Products.TotalItems = Products.ItemsSold + Products.ItemsAvailable;
@@ -315,17 +476,22 @@ namespace SafriSoftv1._3.Controllers.API
         }
 
         [HttpPost, Route("ProductCreate")]
-        public async Task<IHttpActionResult> ProductCreate(JObject ProductData)
+        public async Task<IHttpActionResult> ProductCreate(BaseViewModel vm)
         {
-            var productCode = ProductData.Value<string>("ProductCode");
-            var productCategory = ProductData.Value<string>("ProductCategory");
-            var productName = ProductData.Value<string>("ProductName");
-            var productReference = ProductData.Value<string>("ProductReference");
-            var cost = ProductData.Value<string>("Cost");
-            var sellingPrice = ProductData.Value<string>("SellingPrice");
-            var itemsSold = ProductData.Value<string>("ItemsSold");
-            var itemsAvailable = ProductData.Value<string>("ItemsAvailable");
-            var productImage = ProductData.Value<string>("ProductImage");
+            var ProductData = JsonConvert.DeserializeObject<ProductViewModel>(vm.JsonString);
+
+            var productCode = ProductData.ProductCode;
+            var productCategory = ProductData.ProductCategory;
+            var productName = ProductData.ProductName;
+            var productReference = ProductData.ProductReference;
+            var cost = ProductData.Cost;
+            var sellingPrice = ProductData.SellingPrice;
+            var itemsSold = 0;
+            var itemsAvailable = 0;
+            var productImage = ProductData.ProductImage;
+            var inventoryAccountId = ProductData.InventoryAccountId;
+            var productType = ProductData.ProductType;
+            var products = ProductData.Products;
 
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
 
@@ -348,10 +514,20 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     conn.Open();
                     var cmd = conn.CreateCommand();
-                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[OrganisationId],[Cost]) " +
-                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}')",
-                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active", productCategory, productImage, productCode, organisationId, cost);
-                    await cmd.ExecuteNonQueryAsync();
+                    cmd.CommandText = string.Format("INSERT INTO  [{0}].[dbo].[Product] ([ProductName],[ProductReference],[SellingPrice],[ItemsSold],[ItemsAvailable],[Status],[ProductCategory],[ProductImage],[ProductCode],[OrganisationId],[Cost],[InventoryAccountId],[ProductType]) output INSERTED.Id " +
+                                                    "VALUES('{1}','{2}',{3},'{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}', {12},{13})",
+                                                    conn.Database, productName, productReference, sellingPrice, itemsSold, itemsAvailable, "Active", productCategory, productImage, productCode, organisationId, cost, inventoryAccountId, (int)productType);
+                    
+                    var id = (int)cmd.ExecuteScalar();
+
+                    var iSvc = new InventoryService();
+
+                    if (id > 0 && products.Count() > 0)
+                    {
+                        var result = iSvc.SaveProductRequirements(id, ProductData.Requirements, organisationId);
+                    }
+
+                    var auditResult = iSvc.SaveProductAudit(id,"Product created",organisationId,userId);
 
                 }
                 return Json(new { Success = true });
@@ -364,9 +540,13 @@ namespace SafriSoftv1._3.Controllers.API
         }
 
         [HttpPost, Route("ProductUpdate")]
-        public async Task<IHttpActionResult> ProductUpdate(ProductViewModel ProductData)
+        public async Task<IHttpActionResult> ProductUpdate(BaseViewModel vm)
         {
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
+
+            var ProductData = JsonConvert.DeserializeObject<ProductViewModel>(vm.JsonString);
+
+            var sb = new StringBuilder();
 
             try
             {
@@ -383,14 +563,15 @@ namespace SafriSoftv1._3.Controllers.API
                 }
 
                 if (dbProduct.SellingPrice != ProductData.SellingPrice)
-                {
+                {                    
+                    sb.AppendLine($"Selling Price: From - {dbProduct.SellingPrice} To - {ProductData.SellingPrice} <br>");
                     dbProduct.SellingPrice = ProductData.SellingPrice;
                 }
 
-                if (dbProduct.ItemsAvailable != ProductData.ItemsAvailable)
-                {
-                    dbProduct.ItemsAvailable = ProductData.ItemsAvailable;
-                }
+                //if (dbProduct.ItemsAvailable != ProductData.ItemsAvailable)
+                //{
+                //    dbProduct.ItemsAvailable = ProductData.ItemsAvailable;
+                //}
 
                 if (dbProduct.ProductCode != ProductData.ProductCode)
                 {
@@ -403,8 +584,36 @@ namespace SafriSoftv1._3.Controllers.API
                 }
 
                 if (dbProduct.Cost != ProductData.Cost)
-                {
+                {                    
+                    sb.AppendLine($"Cost: From - {dbProduct.Cost} To - {ProductData.Cost} <br>");
                     dbProduct.Cost = ProductData.Cost;
+                }
+                
+                if (dbProduct.InventoryAccountId != ProductData.InventoryAccountId)
+                {
+                    //var fromAccount = SafriSoft.TrialBalanceAccounts.Where(x => x.Id == dbProduct.InventoryAccountId).FirstOrDefault();
+                    //var toAccount = SafriSoft.TrialBalanceAccounts.Where(x => x.Id == ProductData.InventoryAccountId).FirstOrDefault();
+
+                    //sb.AppendLine($"Inventory Account: From - {fromAccount.AccountName} To - {toAccount.AccountName} <br>");
+                    dbProduct.InventoryAccountId = ProductData.InventoryAccountId;
+                }
+
+                if (dbProduct.ProductType != ProductData.ProductType)
+                {
+                    sb.AppendLine($"Product Type: From - {dbProduct.ProductType.ToString()} To - {ProductData.ProductType.ToString()} <br>");
+                    dbProduct.ProductType = ProductData.ProductType;
+                }
+
+                var iSvc = new InventoryService();
+
+                if (ProductData.Products != null && ProductData.Products.Count() > 0)
+                {                    
+                    var result = iSvc.SaveProductRequirements(dbProduct.Id, ProductData.Requirements, dbProduct.OrganisationId);
+                }
+
+                if(string.IsNullOrEmpty(sb.ToString()) == false)
+                {
+                    var auditResult = iSvc.SaveProductAudit(dbProduct.Id, sb.ToString(), dbProduct.OrganisationId, User.Identity.GetUserId());
                 }
 
                 //if (dbProduct.ProductImage != ProductData.ProductImage)
@@ -440,6 +649,33 @@ namespace SafriSoftv1._3.Controllers.API
             }
 
         }
+
+        [HttpPost, Route("AddQuantity")]
+        public async Task<IHttpActionResult> AddQuantity(BaseViewModel vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var quantityVm = JsonConvert.DeserializeObject<AddQuantityViewModel>(vm.JsonString);
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var svc = new InventoryService();
+
+                result = svc.AddQuantity(quantityVm, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                result.Success = false;
+
+                return Json(result);
+            }
+        }
+
 
         [HttpGet, Route("GetCustomers")]
         public async Task<IHttpActionResult> GetCustomers()
@@ -638,6 +874,69 @@ namespace SafriSoftv1._3.Controllers.API
                 return BadRequest(Ex.ToString());
             }
 
+        }
+
+        [HttpPost, Route("UploadDocument/{Id}")]
+        public async Task<IHttpActionResult> UploadDocument(HttpRequestMessage request, int Id)
+        {
+            SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
+            HttpContext context = HttpContext.Current;
+            HttpPostedFile postedFile = context.Request.Files["files[]"];
+
+            string fileName = postedFile.FileName;
+            string fileContentType = postedFile.ContentType;
+
+            var saveFileDir = System.Web.Hosting.HostingEnvironment.MapPath("~/Documents/Customers");
+
+            if (Directory.Exists(saveFileDir) == false)
+            {
+                Directory.CreateDirectory(saveFileDir);
+            }
+
+            var fullFileName = $"{saveFileDir}/{fileName}";
+
+            var result = new Result();
+
+            try
+            {
+                postedFile.SaveAs(fullFileName);
+
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+                var ivSvc = new InventoryService();
+                result = ivSvc.UploadCustomerDocuments(fileName, Id, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+
+        }
+
+        [HttpGet, Route("GetCustomerDocuments/{Id}")]
+        public async Task<IHttpActionResult> GetCustomerDocuments(int Id = 0)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+                var ivSvc = new InventoryService();
+                result = ivSvc.GetDocuments(Id, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
         }
 
         [HttpGet, Route("GetOrders")]
@@ -1036,7 +1335,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var randValueSoldCmd = conn.CreateCommand();
-                    randValueSoldCmd.CommandText = string.Format("SELECT sum([Amount]) from [{0}].[dbo].[Invoice] WHERE [Paid] = 1 AND [OrganisationId] = {1}", conn.Database, organisationId);
+                    randValueSoldCmd.CommandText = string.Format("SELECT sum([Amount]) from [{0}].[dbo].[Invoice] WHERE [OrganisationId] = {1}", conn.Database, organisationId);
                     try
                     {
                         randValueSold = (double)randValueSoldCmd.ExecuteScalar();
@@ -1770,17 +2069,45 @@ namespace SafriSoftv1._3.Controllers.API
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
 
+                var userId = GetUserId();
+
                 postedFile.SaveAs(fullFileName);
 
                 var iSvc = new InventoryService();
 
-                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, organisationId, Id, productId);
+                result = iSvc.SaveInvoiceFileDetails(fileName, fileContentType, date, description, qty, vatAmount, amount, vatAccountId, invoiceAccountId, organisationId, Id, productId, userId);
 
                 if (result.Success == false)
                     return Json(result);
 
                 result.Success = true;
                 result.Message = "File processed";
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("LoadProductStock/{Id}")]
+        public async Task<IHttpActionResult> LoadProductStock(int Id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var userId = GetUserId();
+
+                var iSvc = new InventoryService();
+
+                result = iSvc.LoadProductStock(Id, organisationId, userId);
+
                 return Json(result);
             }
             catch (Exception Ex)
@@ -1830,6 +2157,30 @@ namespace SafriSoftv1._3.Controllers.API
                 var iSvc = new InventoryService();
 
                 result = iSvc.PaySupplier(vm, organisationId);
+
+                return Json(result);
+            }
+            catch (Exception Ex)
+            {
+                result.Success = false;
+                result.Message = Ex.Message;
+                return Json(result);
+            }
+        }
+
+        [HttpGet, Route("GetCurrencies")]
+        public async Task<IHttpActionResult> GetCurrencies()
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var iSvc = new InventoryService();
+
+                result = iSvc.GetCurrencies();
 
                 return Json(result);
             }

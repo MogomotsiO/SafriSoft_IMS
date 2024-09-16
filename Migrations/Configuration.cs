@@ -10,6 +10,7 @@ namespace SafriSoftv1._3.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(SafriSoftv1._3.Models.SafriSoftDbContext context)
@@ -18,6 +19,8 @@ namespace SafriSoftv1._3.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
+
+
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 
 namespace SafriSoft.Controllers
@@ -22,7 +23,13 @@ namespace SafriSoft.Controllers
 
         public new ActionResult User()
         {
-            return View();
+            var vm = new OrganisationPageViewModel();
+
+            var ivS = new InventoryService();
+
+            vm.UserRoles = ivS.GetUserRoles();
+
+            return View(vm);
         }
 
         public ActionResult Suppliers()
@@ -254,6 +261,22 @@ namespace SafriSoft.Controllers
             byte[] fileBytes = System.IO.File.ReadAllBytes(fullFileName);
 
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, supplierInvoice.FileName);
+        }
+
+        public ActionResult DownloadCustomerFile(int Id)
+        {
+            var Isvc = new InventoryService();
+
+            var filename = Isvc.GetCustomerDocument(Id);
+
+            var saveFileDir = $@"{AppDomain.CurrentDomain.BaseDirectory}\\Documents\\Customers";
+
+            var fullFileName = $@"{saveFileDir}\\{filename}";
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullFileName);
+
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+
         }
 
     }

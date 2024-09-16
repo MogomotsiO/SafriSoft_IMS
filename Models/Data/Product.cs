@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SafriSoftv1._3.Models.SystemModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace SafriSoftv1._3.Models.Data
 {
@@ -16,6 +17,8 @@ namespace SafriSoftv1._3.Models.Data
         public int? ItemsSold { get; set; }
         public int ItemsAvailable { get; set; }
         public string Status { get; set; }
+        public ProductType ProductType { get; set; }
+        public int InventoryAccountId { get; set; }
         public int OrganisationId { get; set; }
     }
 }

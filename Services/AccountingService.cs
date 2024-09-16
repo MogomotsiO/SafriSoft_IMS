@@ -211,7 +211,8 @@ namespace SafriSoftv1._3.Services
                     {
                         Id = item.Id,
                         AccountNumber = item.AccountNumber,
-                        AccountName = item.AccountName
+                        AccountName = item.AccountName,
+                        AccountDescription = item.AccountDescription
                     });
                 }
 
@@ -227,8 +228,9 @@ namespace SafriSoftv1._3.Services
                         {
                             Id = jnl.Id,
                             AccountNumber = account.AccountNumber,
-                            AccountName = $"{jnl.Number} - {account.AccountName}"
-                    });
+                            AccountName = account.AccountName,
+                            AccountDescription = $"{jnl.Number} - {account.AccountName}"
+                        });
                     }
                     
                 }
@@ -414,7 +416,7 @@ namespace SafriSoftv1._3.Services
                 foreach (var glAccount in gls)
                 {
                     total += glAccount.Debit;
-                    total += glAccount.Credit;
+                    total += (glAccount.Credit * -1);
                 }
 
                 trialBalanceTotal += total;
@@ -1619,16 +1621,19 @@ namespace SafriSoftv1._3.Services
             {
                 var vat = db.VatOptions.Where(x => x.Id == item.TypeId).FirstOrDefault();
 
-                list.Add(new VatReport()
+                if(vat != null)
                 {
-                    Date = item.Date.ToString("dd/MM/yyyy"),
-                    Type = vat.Description,
-                    Account = item.Account,
-                    Description = item.Description,
-                    Exclusive = item.Exclusive,
-                    Inclusive = item.Inclusive,
-                    TaxAmount = item.TaxAmount,
-                });
+                    list.Add(new VatReport()
+                    {
+                        Date = item.Date.ToString("dd/MM/yyyy"),
+                        Type = vat.Description,
+                        Account = item.Account,
+                        Description = item.Description,
+                        Exclusive = item.Exclusive,
+                        Inclusive = item.Inclusive,
+                        TaxAmount = item.TaxAmount,
+                    });
+                }
             }
 
             result.obj = list;
@@ -1797,6 +1802,20 @@ namespace SafriSoftv1._3.Services
             }
 
             return balance;
+        }
+
+        public string GetTrialBalanceAccountDetails(int id, int organisationId)
+        {
+            var returnStr = string.Empty;
+
+            var item = db.TrialBalanceAccounts.Where(x => x.Id == id && (x.OrganisationId == organisationId || x.IsGlobal == true)).FirstOrDefault();
+
+            if(item != null)
+            {
+                returnStr = $"{item.AccountNumber} - {item.AccountName}";
+            }
+
+            return returnStr;
         }
 
     }

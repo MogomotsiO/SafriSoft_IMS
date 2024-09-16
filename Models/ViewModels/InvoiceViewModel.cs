@@ -19,6 +19,8 @@
         public string ClientReference { get; set; }
         public int VATNumber { get; set; }
         public string ImgLogoSource { get; set; }
+        public string Currency { get; set; }
+        public string CurrencyIsoName { get; set; }
 
         // Customer Details
         public string CustomerName { get; set; }

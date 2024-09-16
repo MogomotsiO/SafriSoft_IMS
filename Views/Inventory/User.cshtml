@@ -1,6 +1,17 @@
-﻿@{
+﻿@model SafriSoftv1._3.Models.OrganisationPageViewModel
+
+@{
     ViewBag.title = "Users";
 }
+
+<style>
+    .safriSelect2-info {
+        border: 1px solid #17a2b8 !important;
+    }
+
+    
+</style>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -9,14 +20,14 @@
             <div class="row">
                 <div class="col-sm-3">
                     @*<div class="small-box bg-white border-left border-info safri-input-style">
-                        <div class="inner">
-                            <h3>Users:</h3>
-                            <p>Home / Users / Manage Users</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-users text-dark"></i>
-                        </div>
-                    </div>*@
+                            <div class="inner">
+                                <h3>Users:</h3>
+                                <p>Home / Users / Manage Users</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-users text-dark"></i>
+                            </div>
+                        </div>*@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                 </div><!-- /.col -->
@@ -43,9 +54,12 @@
                             <table id="example1" class="table table-bordered ">
                                 <thead>
                                     <tr>
-                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
                                         <th>Email</th>
-                                        <th>Role</th>
+                                        <th>Role(s)</th>
+                                        <th>Read</th>
+                                        <th>Write</th>
                                         <th># Orders</th>
                                         <th>Brought F/W</th>
                                         <th>Actions</th>
@@ -79,56 +93,58 @@
                 <div class="row">
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Username</label>
-                            <input id="username" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-user text-info"></span>
-                                </div>
-                            </div>
+                            <label class="bmd-label-floating">First Name</label>
+                            <input id="firstName" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3 col-lg-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Last Name</label>
+                            <input id="lastName" class="form-control" type="text">
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group is-filled">
                             <label class="bmd-label-floating">Email</label>
+                            <input id="username" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3 col-lg-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Confirm Email</label>
                             <input id="user-email" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-envelope text-info"></span>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
-                            <input id="user-role" disabled class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-user-cog text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
+                    <div class="mb-3 col-lg-12" hidden>
                         <div class="input-group form-group bmd-form-group">
                             <input id="organisation" disabled class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-users text-info"></span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="mb-3 col-lg-12">
                         <div class="input-group form-group bmd-form-group">
                             <input id="password" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-lock text-info"></span>
-                                </div>
-                            </div>
                         </div>
                     </div>
+                    <div class="mb-3 col-lg-12">
+                        <div class="input-group form-group bmd-form-group">
+                            <label>SELECT USER ROLE</label>
+                            <select id="user-role" class="safriSelect2 safriSelect2-info" multiple style="min-width:100%;width:100%; min-height:100px;">
+                                @foreach (var role in Model.UserRoles)
+                                {
+                                    <option value="@role.Value">@role.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 col-lg-12">
+                        <div class="icheck-success d-inline"> <input type="checkbox" id="read" disabled value="true" checked> <label for="read"> Read</label></div>
+                    </div>
+
+                    <div class="mb-3 col-lg-12">
+                        <div class="icheck-success d-inline"> <input type="checkbox" id="write" onclick="$(this).attr('value', this.checked)"> <label for="write"> Write</label></div>
+                    </div>
+
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
@@ -141,8 +157,69 @@
     <!-- /.modal-dialog -->
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="update-user-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@*<i class="fa fa-user-plus"></i>*@ Update User</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body login-card-body">
+                <div class="row">
+                    <div class="mb-3 col-lg-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">First Name</label>
+                            <input id="editFirstName" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3 col-lg-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating">Last Name</label>
+                            <input id="editLastName" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3 col-lg-12" hidden>
+                        <div class="input-group form-group bmd-form-group">
+                            <input id="editOrganisation" disabled class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3 col-lg-12">
+                        <div class="input-group form-group bmd-form-group">
+                            <label>SELECT USER ROLE</label>
+                            <select id="edit-user-role" class="safriSelect2 safriSelect2-info" multiple style="min-width:100%;width:100%; min-height:100px;">
+                                @foreach (var role in Model.UserRoles)
+                                {
+                                    <option value="@role.Value">@role.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 col-lg-12">
+                        <div class="icheck-success d-inline"> <input type="checkbox" id="editRead" disabled value="true" checked> <label for="editRead"> Read</label></div>
+                    </div>
+
+                    <div class="mb-3 col-lg-12">
+                        <div class="icheck-success d-inline"> <input type="checkbox" id="editWrite" onclick="$(this).attr('value', this.checked)"> <label for="editWrite"> Write</label></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button id="final-edit" type="button" class="btn btn-light" onclick="updateUserDetails()"><i class="fa fa-user-edit text-info"></i> Update</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 <div class="modal fade" id="update-organisation-modal">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">@*<i class="fa fa-user-plus"></i>*@ Update Organisation</h4>
@@ -156,84 +233,49 @@
                         <div class="mb-5 col-lg-12">
                             <input id="img-source" type="text" />
                             <input id="img-filename" type="text" />
-                            <img id="logo" src="" alt="" style="height:100px;"/>
+                            <img id="logo" src="" alt="" style="height:100px;" />
 
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group is-filled">
                                 <label class="bmd-label-floating">Organisation Name</label>
                                 <input id="organisation-name" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-user text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Organisation Email</label>
                                 <input id="organisation-email" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-envelope text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Organisation Cell</label>
                                 <input id="organisation-cell" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-phone text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Street</label>
                                 <input id="organisation-street" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-home text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Suburb</label>
                                 <input id="organisation-suburb" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-home text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">City</label>
                                 <input id="organisation-city" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-home text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Code</label>
                                 <input id="organisation-code" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-home text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
@@ -244,6 +286,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mb-3 col-lg-6">
+                            <div class="input-group form-group bmd-form-group">
+                                <select id="selectedCurrency" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                </select>
+                            </div>
+                        </div>
                         <div class="mb-3 col-lg-12">
                             <h4>Banking Details</h4>
                             <hr />
@@ -252,77 +300,42 @@
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Account Name</label>
                                 <input id="account-name" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fa fa-university text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Account No</label>
                                 <input id="account-no" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fa fa-university text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Bank</label>
                                 <input id="bank-name" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fa fa-university text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Branch</label>
                                 <input id="branch-name" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fa fa-university text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Branch Code</label>
                                 <input id="branch-code" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fa fa-university text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">Clients Reference</label>
                                 <input id="clients-reference" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fa fa-user-check text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="mb-3 col-lg-6">
                             <div class="input-group form-group bmd-form-group">
                                 <label class="bmd-label-floating">VAT Number</label>
                                 <input id="vat-number" class="form-control" type="text">
-                                <div class="input-group-append">
-                                    <div class="input-group-text  bg-white border-white">
-                                        <span class="fas fa-exclamation text-info"></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -340,5 +353,426 @@
 
 
 @section scripts{
-    <script src="~/Scripts/Inventory/users.js"></script>    
+
+    <script>
+        loadCurrencies();
+
+        function loadCurrencies() {
+
+            var url = "/api/Inventory/GetCurrencies";
+
+            SafriSoftGetRequest(url, (response) => {
+                console.log(response);
+                $("#selectedCurrency").append('<option value="-100">SELECT CURRENCY</option>');
+                if (response.obj.length > 0) {
+
+                    for (var i = 0; i < response.obj.length; i++) {
+                        $("#selectedCurrency").append(`<option value="${response.obj[i].Id}">${response.obj[i].CurrencyCode} - ${response.obj[i].CountryName}</option>`);
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        var userDataTable = $("#example1").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "info": true,
+            lengthMenu: [[7, 15, 30, -1], [7, 15, 30, "All"]],
+            order: [[8, "asc"]],
+            ajax: {
+                url: '/api/Inventory/GetUserData/',
+                method: 'GET',
+                "dataSrc": ""
+            },
+            'columns': [
+                //{
+                //    'data': 'Id',
+                //    'searchable': true
+                //},
+                {
+                    'data': 'FirstName',
+                    'searchable': true
+                },
+                {
+                    'data': 'LastName',
+                    'searchable': true
+                },
+                {
+                    'data': 'Email',
+                    'searchable': true
+                },
+                {
+                    'data': 'UserRoles',
+                    'searchable': true
+                },
+                {
+                    'data': 'Read',
+                    'searchable': true,
+                    className: 'text-center',
+                    render: function (data, type, full, meta) {
+
+                        if (data == true) {
+                            return `<div class="icheck-success d-inline"> <input type="checkbox" checked disabled id="${full.Id}"><label for="${full.Id}"></label></div>`;
+                        } else {
+                            return `<div class="icheck-success d-inline"> <input type="checkbox" disabled id="${full.Id}"><label for="${full.Id}"></label></div>`;
+                        }
+
+                    }
+                },
+                {
+                    'data': 'Write',
+                    'searchable': true,
+                    className: 'text-center',
+                    render: function (data, type, full, meta) {
+
+                        if (data == true) {
+                            return `<div class="icheck-success d-inline"> <input type="checkbox" checked disabled id="${full.Id}"><label for="${full.Id}"></label></div>`;
+                        } else {
+                            return `<div class="icheck-success d-inline"> <input type="checkbox" disabled id="${full.Id}"><label for="${full.Id}"></label></div>`;
+                        }
+
+                    }
+                },
+                {
+                    'data': 'NumberOfOrders',
+                    className: 'text-center',
+                    'searchable': true
+                },
+                {
+                    'data': 'RandValueSold',
+                    className: 'text-right',
+                    'searchable': true,
+                    'render': function (data, type, full, meta) {
+
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
+                    'data': 'Id',
+                    'render': function (data, type, full, meta) {
+                        if (full.UserState == "Locked") {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"><a id="' + full.UserId + '" class="btn btn-white" href="#" onclick="userLock(this.id)"><i class="fas fa-lock text-info"></i></a> ' +
+                                '<a id="' + full.UserId + '" class="btn btn-white" href="#" onclick="editUserModal(this.id)"><i class="fas fa-edit text-info"></i></a> </div> </td>'
+                        } else {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"><a id="' + full.UserId + '" class="btn btn-white" href="#" onclick="userLock(this.id)"><i class="fas fa-unlock-alt text-info"></i></a> ' +
+                                '<a id="' + full.UserId + '" class="btn btn-white" href="#" onclick="editUserModal(this.id)"><i class="fas fa-edit text-info"></i></a> </div> </td>'
+                        }
+
+                    }
+                }
+            ]
+        });
+
+        var organisationValue = $('#organisation-value').text();
+        $('#CreateUser').on('click', function () {
+            $('#creat-user-modal').modal('show');
+            //$('#user-role').val('OrganisationUser');
+            $('#organisation').val(organisationValue);
+            $('#password').val(organisationValue + '&1');
+        });
+        var passwordCreation = organisationValue + '&1';
+        $("#username").on("input", function () {
+            //$('#password').val(passwordCreation + $(this).val());
+        });
+
+        // user creation below
+        $('#final-create').on('click', function () {
+            // Get all inputs and assign to variables
+            var firstName = $('#firstName').val();
+            var lastName = $('#lastName').val();
+            var username = $('#username').val();
+            var email = $('#user-email').val();
+            var role = $('#user-role').val();
+            var organisation = $('#organisation').val();
+            var password = $('#password').val();
+            var read = $('#read').val();
+            var write = $('#write').val();
+
+            if (username != "" && email != "" && firstName != "" && lastName != "" && role.length > 0) {
+
+                var user = {
+                    'FirstName': firstName,
+                    'LastName': lastName,
+                    'Username': username,
+                    'Email': email,
+                    'Roles': role,
+                    'OrganisationName': organisation,
+                    'Password': password.trim(),
+                    'Read': read,
+                    'Write': write
+                };
+
+                $.ajax({
+                    url: '/api/Inventory/UserCreate',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: user,
+                    contextType: "application/json",
+                    traditional: true
+                }).done(function (data) {
+                    if (data.Succeeded) {
+                        console.log(data);
+                        $('#creat-user-modal').modal('hide');
+                        toastr.success('Successfully created user, search user table for confirmation!');
+                        userDataTable.ajax.reload();
+                    } else {
+                        console.log(data.Errors[0]);
+                        toastr.error(data.Errors[0]);
+                    }
+
+                });
+            } else {
+                if (username == "") {
+                    toastr.error('Username cannot be empty!');
+                }
+                if (email == "") {
+                    toastr.error('Email cannot be empty!');
+                }
+                if (firstName == "") {
+                    toastr.error('First Name cannot be empty!');
+                }
+                if (lastName == "") {
+                    toastr.error('Last Name cannot be empty!');
+                }
+                if (roleId == "-100") {
+                    toastr.error('Please select a role!');
+                }
+            }
+
+        });
+
+        var _editUserId = 0;
+
+        function editUserModal(id) {
+            _editUserId = id;            
+
+            var url = `/api/Inventory/GetUserDetails/${id}`;
+
+            SafriSoftGetRequest(url, (response) => {
+                console.log(response);
+                $("#editFirstName").val(response.FirstName);
+                $("#editLastName").val(response.LastName);
+                $("#edit-user-role").val(response.UserRoleIds);
+                $('#edit-user-role').trigger('change.select2');
+
+                if (response.Read == true) {
+                    $("#editRead").attr('checked', 'checked');
+                    $("#editRead").attr('value', true);
+                } else {
+                    $("#editRead").removeAttr('checked');
+                    $("#editRead").attr('value', false);
+                }
+
+                if (response.Write == true) {
+                    $("#editWrite").attr('checked', 'checked');
+                    $("#editWrite").attr('value', true);
+                } else {
+                    $("#editWrite").removeAttr('checked');
+                    $("#editWrite").attr('value', false);
+                }
+
+                $('#update-user-modal').modal('show');
+
+            });
+
+        }
+
+        function updateUserDetails() {
+            var firstName = $('#editFirstName').val();
+            var lastName = $('#editLastName').val();
+            var role = $('#edit-user-role').val();
+            var read = $('#editRead').val();
+            var write = $('#editWrite').val();
+
+            if (firstName == '') {
+                toastr.error('First name required');
+                return;
+            }
+
+            if (lastName == '') {
+                toastr.error('Last name required');
+                return;
+            }
+
+            if (role.length == 0) {
+                toastr.error('Role required');
+                return;
+            }
+
+            var url = `/api/Inventory/UpdateUser`;
+
+            var data = {
+                UserId: _editUserId,
+                FirstName: firstName,
+                LastName: lastName,
+                Roles: role,
+                Read: read,
+                Write: write
+            }
+
+            SafriSoftPostRequest(url, data, (response) => {
+
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                    userDataTable.ajax.reload();
+                    $('#update-user-modal').modal('hide');
+                } else {
+                    toastr.error(response.Message);
+                }
+
+            });
+        }
+
+        var globalOrganisationId;
+
+
+        function editOrganisation() {
+            $('#img-source').hide();
+            $('#img-filename').hide();
+            //$('#logo').hide();
+            $.ajax({
+                url: '/api/Inventory/GetOrganisationDetails',
+                method: 'GET',
+                dataType: 'json'
+            }).done(function (data) {
+                $('.input-group').addClass('is-filled');
+                $('#update-organisation-modal').modal('show');
+                $('#organisation-name').val(data.OrganisationName);
+                $('#organisation-email').val(data.OrganisationEmail);
+                $('#organisation-cell').val(data.OrganisationCell);
+                $('#organisation-street').val(data.OrganisationStreet);
+                $('#organisation-suburb').val(data.OrganisationSuburb);
+                $('#organisation-city').val(data.OrganisationCity);
+                $('#organisation-code').val(data.OrganisationCode);
+                $('#account-name').val(data.AccountName);
+                $('#account-no').val(data.AccountNo);
+                $('#bank-name').val(data.BankName);
+                $('#branch-name').val(data.BranchName);
+                $('#branch-code').val(data.BranchCode);
+                $('#clients-reference').val(data.ClientReference);
+                $('#vat-number').val(data.VATNumber);
+                $('#logo').attr('src', data.OrganisationLogo);
+                if (data.Currency != null) {
+                    $("#selectedCurrency").val(data.Currency);
+                    $('#selectedCurrency').trigger('change.select2');
+                }
+                globalOrganisationId = data.OrganisationId;
+            });
+
+        }
+
+        function finalUpdateOrganisation() {
+
+            var OrganisationName = $('#organisation-name').val();
+            var OrganisationEmail = $('#organisation-email').val();
+            var OrganisationCell = $('#organisation-cell').val();
+            var OrganisationStreet = $('#organisation-street').val();
+            var OrganisationSuburb = $('#organisation-suburb').val();
+            var OrganisationCity = $('#organisation-city').val();
+            var OrganisationCode = $('#organisation-code').val();
+            var AccountName = $('#account-name').val();
+            var AccountNo = $('#account-no').val();
+            var BankName = $('#bank-name').val();
+            var BranchName = $('#branch-name').val();
+            var BranchCode = $('#branch-code').val();
+            var ClientReference = $('#clients-reference').val();
+            var VATNumber = $('#vat-number').val();
+            var OrganisationLogo = $('#logo').attr("src");
+            var currency = $("#selectedCurrency").val();
+
+            var organisation = {
+                'OrganisationId': globalOrganisationId,
+                'OrganisationName': OrganisationName != "" ? OrganisationName : "Change",
+                'OrganisationEmail': OrganisationEmail != "" ? OrganisationEmail : "Change",
+                'OrganisationCell': OrganisationCell != "" ? OrganisationCell : "Change",
+                'OrganisationLogo': OrganisationLogo,
+                'OrganisationStreet': OrganisationStreet != "" ? OrganisationStreet : "Change",
+                'OrganisationSuburb': OrganisationSuburb != "" ? OrganisationSuburb : "Change",
+                'OrganisationCity': OrganisationCity != "" ? OrganisationCity : "Change",
+                'OrganisationCode': OrganisationCode,
+                'AccountName': AccountName != "" ? AccountName : "Change",
+                'AccountNo': AccountNo,
+                'BankName': BankName != "" ? BankName : "Change",
+                'BranchName': BranchName != "" ? BranchName : "Change",
+                'BranchCode': BranchCode != "" ? BranchCode : "Change",
+                'ClientReference': ClientReference != "" ? ClientReference : "Change",
+                'VATNumber': VATNumber,
+                'ImgLogoSource': "Change",
+                'Currency': currency
+            }
+            debugger;
+            $.ajax({
+                url: '/api/Inventory/SaveOrganisationDetails',
+                method: 'POST',
+                dataType: 'json',
+                data: organisation,
+                contextType: "application/json",
+                traditional: true
+            }).done(function (data) {
+                if (data.Success) {
+                    console.log(data);
+                    $('#update-organisation-modal').modal('hide');
+                    editOrganisation();
+                    toastr.success('Successfully updated organisation details');
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    console.log(data);
+                    toastr.error('An error occured while trying to update organisation, contact administrator!');
+                }
+
+            });
+        }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img-source').val(e.target.result);
+                    $('#img-filename').val(input.value.substring((input.value.lastIndexOf("\\")) + 1));
+                    $('#logo').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+        $("#input-logo").change(function () {
+            $('#logo').show();
+            readURL(this);
+        });
+
+
+        function userLock(id) {
+            var user = {
+                'UserId': id
+            };
+
+            $.ajax({
+                url: '/api/Inventory/UserLock',
+                method: 'POST',
+                dataType: 'json',
+                data: user,
+                contextType: "application/json",
+                traditional: true
+            }).done(function (data) {
+                if (data.Success) {
+                    console.log(data);
+                    toastr.success('Successfully locked user, search user table for confirmation!');
+                    userDataTable.ajax.reload();
+                } else {
+                    console.log(data);
+                    toastr.error('An error occured while trying to lock user, contact administrator!');
+                }
+
+            });
+        }
+    </script>
 }

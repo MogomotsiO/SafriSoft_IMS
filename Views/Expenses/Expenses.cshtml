@@ -27,7 +27,7 @@
                         <h4 class="card-title"><i class="fa fa-file"></i> Income/Expense</h4>
                     </div>
                     <div class="card-body">
-                        <span class="text-right mr-1"><button id="" type="submit" class="btn btn-light" style="text-align:right !important;" onclick="addExpenseModal()"><i class="fa fa-plus text-info"></i> Add Expense</button></span>
+                        <span class="text-right mr-1"><button id="addIncomeExpenseBtn" type="submit" class="btn btn-light" style="text-align:right !important;display:none;" onclick="addExpenseModal()"><i class="fa fa-plus text-info"></i> Add Expense</button></span>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -190,6 +190,10 @@
 
     <script type="text/javascript">
 
+        if (userWrite == 'true') {
+            $('#addIncomeExpenseBtn').show();
+        }
+
         function addExpenseModal() {
             $("#addExpenseModal").modal('show');
         }
@@ -242,7 +246,7 @@
                     render: function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }
@@ -254,7 +258,7 @@
                     render: function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }

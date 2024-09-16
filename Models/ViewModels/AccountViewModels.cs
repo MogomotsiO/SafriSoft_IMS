@@ -84,7 +84,12 @@ namespace SafriSoftv1._3.Models
         public string ConfirmPassword { get; set; }
         public string OrganisationName { get; set; }
         public string Username { get; set; }
-        public string Role { get; set; }
+        public List<string> Roles { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public bool Read { get; set; }
+        public bool Write { get; set; }
+        public string UserId { get; set; }
     }
 
     public class ResetPasswordViewModel

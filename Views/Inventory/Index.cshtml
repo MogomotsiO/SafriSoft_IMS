@@ -3,44 +3,49 @@
 }
 
 <style type="text/css">
-/* Chart.js */
- @@keyframes chartjs-render-animation{
-    from{
-        opacity:.99
+    /* Chart.js */
+    @@keyframes chartjs-render-animation {
+        from {
+            opacity: .99
+        }
+
+        to {
+            opacity: 1
+        }
     }
-    to{
-        opacity:1
+
+    .chartjs-render-monitor {
+        animation: chartjs-render-animation 1ms
     }
-}
-.chartjs-render-monitor{
-    animation:chartjs-render-animation 1ms
-}
-.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{
-    position:absolute;
-    direction:ltr;
-    left:0;
-    top:0;
-    right:0;
-    bottom:0;
-    overflow:hidden;
-    pointer-events:none;
-    visibility:hidden;
-    z-index:-1
-}
-.chartjs-size-monitor-expand>div{
-    position:absolute;
-    width:1000000px;
-    height:1000000px;
-    left:0;
-    top:0
-}
-.chartjs-size-monitor-shrink>div{
-    position:absolute;
-    width:200%;
-    height:200%;
-    left:0;
-    top:0
-}
+
+    .chartjs-size-monitor, .chartjs-size-monitor-expand, .chartjs-size-monitor-shrink {
+        position: absolute;
+        direction: ltr;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        pointer-events: none;
+        visibility: hidden;
+        z-index: -1
+    }
+
+        .chartjs-size-monitor-expand > div {
+            position: absolute;
+            width: 1000000px;
+            height: 1000000px;
+            left: 0;
+            top: 0
+        }
+
+        .chartjs-size-monitor-shrink > div {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            left: 0;
+            top: 0
+        }
 </style>
 
 <!-- Content Wrapper. Contains page content -->
@@ -259,7 +264,7 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
-                    
+
                     <!-- BAR CHART
                     <div class="card card-light">
                         <div class="card-header">
@@ -278,7 +283,7 @@
                     </div>-->
                     <!-- /.card -->
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" style="display:none;" id="debitsAndCredits">
                     <div class="card">
                         <div class="card-header card-header-info">
                             <h4 class="card-title"><i class="fas fa-chart-bar"></i> Top 10 Debits & Credits</h4>
@@ -298,8 +303,6 @@
 <!-- /.content-wrapper -->
 <!-- ./wrapper -->
 <!-- Modal -->
-
-
 <!-- Open Street Map-->
 @*<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>*@
 
@@ -307,238 +310,244 @@
 @*<script src="~/Scripts/heatmap.js"></script>*@
 @*<script src="~/Scripts/leaflet-heatmap.js"></script>*@
 
+@section scripts{
+    <script>
 
-<script>
+
+        window.onload = function () {
+            $(function () {
+
+                if (userRoleIds.includes(admin.toString()) || userRoleIds.includes(bookkeeping.toString())) {
+                    $('#debitsAndCredits').show();
+                }
+
+                /* ChartJS
+                 * -------
+                 * Here we will create a few charts using ChartJS
+                 */
+
+                //--------------
+                //- AREA CHART -
+                //--------------
+
+                // Get context with jQuery - using jQuery's .get() method.
+                //var areaChartCanvas = $('#areaChart').get(0).getContext('2d');
+
+                var today = new Date();
+                var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+                var startDay = '01';
+                var endDay = monthEnd.getDate();
+
+                var start = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + startDay;
+                var end = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + endDay;
+
+                var vm = {
+                    'Start': start,
+                    'End': end
+                };
+
+                var url = '/api/Accounting/GetTrialBalanceReport';
+
+                SafriSoftPostRequest(url, vm, (data) => {
+                    if (data.Success) {
+                        console.log(data);
+                        var debits = data.Obj.filter(x => x.Total > 0).sort(function (a, b) { a.Total - b.Total });
+                        var credits = data.Obj.filter(x => x.Total < 0).sort(function (a, b) { b.Total - a.Total });
+                        var labels = [];
+                        var totals = [];
+                        var period = '';
+                        debugger;
+                        for (var i = 0; i < debits.length; i++) {
+
+                            if (debits[i].AccountNumber == 0 || i == 5)
+                                continue;
+
+                            labels.push(debits[i].AccountName);
+                            totals.push(Math.round(debits[i].Total * 100) / 100);
+                            period = debits[i].Period;
+                        }
+
+                        for (var i = 0; i < credits.length; i++) {
+
+                            if (credits[i].AccountNumber == 0 || i == 5)
+                                continue;
+
+                            labels.push(credits[i].AccountName);
+                            totals.push(Math.round(credits[i].Total * 100) / 100);
+                            period = credits[i].Period;
+                        }
+
+                        var barChartData = {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: period,
+                                    backgroundColor: 'lightblue',
+                                    borderColor: 'rgba(60,141,188,1)',
+                                    borderWidth: 1,
+                                    pointRadius: false,
+                                    pointColor: '#3b8bba',
+                                    pointStrokeColor: 'rgba(60,141,188,1)',
+                                    pointHighlightFill: '#fff',
+                                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                                    data: totals
+                                }
+                            ]
+                        }
+
+                        var barChartCanvas = $('#barChart').get(0).getContext('2d')
+                        var barChartData = jQuery.extend(true, {}, barChartData)
+                        var temp1 = barChartData.datasets[0]
+                        barChartData.datasets[0] = temp1
+
+                        var barChartOptions = {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            datasetFill: false
+                        }
+
+                        var barChart = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: barChartData,
+                            options: barChartOptions
+                        })
+
+                    } else {
+                        //toastr.error(data.Message);
+                    }
+                });
 
 
-    window.onload = function () {
-        $(function () {
-            /* ChartJS
-             * -------
-             * Here we will create a few charts using ChartJS
-             */
 
-            //--------------
-            //- AREA CHART -
-            //--------------
+                //var areaChartOptions = {
+                //    maintainAspectRatio: false,
+                //    responsive: true,
+                //    legend: {
+                //        display: false
+                //    },
+                //    scales: {
+                //        xAxes: [{
+                //            gridLines: {
+                //                display: false,
+                //            }
+                //        }],
+                //        yAxes: [{
+                //            gridLines: {
+                //                display: false,
+                //            }
+                //        }]
+                //    }
+                //}
 
-            // Get context with jQuery - using jQuery's .get() method.
-            //var areaChartCanvas = $('#areaChart').get(0).getContext('2d');
+                //// This will get the first returned node in the jQuery collection.
+                //var areaChart = new Chart(areaChartCanvas, {
+                //    type: 'line',
+                //    data: areaChartData,
+                //    options: areaChartOptions
+                //})
 
-            var today = new Date();
-            var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-            var startDay = '01';
-            var endDay = monthEnd.getDate();
 
-            var start = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + startDay;
-            var end = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + endDay;
+                //-------------
+                //- BAR CHART -
+                //-------------
 
-            var vm = {
-                'Start': start,
-                'End': end
-            };
 
-            var url = '/api/Accounting/GetTrialBalanceReport';
-
-            SafriSoftPostRequest(url, vm, (data) => {
+            });
+            var donutData;
+            $.ajax({
+                url: '/api/Inventory/Home',
+                method: 'GET',
+                dataType: 'json'
+            }).done(function (data) {
                 if (data.Success) {
                     console.log(data);
-                    var debits = data.Obj.filter(x => x.Total > 0).sort(function (a, b) { a.Total - b.Total });
-                    var credits = data.Obj.filter(x => x.Total < 0).sort(function (a, b) { b.Total - a.Total });
-                    var labels = [];
-                    var totals = [];
-                    var period = '';
-                    debugger;
-                    for (var i = 0; i < debits.length; i++) {
+                    $("#customer-count").text(data.Customers);
+                    $("#stock-available-count").text(data.StockAvailable);
+                    $("#stock-sold-count").text(data.StockSold);
+                    $("#orders-processed").text(data.OrdersProcessed);
+                    $("#orders-packaged").text(data.OrdersPackaged);
+                    $("#orders-intransit").text(data.OrdersInTransit);
+                    $("#orders-delivered").text(data.OrdersDelivered);
+                    $("#stock-sold-value").text(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data.RandValueSold));
 
-                        if (debits[i].AccountNumber == 0 || i == 5)
-                            continue;
-
-                        labels.push(debits[i].AccountName);
-                        totals.push(Math.round(debits[i].Total * 100) / 100);
-                        period = debits[i].Period;
-                    }
-
-                    for (var i = 0; i < credits.length; i++) {
-
-                        if (credits[i].AccountNumber == 0 || i == 5)
-                            continue;
-
-                        labels.push(credits[i].AccountName);
-                        totals.push(Math.round(credits[i].Total * 100) / 100);
-                        period = credits[i].Period;
-                    }
-
-                    var barChartData = {
-                        labels: labels,
+                    donutData = {
+                        labels: [
+                            'Products Available',
+                            'Products Sold',
+                        ],
                         datasets: [
                             {
-                                label: period,
-                                backgroundColor: 'lightblue',
-                                borderColor: 'rgba(60,141,188,1)',
-                                borderWidth: 1,
-                                pointRadius: false,
-                                pointColor: '#3b8bba',
-                                pointStrokeColor: 'rgba(60,141,188,1)',
-                                pointHighlightFill: '#fff',
-                                pointHighlightStroke: 'rgba(60,141,188,1)',
-                                data: totals
+                                data: [data.StockAvailable, data.StockSold],
+                                backgroundColor: ['rgba(60,141,188,1)', 'lightblue'],
                             }
                         ]
                     }
 
-                    var barChartCanvas = $('#barChart').get(0).getContext('2d')
-                    var barChartData = jQuery.extend(true, {}, barChartData)
-                    var temp1 = barChartData.datasets[0]
-                    barChartData.datasets[0] = temp1
-
-                    var barChartOptions = {
-                        responsive: true,
+                    //-------------
+                    //- PIE CHART -
+                    //-------------
+                    // Get context with jQuery - using jQuery's .get() method.
+                    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+                    var pieData = donutData;
+                    var pieOptions = {
                         maintainAspectRatio: false,
-                        datasetFill: false
+                        responsive: true,
                     }
-
-                    var barChart = new Chart(barChartCanvas, {
-                        type: 'bar',
-                        data: barChartData,
-                        options: barChartOptions
+                    //Create pie or douhnut chart
+                    // You can switch between pie and douhnut using the method below.
+                    var pieChart = new Chart(pieChartCanvas, {
+                        type: 'pie',
+                        data: pieData,
+                        options: pieOptions
                     })
 
                 } else {
-                    //toastr.error(data.Message);
+                    console.log(data);
+                    toastr.error('An error occured while trying to save user, contact administrator!');
                 }
+
             });
 
-            
-
-            //var areaChartOptions = {
-            //    maintainAspectRatio: false,
-            //    responsive: true,
-            //    legend: {
-            //        display: false
-            //    },
-            //    scales: {
-            //        xAxes: [{
-            //            gridLines: {
-            //                display: false,
-            //            }
-            //        }],
-            //        yAxes: [{
-            //            gridLines: {
-            //                display: false,
-            //            }
-            //        }]
-            //    }
-            //}
-
-            //// This will get the first returned node in the jQuery collection.
-            //var areaChart = new Chart(areaChartCanvas, {
-            //    type: 'line',
-            //    data: areaChartData,
-            //    options: areaChartOptions
-            //})
 
 
+        }
+    </script>
 
-            //-------------
-            //- BAR CHART -
-            //-------------
-            
+    <script>
+        try {
+            var heatMapData = {
+                max: 8,
+                data: []
+            };
 
-        });
-        var donutData;
-        $.ajax({
-            url: '/api/Inventory/Home',
-            method: 'GET',
-            dataType: 'json'
-        }).done(function (data) {
-            if (data.Success) {
-                console.log(data);
-                $("#customer-count").text(data.Customers);
-                $("#stock-available-count").text(data.StockAvailable);
-                $("#stock-sold-count").text(data.StockSold);
-                $("#orders-processed").text(data.OrdersProcessed);
-                $("#orders-packaged").text(data.OrdersPackaged);
-                $("#orders-intransit").text(data.OrdersInTransit);
-                $("#orders-delivered").text(data.OrdersDelivered);
-                $("#stock-sold-value").text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data.RandValueSold));
+            heatMapData.data.push({ lat: parseFloat(-29), lng: parseFloat(24), count: 2 });
 
-                donutData = {
-                    labels: [
-                        'Products Available',
-                        'Products Sold',
-                    ],
-                    datasets: [
-                        {
-                            data: [data.StockAvailable, data.StockSold],
-                            backgroundColor: ['rgba(60,141,188,1)', 'lightblue' ],
-                        }
-                    ]
-                }
+            var baseLayer = L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=0I6f3JCVL7PRhmvKYxRb', { attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>', });
 
-                //-------------
-                //- PIE CHART -
-                //-------------
-                // Get context with jQuery - using jQuery's .get() method.
-                var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-                var pieData = donutData;
-                var pieOptions = {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                }
-                //Create pie or douhnut chart
-                // You can switch between pie and douhnut using the method below.
-                var pieChart = new Chart(pieChartCanvas, {
-                    type: 'pie',
-                    data: pieData,
-                    options: pieOptions
-                })
+            var cfg = {
+                "radius": 2,
+                "maxOpacity": .8,
+                "scaleRadius": true,
+                "useLocalExtrema": true,
+                latField: 'lat',
+                lngField: 'lng',
+                valueField: 'count'
+            };
 
-            } else {
-                console.log(data);
-                toastr.error('An error occured while trying to save user, contact administrator!');
-            }
+            var heatmapLayer = new HeatmapOverlay(cfg);
 
-        });
+            var networkGeoLocationHeatmap = new L.map('networkGeoLocationHeatmap', {
+                center: new L.LatLng(-29, 24),
+                zoom: 5,
+                layers: [baseLayer, heatmapLayer]
+            });
 
+            heatmapLayer.setData(heatMapData);
+        } catch (err) {
 
+        }
 
+    </script>
     }
-</script>
-
-<script>
-    try {
-        var heatMapData = {
-            max: 8,
-            data: []
-        };
-
-        heatMapData.data.push({ lat: parseFloat(-29), lng: parseFloat(24), count: 2 });
-
-        var baseLayer = L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=0I6f3JCVL7PRhmvKYxRb', { attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>', });
-
-        var cfg = {
-            "radius": 2,
-            "maxOpacity": .8,
-            "scaleRadius": true,
-            "useLocalExtrema": true,
-            latField: 'lat',
-            lngField: 'lng',
-            valueField: 'count'
-        };
-
-        var heatmapLayer = new HeatmapOverlay(cfg);
-
-        var networkGeoLocationHeatmap = new L.map('networkGeoLocationHeatmap', {
-            center: new L.LatLng(-29, 24),
-            zoom: 5,
-            layers: [baseLayer, heatmapLayer]
-        });
-
-        heatmapLayer.setData(heatMapData);
-    } catch (err) {
-
-    }
-
-</script>

@@ -227,7 +227,15 @@
     <Compile Include="Migrations\202408111204551_safrisoft_Ims2.Designer.cs">
       <DependentUpon>202408111204551_safrisoft_Ims2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202409041835024_ApplicationDbContext.cs" />
+    <Compile Include="Migrations\202409041835024_ApplicationDbContext.Designer.cs">
+      <DependentUpon>202409041835024_ApplicationDbContext.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Data\Country.cs" />
+    <Compile Include="Models\Data\CustomerDocument.cs" />
+    <Compile Include="Models\Data\ProductAudit.cs" />
+    <Compile Include="Models\Data\ProductRequirement.cs" />
     <Compile Include="Models\Data\ReportBalanceSheetAccount.cs" />
     <Compile Include="Models\Data\ReportBalanceSheetAccountLink.cs" />
     <Compile Include="Models\Data\CustomerTransaction.cs" />
@@ -241,6 +249,7 @@
     <Compile Include="Models\Data\SupplierTransaction.cs" />
     <Compile Include="Models\Data\VatTransaction.cs" />
     <Compile Include="Models\SystemModels\Enums.cs" />
+    <Compile Include="Models\SystemModels\ValuePair.cs" />
     <Compile Include="Models\ViewModels\AccountingViewModel.cs" />
     <Compile Include="Models\ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\ViewModels\BaseViewModel.cs" />
@@ -2830,6 +2839,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202408111204551_safrisoft_Ims2.resx">
       <DependentUpon>202408111204551_safrisoft_Ims2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409041835024_ApplicationDbContext.resx">
+      <DependentUpon>202409041835024_ApplicationDbContext.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

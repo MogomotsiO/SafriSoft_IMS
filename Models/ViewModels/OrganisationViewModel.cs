@@ -1,4 +1,7 @@
-﻿namespace SafriSoftv1._3.Models
+﻿using SafriSoftv1._3.Models.SystemModels;
+using System.Collections.Generic;
+
+namespace SafriSoftv1._3.Models
 {
     public class OrganisationViewModel
     {
@@ -18,5 +21,10 @@
         public string BranchCode { get; set; }
         public string ClientReference { get; set; }
         public int VATNumber { get; set; }
+    }
+
+    public class OrganisationPageViewModel
+    {
+        public List<NameValuePair> UserRoles { get; set; } = new List<NameValuePair>();
     }
 }

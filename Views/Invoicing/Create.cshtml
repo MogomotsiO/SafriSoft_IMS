@@ -205,7 +205,7 @@
                 </div>
                 
                 <div class="col-md-8">
-                    <button class="btn btn-outline-info" data-bind="click: saveInvoice">Save Invoice</button>
+
                     <div style="background-color:#fff;padding:20px;margin-top:10px;">
 
 
@@ -364,6 +364,12 @@
                             <!-- /.col -->
                         </div>
                     </div>
+
+                    <div class="col-md-12 text-right mt-3">
+                        <button class="btn btn-info" data-bind="click: saveInvoice"><i class="fa fa-download"></i> Save Invoice</button>
+                        <button class="btn btn-success" data-bind="click: saveInvoiceAndCreateOrder"><i class="fas fa-shopping-cart"></i> Save Invoice & Create Order</button>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -395,15 +401,15 @@
             this.Description = description;
             this.Qty = qty;
             this.Amount = amount;
-            this.amountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(amount);
+            this.amountStr = new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(amount);
             this.VatOptionId = vatOptionId;
             this.itemAccountId = itemAccountId;
             var itemVatAmount = amount * (vatPercentage / 100);
             this.itemVatAmount = itemVatAmount;
             var totalAmount = parseFloat(amount) + itemVatAmount;
             this.itemTotalAmount = totalAmount;
-            this.itemVatAmountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(itemVatAmount);
-            this.itemTotalAmountStr = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(totalAmount);
+            this.itemVatAmountStr = new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(itemVatAmount);
+            this.itemTotalAmountStr = new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(totalAmount);
             this.ProductId = productId;
         }
 
@@ -452,7 +458,7 @@
                     self.description('');
                     self.amount('');
                 }
-                
+
             }
 
             self.totalStr = ko.computed(function () {
@@ -461,7 +467,7 @@
 
                 self.total(total);
 
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(total));
+                return new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(parseFloat(total));
 
             });
 
@@ -469,7 +475,7 @@
 
                 var shipping = parseFloat(self.shipping());
 
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(shipping));
+                return new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(parseFloat(shipping));
 
             });
 
@@ -487,7 +493,7 @@
                     self.vat(vat);
                 }
 
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(parseFloat(vat));
+                return new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(parseFloat(vat));
 
             });
 
@@ -495,7 +501,7 @@
 
                 var subtotal = self.subtotal();
 
-                return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(subtotal);
+                return new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(subtotal);
 
             });
 
@@ -546,6 +552,18 @@
                     return;
                 }
 
+                var product = products.find(x => x.Id == self.selectedProductId());
+
+                if (product == null) {
+                    toastr.error('Product not available. Please check your products list.');
+                    return;
+                }
+
+                if (product.ItemsAvailable < self.qty()) {
+                    toastr.error(`Product items not available, only ${product.ItemsAvailable} available.`);
+                    return;
+                }
+
                 var vatPercent = 0;
 
                 var vatItem = self.vatOptions().find(x => x.Id == parseInt(self.itemVatOptionId()));
@@ -562,7 +580,7 @@
 
                 self.subtotal(tot);
 
-                //self.subtotalStr(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(tot));
+                //self.subtotalStr(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(tot));
 
                 self.description('');
                 self.qty('');
@@ -636,7 +654,71 @@
                         toastr.error(response.Message);
                     }
                 });
-                
+
+            },
+
+            self.saveInvoiceAndCreateOrder = function () {
+
+                var custId = $("#selectedOption").val();
+                if (custId == -100) {
+                    toastr.error('Please select a Customer');
+                    return;
+                }
+
+                if (self.InvoiceName() == '') {
+                    toastr.error('Please complete Invoice Name');
+                    return;
+                }
+
+                if (self.DateIssued() == '') {
+                    toastr.error('Please complete Date Issued');
+                    return;
+                }
+
+                if (self.DateDue() == '') {
+                    toastr.error('Please complete Date Due');
+                    return;
+                }
+
+                if (self.lineItems().length == 0) {
+                    toastr.error('Please add at least 1 line item');
+                    return;
+                }
+
+                var invoiceDetails = {
+                    InvoiceDate: self.DateIssued(),
+                    InvoiceDueDate: self.DateDue(),
+                    InvoiceDescription: self.InvoiceName(),
+                    Amount: self.total(),
+                    Reference: self.Reference(),
+                    Shipping: self.shipping(),
+                    VatPercentage: self.VatPercent(),
+                    CustomerId: self.customerId(),
+                    VatOptionId: self.invoiceVatOptionId(),
+                    InvoiceAccountId: self.invoiceAccountId()
+                }
+
+                var invoiceDetailsVm = {
+                    InvoiceDetails: invoiceDetails,
+                    CustomerId: self.customerId(),
+                    InvoiceItems: self.lineItems(),
+                    CreateOrder: true
+                }
+                console.log(invoiceDetailsVm);
+
+                var url = "/api/Invoicing/SaveInvoice";
+
+                SafriSoftPostJsonRequest(url, invoiceDetailsVm, (response) => {
+                    if (response.Success == true) {
+                        toastr.success('Invoice saved and you will be redirected shortly');
+                        setTimeout(function () {
+                            window.location = '@Url.Action("Invoices", "Invoicing")';
+                        }, 3000);
+                    } else {
+                        toastr.error(response.Message);
+                    }
+                });
+
             }
 
             self.saveAndEmailInvoice = function () {

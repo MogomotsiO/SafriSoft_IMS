@@ -50,6 +50,9 @@ namespace SafriSoftv1._3.Models
         public int VatAccountId { get; set; }
         public double Amount { get; set; }
         public int AmountAccountId { get;}
+        public string DateStockLoadedStr { get; set; }
+        public string StockLoadedUser { get; set; }
+        public bool StockLoaded { get;set; }
     }
 
     public class DocumentDetails

@@ -8,15 +8,22 @@
 @{
 
     var username = "";
-    var userRole = "";
+    var userRoleIds = new List<string>();
+    var userRoles = new List<string>();
     var organisation = "";
     var userEmail = "";
     var packageId = 0;
     var organisationLogo = "";
+    var currency = "ZAR";
+    var currencyIsoName = "en-ZA";
     var companies = new List<string>();
+    var read = false;
+    var write = false;
 
-    NumberFormatInfo cZA = new CultureInfo("en-ZA", false).NumberFormat;
-    cZA.CurrencyPositivePattern = 2;
+    var admin = (int)SafriSoftv1._3.Models.SystemModels.UserRoles.Admin;
+    var sales = (int)SafriSoftv1._3.Models.SystemModels.UserRoles.Sales;
+    var suppliers = (int)SafriSoftv1._3.Models.SystemModels.UserRoles.Suppliers;
+    var bookkeeping = (int)SafriSoftv1._3.Models.SystemModels.UserRoles.Bookkeeping;
 
     Dictionary<string, List<string>> pf = new Dictionary<string, List<string>>();
     List<string> standardFeatures = new List<string>();
@@ -41,7 +48,16 @@
             organisation = organisationClaim.Value;
             var usernameClaim = userManager.GetClaims(userId).First(x => x.Type == "Username");
             username = usernameClaim.Value;
-            userRole = userManager.GetRoles(userId).First();
+            userRoles = userManager.GetRoles(userId).ToList();
+            var db = new SafriSoftv1._3.Models.SafriSoftDbContext();
+            var dbMain = new SafriSoftv1._3.Models.ApplicationDbContext();
+
+            read = user.Read;
+            write = user.Write;
+
+            userRoleIds = dbMain.Roles.Where(x => userRoles.Contains(x.Name)).Select(x => x.Id).ToList();
+
+            //userRoleId = Convert.ToInt32(userRoleDetails.Id);
 
             var identityConn = new SqlConnection(ConfigurationManager.ConnectionStrings["IdentityDbContext"].ToString());
             identityConn.Open();
@@ -71,12 +87,24 @@
             //Company package
 
             var identityPackageCmd = identityConn.CreateCommand();
-            identityPackageCmd.CommandText = string.Format("SELECT os.[PackageId], o.[OrganisationLogo] from [{0}].[dbo].[Organisations] o JOIN [{0}].[dbo].[OrganisationSoftwares] os on os.[OrganisationId] = o.[OrganisationId] AND os.[SoftwareId] = 1 WHERE o.[OrganisationName] = '{1}'", identityConn.Database, organisation);
+            identityPackageCmd.CommandText = string.Format("SELECT os.[PackageId], o.[OrganisationLogo], ISNULL(o.[Currency],99) from [{0}].[dbo].[Organisations] o JOIN [{0}].[dbo].[OrganisationSoftwares] os on os.[OrganisationId] = o.[OrganisationId] AND os.[SoftwareId] = 1 WHERE o.[OrganisationName] = '{1}'", identityConn.Database, organisation);
             var identityPackageReader = identityPackageCmd.ExecuteReader();
 
             if (identityPackageReader.Read()) {
                 packageId = identityPackageReader.GetInt32(0);
                 organisationLogo = identityPackageReader.GetString(1);
+                var currencyId = identityPackageReader.GetString(2);
+
+                if(string.IsNullOrEmpty(currencyId) == false) {
+                    var id = Convert.ToInt32(currencyId);
+                    var currencyDetails = db.Countries.Where(x => x.Id == id).FirstOrDefault();
+
+                    if(currencyDetails != null) {
+                        currency = currencyDetails.CurrencyCode;
+                        currencyIsoName = "en-" + currencyDetails.ISO2Name;
+                    }
+                }
+                //currencyIsoName = identityPackageReader.GetString(3);
             }
 
             //Companies 
@@ -98,7 +126,8 @@
         }
     }
 
-
+    NumberFormatInfo cZA = new CultureInfo(currencyIsoName, false).NumberFormat;
+    cZA.CurrencyPositivePattern = 2;
 }
 <!DOCTYPE html>
 <html class="perfect-scrollbar-on">
@@ -140,8 +169,69 @@
     <!-- Template Main CSS File-->
     <link href="../../assets/css/style.css" rel="stylesheet">
 
+    <style>
+        /*.random:hover .tooltip {
+            display: block;
+        }*/
+
+        .tooltip {
+            /*display: block;
+            color: red;
+            margin-left: 5px;*/ /* moves the tooltip to the right */
+            /*margin-top: 5px;*/ /* moves it down */
+            /*position: absolute;*/
+            /*max-width:150px;*/
+            font-size:11pt;
+            margin-left:65px;
+        }
+
+            .tooltip.top .tooltip-arrow,
+            .tooltip-inner {
+                border: none;
+                box-shadow: none;
+                outline: none;
+            }
+
+        .select2-container--default .select2-selection--single {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #17a2b8;
+            border: 1px solid #17a2b8;
+            border-radius: 4px;
+            cursor: default;
+            float: left;
+            margin-right: 5px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 2px;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border: solid #ddd 1px;
+            outline: 0;
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: text;
+        }
+    </style>
+
 </head>
-<body class="hold-transition sidebar-mini sidebar-collapse">
+<body id="body" class="hold-transition sidebar-mini sidebar-collapse">
     <input id="packageId" hidden value="@packageId"/>
     <div class="wrapper">
         <!-- Navbar -->
@@ -162,7 +252,7 @@
                     }
                     else if (packageId == 3)
                     {
-                        <button class="btn btn-outline-dark"><i class="fas fa-crown text-warning"></i> SafriSoft - Business</button>
+                        <button class="btn btn-outline-info"><i class="fas fa-crown text-warning"></i> SafriSoft - Business</button>
                     }
                 </li>
                 @*<li class="nav-item">
@@ -202,16 +292,20 @@
                     </select>
                 </li>*@
                 <li class="nav-item dropdown">
-                    <button class="btn btn-outline-dark" data-toggle="dropdown"><i class="fas fa-building text-info"></i> @organisation.ToUpper()</button>
+                    <button class="btn btn-outline-info" data-toggle="dropdown">@organisation.ToUpper()</button>
                     @*<a class="nav-link" data-toggle="dropdown" href="#"></a>*@
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                    @foreach (var company in companies)
+                    @if (userRoleIds.Contains(admin.ToString()))
                     {
-                        <a href="#" class="dropdown-item" onclick="switchCompany('@company')">@company.ToUpper()</a>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                            @foreach (var company in companies)
+                            {
+                                <a href="#" class="dropdown-item" onclick="switchCompany('@company')">@company.ToUpper()</a>
+                            }
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" onclick="addNewCompany()"><i class="fa fa-plus text-info"></i> Add Company</a>
+
+                        </div>
                     }
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item" onclick="addNewCompany()"><i class="fa fa-plus text-info"></i> Add Company</a>
-                </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
@@ -234,7 +328,7 @@
                         </a>
                         @*<div class="dropdown-divider"></div>*@
                         <a href="#" class="dropdown-item">
-                            <i class="fas fa-user-cog mr-2 text-info"></i> @(userRole)
+                            <i class="fas fa-user-cog mr-2 text-info"></i> @(userRoles)
                         </a>
                         <div class="dropdown-divider"></div>
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -248,7 +342,7 @@
         </nav>
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-light-info bg-gradient-dark elevation-4">
+        <aside class="main-sidebar sidebar-light-info bg-gradient-dark sidebar-no-expand">
             <!-- Brand Logo -->
             <a href="~/Home/Index" class="brand-link" style="text-align:center;border-bottom:none;">
                 @*<img src="../../assets/img/iconOnly.png" alt="" style="height:55px;">*@
@@ -261,214 +355,169 @@
 
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    <ul class="nav nav-pills flex-column nav-sidebar" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-                    with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
                         <li class="nav-item">
-                            <a id="Dashboard" href="~/Inventory/Index" class="nav-link">
+                            <a id="Dashboard" href="~/Inventory/Index" class="nav-link" data-toggle="tooltip" data-placement="right" title="Dashboard">
                                 <i class="nav-icon fas fa-home text-white"></i>
                                 <p class="text-white">
                                     Dashboard
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a id="Customers" href="~/Inventory/Customers" class="nav-link">
-                                <i class="nav-icon fas fa-user-friends text-white"></i>
-                                <p class="text-white">
-                                    Customers
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="Suppliers" href="~/Inventory/Suppliers" class="nav-link">
-                                <i class="nav-icon fas fa-pallet text-white"></i>
-                                <p class="text-white">
-                                    Suppliers
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="Products" href="~/Inventory/Stock" class="nav-link">
-                                <i class="nav-icon fas fa-boxes text-white"></i>
-                                <p class="text-white">
-                                    Products
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="Orders" href="~/Inventory/Orders" class="nav-link">
-                                <i class="nav-icon fas fa-shopping-cart text-white"></i>
-                                <p class="text-white">
-                                    Orders
-                                </p>
-                            </a>
-                        </li>
-                        <li id="Invoicing-Menu" class="nav-item has-treeview">
-                            <a id="Invoicing" href="#" class="nav-link">
-                                <i class="nav-icon fas fa-file-invoice text-white"></i>
-                                <p class="text-white">
-                                    Invoicing
-                                    <i class="right fas fa-angle-left  text-white"></i>
-                                </p>
-                            </a>
-                            @if (packageId == 3)
-                            {
+                        @if(userRoleIds.Contains(sales.ToString()) || userRoleIds.Contains(admin.ToString())) { 
+                            <li class="nav-item">
+                                <a id="Customers" href="~/Inventory/Customers" class="nav-link" data-toggle="tooltip" data-placement="right" title="Customers">
+                                    <i class="nav-icon fas fa-user-friends text-white"></i>
+                                    <p class="text-white">
+                                        Customers
+                                    </p>
+                                </a>
+
+                            </li>
+                        }                        
+
+                        @if (userRoleIds.Contains(suppliers.ToString()) || userRoleIds.Contains(admin.ToString()))
+                        {
+                            <li class="nav-item">
+                                <a id="Products" href="~/Inventory/Stock" class="nav-link" data-toggle="tooltip" data-placement="right" title="Products">
+                                    <i class="nav-icon fas fa-boxes text-white"></i>
+                                    <p class="text-white">
+                                        Products
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="Suppliers" href="~/Inventory/Suppliers" class="nav-link" data-toggle="tooltip" data-placement="right" title="Suppliers">
+                                    <i class="nav-icon fas fa-pallet text-white"></i>
+                                    <p class="text-white">
+                                        Suppliers
+                                    </p>
+                                </a>
+                            </li>
+                        }
+
+                        @if (userRoleIds.Contains(sales.ToString()) || userRoleIds.Contains(admin.ToString()))
+                        {
+                            <li class="nav-item">
+                                <a id="Orders" href="~/Inventory/Orders" class="nav-link" data-toggle="tooltip" data-placement="right" title="Orders">
+                                    <i class="nav-icon fas fa-shopping-cart text-white"></i>
+                                    <p class="text-white">
+                                        Orders
+                                    </p>
+                                </a>
+                            </li>
+                            <li id="Invoicing-Menu" class="nav-item has-treeview">
+                                <a id="Invoicing" href="#" class="nav-link" data-toggle="tooltip" data-placement="right" title="Invoicing">
+                                    <i class="nav-icon fas fa-file-invoice text-white"></i>
+                                    <p class="text-white">
+                                        Invoicing
+                                        <i class="right fas fa-angle-left  text-white"></i>
+                                    </p>
+                                </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="Create" href="~/Invoicing/Create" class="nav-link">
-                                            <i class="far fa-circle text-white nav-icon"></i>
-                                            <p class="text-white">Create</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="Invoices" href="~/Invoicing/Invoices" class="nav-link">
+                                        <a id="Invoices" href="~/Invoicing/Invoices" class="nav-link" data-toggle="tooltip" data-placement="right" title="Invoices">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Invoices</p>
                                         </a>
                                     </li>
+                                    @if(write == true) { 
+                                        <li class="nav-item">
+                                            <a id="Create" href="~/Invoicing/Create" class="nav-link" data-toggle="tooltip" data-placement="right" title="Create">
+                                                <i class="far fa-circle text-white nav-icon"></i>
+                                                <p class="text-white">Create</p>
+                                            </a>
+                                        </li>
+                                    }                                    
                                 </ul>
-                            }
-                            else
-                            {
+                            </li>
+                        }
+
+                        @if (userRoleIds.Contains(bookkeeping.ToString()) || userRoleIds.Contains(admin.ToString()))
+                        {
+                            <li id="Accounting-Menu" class="nav-item has-treeview">
+                                <a id="Accounting" href="#" class="nav-link" data-toggle="tooltip" data-placement="right" title="Bookkeeping">
+                                    <i class="nav-icon fas fa-coins text-white"></i>
+                                    <p class="text-white">
+                                        Bookkeeping
+                                        <i class="right fas fa-angle-left  text-white"></i>
+                                    </p>
+                                </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="Create" href="#" class="nav-link">
-                                            <i class="fa fa-crown text-primary text-white nav-icon"></i>
-                                            <p class="text-white">Create</p>
+                                        <a id="Income-Expense" href="~/Expenses/Expenses" class="nav-link" data-toggle="tooltip" data-placement="right" title="Income/Expense">
+                                            <i class="nav-icon far fa-circle text-white"></i>
+                                            <p class="text-white">Income/Expense</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a id="Invoices" href="#" class="nav-link">
-                                            <i class="fa fa-crown text-primary text-white nav-icon"></i>
-                                            <p class="text-white">Invoices</p>
+                                        <a id="Journals" href="~/Journal/Journals" class="nav-link" data-toggle="tooltip" data-placement="right" title="Journals">
+                                            <i class="nav-icon far fa-circle text-white"></i>
+                                            <p class="text-white">Journals</p>
                                         </a>
                                     </li>
-                                </ul>
-                            }
-
-                        </li>
-
-                        <li id="Expenses-Menu" class="nav-item">
-
-                            @if (packageId == 3)
-                            {
-                                <a id="Income-Expense" href="~/Expenses/Expenses" class="nav-link">
-                                    <i class="nav-icon fas fa-money-check text-white"></i>
-                                    <p class="text-white">
-                                        Income/Expense
-                                    </p>
-                                </a>
-                            }
-                            else
-                            {
-                                <a id="Income-Expense" href="#" class="nav-link">
-                                    <i class="fa fa-crown text-primary nav-icon"></i>
-                                    <p class="text-white">
-                                        Income/Expense
-                                    </p>
-                                </a>
-                            }
-
-                        </li>
-                        <li id="Journal-Menu" class="nav-item has-treeview">
-                            <a id="Journals" href="~/Journal/Journals" class="nav-link">
-                                <i class="nav-icon fas fa-balance-scale text-white"></i>
-                                <p class="text-white">
-                                    Journals
-                                </p>
-                            </a>
-                        </li>
-                        <li id="Accounting-Menu" class="nav-item has-treeview">
-                            <a id="Accounting" href="#" class="nav-link">
-                                <i class="nav-icon fas fa-coins text-white"></i>
-                                <p class="text-white">
-                                    Accounting
-                                    <i class="right fas fa-angle-left  text-white"></i>
-                                </p>
-                            </a>
-                            @if (packageId == 3)
-                            {
-                                <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link">
+                                        <a id="GeneralLedger" href="~/Accounting/GeneralLedger" class="nav-link" data-toggle="tooltip" data-placement="right" title="General Ledger">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">General Ledger</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link">
+                                        <a id="TrialBalanceReport" href="~/Accounting/TrialBalanceReport" class="nav-link" data-toggle="tooltip" data-placement="right" title="Trial Balance">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Trial Balance</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link">
+                                        <a id="TrialBalanceAccounts" href="~/Accounting/TrialBalanceAccounts" class="nav-link" data-toggle="tooltip" data-placement="right" title="Trial Balance Accounts">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Trial Balance Accounts</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a id="BalanceSheetAccounts" href="~/Accounting/BalanceSheetAccounts" class="nav-link">
+                                        <a id="BalanceSheetAccounts" href="~/Accounting/BalanceSheetAccounts" class="nav-link" data-toggle="tooltip" data-placement="right" title="Balance Sheet Accounts">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Balance Sheet Accounts</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a id="IncomeStatementAccounts" href="~/Accounting/IncomeStatementAccounts" class="nav-link">
+                                        <a id="IncomeStatementAccounts" href="~/Accounting/IncomeStatementAccounts" class="nav-link" data-toggle="tooltip" data-placement="right" title="Income Statement Accounts">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Income Statement Accounts</p>
                                         </a>
                                     </li>
                                 </ul>
-                            }
-                            else
-                            {
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a id="GeneralLedger" href="#" class="nav-link">
-                                            <i class="fa fa-crown text-primary nav-icon"></i>
-                                            <p class="text-white">General Ledger</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a id="TrialBalanceAccounts" href="#" class="nav-link">
-                                            <i class="fa fa-crown text-primary nav-icon"></i>
-                                            <p class="text-white">Trial Balance Accounts</p>
-                                        </a>
-                                    </li>
 
-                                    <li class="nav-item">
-                                        <a id="TrialBalanceReport" href="#" class="nav-link">
-                                            <i class="fa fa-crown text-primary nav-icon"></i>
-                                            <p class="text-white">Trial Balance Report</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            }
+                            </li>
+                        }
 
-                        </li>
                         <li class="nav-item">
-                            <a id="InventoryReporting" href="~/Reporting/Inventory" class="nav-link">
+                            <a id="InventoryReporting" href="~/Reporting/Inventory" class="nav-link" data-toggle="tooltip" data-placement="right" title="Reports">
                                 <i class="nav-icon fas fa-file-excel text-white"></i>
                                 <p class="text-white">
                                     Reports
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a id="Settings" href="~/Setting/Settings" class="nav-link">
-                                <i class="nav-icon fas fa-cog text-white"></i>
-                                <p class="text-white">
-                                    Settings
-                                </p>
-                            </a>
-                        </li>
-                        @if (userRole == "OrganisationAdmin")
+                        @if (userRoleIds.Contains(admin.ToString()))
+                        {
+                            <li class="nav-item">
+                                <a id="Settings" href="~/Setting/Settings" class="nav-link" data-toggle="tooltip" data-placement="right" title="Settings">
+                                    <i class="nav-icon fas fa-cog text-white"></i>
+                                    <p class="text-white">
+                                        Settings
+                                    </p>
+                                </a>
+                            </li>
+                        }
+
+                        @if (userRoleIds.Contains(admin.ToString()))
                         {
                             <li id="menu-open" class="nav-item has-treeview">
-                                <a id="main-users" href="#" class="nav-link">
+                                <a id="main-users" href="#" class="nav-link" data-toggle="tooltip" data-placement="right" title="Organisation">
                                     <i class="nav-icon fas fa-users text-white"></i>
                                     <p class="text-white">
                                         Organisation
@@ -477,54 +526,54 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a id="Users" href="~/Inventory/User" class="nav-link">
+                                        <a id="Users" href="~/Inventory/User" class="nav-link" data-toggle="tooltip" data-placement="right" title="Manage Organisation">
                                             <i class="far fa-circle text-white nav-icon"></i>
                                             <p class="text-white">Manage Organisation</p>
                                         </a>
                                     </li>
                                     @*<li class="nav-item">
-                                        <a id="Inbox" href="~/Inventory/Inbox" class="nav-link">
-                                            <i class="fa fa-circle text-info nav-icon"></i>
-                                            <p>Inbox</p>
-                                        </a>
-                                    </li>*@
+                        <a id="Inbox" href="~/Inventory/Inbox" class="nav-link">
+                            <i class="fa fa-circle text-info nav-icon"></i>
+                            <p>Inbox</p>
+                        </a>
+                    </li>*@
                                 </ul>
                             </li>
                         }
-                        <li id="menu-open" class="nav-item has-treeview">
-                            <a id="main-users" href="#" class="nav-link">
-                                <i class="nav-icon fas fa-project-diagram text-white"></i>
-                                <p class="text-white">
-                                    Other Softwares
-                                    <i class="right fas fa-angle-left  text-white"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a id="Users" href="https://rms.safrisoft.com" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">Rental Management</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="Users" href="https://tms.safrisoft.com" class="nav-link">
-                                        <i class="far fa-circle text-white nav-icon"></i>
-                                        <p class="text-white">Ticket Management</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        @if (packageId != 3)
-                        {
-                            <li class="nav-item">
-                                <a id="Stock" href="#" onclick="changePackage()" class="nav-link bg-gradient-purple text-white">
-                                    <i class="nav-icon fa fa-crown"></i>
-                                    <p class="text-white">
-                                        Try SafriSoft Premium
-                                    </p>
-                                </a>
-                            </li>
-                        }
+                        @*<li id="menu-open" class="nav-item has-treeview">
+            <a id="main-users" href="#" class="nav-link">
+                <i class="nav-icon fas fa-project-diagram text-white"></i>
+                <p class="text-white">
+                    Other Softwares
+                    <i class="right fas fa-angle-left  text-white"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a id="Users" href="https://rms.safrisoft.com" class="nav-link">
+                        <i class="far fa-circle text-white nav-icon"></i>
+                        <p class="text-white">Rental Management</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="Users" href="https://tms.safrisoft.com" class="nav-link">
+                        <i class="far fa-circle text-white nav-icon"></i>
+                        <p class="text-white">Ticket Management</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @if (packageId != 3)
+        {
+            <li class="nav-item">
+                <a id="Stock" href="#" onclick="changePackage()" class="nav-link bg-gradient-purple text-white">
+                    <i class="nav-icon fa fa-crown"></i>
+                    <p class="text-white">
+                        Try SafriSoft Premium
+                    </p>
+                </a>
+            </li>
+        }*@
 
                         <li hidden id="viewbag-title">
                             <p>@ViewBag.title</p>
@@ -754,15 +803,29 @@
         <script src="~/plugins/select2/js/select2.min.js"></script>
         <!-- Handle active tab and other layout js stuff -->
         <script>
+            var currency = '@currency';
+            var currencyIsoName = '@currencyIsoName';
+            var userRoleIds = '@Html.Raw(Json.Encode(userRoleIds))';
+            var userRead = '@read.ToString().ToLower()';
+            var userWrite = '@write.ToString().ToLower()';
+
+            var admin = '@((int)SafriSoftv1._3.Models.SystemModels.UserRoles.Admin)';
+            var sales = '@((int)SafriSoftv1._3.Models.SystemModels.UserRoles.Sales)';
+            var suppliers = '@((int)SafriSoftv1._3.Models.SystemModels.UserRoles.Suppliers)';
+            var bookkeeping = '@((int)SafriSoftv1._3.Models.SystemModels.UserRoles.Bookkeeping)';
+
             $('#summernote').summernote();
 
             $(document).ready(function () {
                 $('.safriSelect2').select2();
+                $('[data-toggle="tooltip"]').tooltip();
             });
 
             function addNewCompany() {
                 $('#companyRegister').modal('show');
             }
+
+
 
             var easternCape = "Alice,Butterworth,East London,Graaff-Reinet,Grahamstown,King William’s Town,Mthatha,Port Elizabeth,Queenstown,Uitenhage,Zwelitsha";
             var freeState = "Bethlehem,Bloemfontein,Jagersfontein,Kroonstad,Odendaalsrus,Parys,Phuthaditjhaba,Sasolburg,Virginia,Welkom";
@@ -913,7 +976,7 @@
                         setTimeout(function () {
                             window.location.reload();
                         }, 3000);
-                        
+
                     } else {
 
                         toastr.error(response.Message);
@@ -956,7 +1019,8 @@
                 $("#menu-open").addClass("menu-open");
             }
 
-            if (tabActive == "TrialBalanceAccounts" || tabActive == "GeneralLedger" || tabActive == "TrialBalanceReport" || tabActive == "BalanceSheetAccounts" || tabActive == "IncomeStatementAccounts") {
+            if (tabActive == "TrialBalanceAccounts" || tabActive == "GeneralLedger" || tabActive == "TrialBalanceReport" || tabActive == "BalanceSheetAccounts" || tabActive == "IncomeStatementAccounts" ||
+                tabActive == "Income-Expense" || tabActive == "Journals") {
                 /*$("#main-users").addClass("active");*/
                 $("#" + tabActive).addClass("active");
                 $("#" + tabActive + " .nav-icon").addClass("text-white");

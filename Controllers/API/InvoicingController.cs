@@ -79,10 +79,11 @@ namespace SafriSoftv1._3.Controllers.API
                 var invoiceVm = JsonConvert.DeserializeObject<InvoicingViewModel>(vm.JsonString);
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
 
                 var service = new InvoicingService();
 
-                result = service.SaveInvoice(invoiceVm, organisationId);
+                result = service.SaveInvoice(invoiceVm, organisationId, userId);
 
             }
             catch (Exception ex)

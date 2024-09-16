@@ -5,14 +5,17 @@
 }
 
 <style>
-    .buttonWidth {
+    /*.buttonWidth {
         width: 100px;
     }
 
-    .filenameWidth{
-        width: 300px;
+    .filenameWidth {
+        width: 200px;
     }
 
+    .loadStock{
+        width:200px;
+    }*/
 </style>
 
 
@@ -43,11 +46,11 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <span class="text-right mr-1"><button id="addSupplier" onclick="openAddSupplierModal()" class="btn btn-light" style="text-align:right !important;"><i class="fas fa-pallet text-info"></i> Add Supplier</button></span>
+                            <span class="text-right mr-1"><button id="addSupplier" onclick="openAddSupplierModal()" class="btn btn-light" style="text-align:right !important;display:none;"><i class="fas fa-pallet text-info"></i> Add Supplier</button></span>
                         </div>
                         <div class="card-body">
 
-                            <table id="suppliersDt" class="table table-bordered ">
+                            <table id="suppliersDt" class="table table-bordered " style="width: 100%; max-width: 100%; min-width: 100%; ">
                                 <thead>
                                     <tr>
                                         <th>Company</th>
@@ -174,11 +177,11 @@
                             </div>
                         </div>
                         @*<div class="col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating"></label>
-                                <select id="selectedOption" class="safriSelect2 form-control" style="max-width:100%;width:100%; min-height:100px;"></select>
-                            </div>
-                        </div>*@
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedOption" class="safriSelect2 form-control" style="max-width:100%;width:100%; min-height:100px;"></select>
+                                </div>
+                            </div>*@
                     </div>
 
                 </div>
@@ -195,10 +198,10 @@
 
 <!-- Modal -->
 <div class="modal fade" id="supplierInvoices">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Supplier Invoices</h5>
+                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Add Invoice Details</h5>
                 <input type="text" id="tenant-id" hidden />
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -206,10 +209,10 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-5">
-                        <div class="card">
-                            <div class="card-header card-header-info">
-                                <h4 class="card-title"><i class="fa fa-paste"></i> Add Invoice</h4>
+                    <div class="col-md-12">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h4 class="card-title">Add Invoice</h4>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -289,32 +292,9 @@
                             <!-- /.card-body -->
                         </div>
                     </div>
-                    <div class="col-md-7">
-                        <div class="card">
-                            <div class="card-header card-header-info">
-                                <h4 class="card-title"><i class="fa fa-paste"></i> Invoices</h4>
-                            </div>
-                            <div class="card-body">
-                                <table id="supplierInvoicesDt" class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Filename</th>
-                                            <th>Product</th>
-                                            <th>Qty</th>
-                                            <th>VatAmount</th>
-                                            <th>Amount</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-
-                                </table>
-                            </div>
-                        </div>
-                        
-                    </div>
+                    
                 </div>
-                
+
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
@@ -324,6 +304,47 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="supplierInvoicesModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="" class="modal-title">@*<i class="fa fa-plus"></i>*@Supplier Invoices</h5>
+                <input type="text" id="tenant-id" hidden />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-outline card-info">
+                    @*<div class="card-header">
+                        <h4 class="card-title">Invoices</h4>
+                    </div>*@
+                    <div class="card-body" style="display: block;">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table id="supplierInvoicesDt" class="table table-bordered" style="width:100%;">
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="paySupplierModal">
@@ -407,13 +428,14 @@
 
     <script type="text/javascript">
 
+        if (userWrite == 'true') {
+            $('#addSupplier').show();
+        }
+
         var suppliersDt = $("#suppliersDt").DataTable({
-            responsive: true,
-            autoWidth: false,
-            info: true,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
-            lengthMenu: [[-1], ["All"]],
+            lengthMenu: [[20, 30, -1], [20, 30, "All"]],
             order: [[11, "asc"]],
             ajax: {
                 url: '/api/Inventory/GetSuppliers/',
@@ -472,7 +494,7 @@
                     'render': function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }
@@ -480,9 +502,17 @@
                 {
                     data: 'Id',
                     searchable: true,
-                    className: 'buttonWidth',
+                    //className: 'buttonWidth',
                     render: function (data, type, full, meta) {
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Supplier Details" onclick="getSupplierDetails(this.id)"><i class="fas fa-folder-open text-info"></i></a><a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Load Supplier Invoice" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a><a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Pay Supplier" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
+                        if (userWrite == 'true') {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Supplier Details" onclick="getSupplierDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ' +
+                                '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Load Supplier Invoice" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a>' +
+                                '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="View Supplier Invoices" href="#" onclick="viewSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-eye text-info"></i></a>' +
+                                '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Pay Supplier" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
+                        } else {
+                            return '';
+                        }
+                        
                     }
                 }
             ]
@@ -638,8 +668,14 @@
             //$("#selectedOption").trigger("change");
         }
 
-        function uploadSupplierInvoices(id) {
+        function viewSupplierInvoices(id) {
+            $('#supplierInvoicesModal').modal('show');
             supplierInvoicesDt.ajax.url('/api/Inventory/GetSupplierInvoices/' + id).load();
+            
+        }
+
+        function uploadSupplierInvoices(id) {
+
             $('#supplierInvoices').modal('show');
 
             $('#dropzone').fileupload({
@@ -756,9 +792,9 @@
         }
 
         var supplierInvoicesDt = $("#supplierInvoicesDt").DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            "success": true,
+            ordering: false,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
             ajax: {
                 url: '/api/Inventory/GetSupplierInvoices/0',
@@ -767,11 +803,13 @@
             },
             'columns': [
                 {
+                    title: 'Date',
                     'data': 'Date',
                     'className': 'buttonWidth',
                     'searchable': true
                 },
                 {
+                    title: 'Filename',
                     'data': 'FileName',
                     'className': 'filenameWidth',
                     'searchable': true,
@@ -780,39 +818,68 @@
                     }
                 },
                 {
+                    title: 'Product',
                     'data': 'Product',
                     'searchable': true
                 },
                 {
+                    title: 'QTY',
                     'data': 'Qty',
-                    'className': 'buttonWidth',
+                    'className': 'buttonWidth text-center',
                     'searchable': true
                 },
                 {
+                    title: 'Vat Amount',
                     'data': 'VatAmount',
-                    'className': 'buttonWidth',
+                    'className': 'buttonWidth text-right',
                     'searchable': true,
                     'render': function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }
                 },
                 {
+                    title: 'Amount (Excl Vat)',
                     'data': 'Amount',
-                    'className': 'buttonWidth',
+                    'className': 'buttonWidth text-right',
                     'searchable': true,
                     'render': function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }
                 },
                 {
+                    title: 'Load Stock',
+                    'data': 'StockLoaded',
+                    'className': 'loadStock text-center',
+                    'searchable': true,
+                    render: function (data, type, full, meta) {
+                        if (data === true)
+                            return '<div class="icheck-success d-inline"> <input disabled type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                        else
+                            return '<div class="icheck-success d-inline"> <input onclick="loadStock(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                    }
+                },
+                {
+                    title: 'Date Loaded',
+                    'data': 'DateStockLoadedStr',
+                    'className': 'loadStock',
+                    'searchable': true
+                },
+                {
+                    title: 'User Loaded',
+                    'data': 'StockLoadedUser',
+                    'className': 'loadStock',
+                    'searchable': true
+                },
+                {
+                    title: 'Actions',
                     'data': 'Id',
                     'className': 'buttonWidth',
                     'render': function (data, type, full, meta) {
@@ -821,6 +888,22 @@
                 }
             ]
         });
+
+        function loadStock(id) {
+
+            var url = `/api/Inventory/LoadProductStock/${id}`;
+
+            SafriSoftGetRequest(url, (response) => {
+                if (response.Success == true) {
+                    supplierInvoicesDt.ajax.reload();
+                    toastr.success(response.Message);
+                } else {
+                    supplierInvoicesDt.ajax.reload();
+                    toastr.error(response.Message);
+                }
+            });
+
+        }
 
         function paySupplierModal(id) {
             _supplierId = id;

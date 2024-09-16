@@ -1,6 +1,46 @@
 ﻿@{
     ViewBag.title = "Products";
 }
+
+<style>
+    .productNameStyle {
+        width: 250px;
+        min-width: 250px;
+        max-width: 100%;
+    }
+
+    .qtyCols {
+        width: 80px;
+        min-width: 80px;
+        max-width: 100%;
+        text-align:center;
+    }
+
+    .normalTextCol {
+        width: 150px;
+        min-width: 150px;
+        max-width: 100%;
+    }
+
+    .btnCol {
+        width: 30px;
+        min-width: 30px;
+        max-width: 100%;
+    }
+
+    /*.select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #17a2b8;
+        border: 1px solid #17a2b8;
+        border-radius: 4px;
+        cursor: default;
+        float: left;
+        margin-right: 5px;
+        margin-top: 5px;
+        padding: 0 5px;
+    }*/
+
+</style>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -35,15 +75,15 @@
                             <h4 class="card-title"><i class="fas fa-boxes"></i> Products</h4>
                         </div>
                         <div class="card-body">
-                            <span class="text-right mr-1"><button id="CreateProduct" type="submit" class="btn btn-light"><i class="fa fa-boxes text-info"></i> Create product</button></span>
+                            <span class="text-right mr-1"><button id="CreateProduct" style="display:none;" type="submit" class="btn btn-light"><i class="fa fa-boxes text-info"></i> Create product</button></span>
                             <span class="text-right">
-                                <button id="ImportProduct" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import products</button>
-                                <button id="ImportProduct-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Import products - Upgrade To Standard</button>
+                                <button style="display:none;" id="ImportProduct" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import products</button>
+                                <button  id="ImportProduct-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Import products - Upgrade To Standard</button>
                             </span>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="products-table" class="table table-bordered ">
+                            <table id="products-table" class="table table-bordered " style="width:100%;">
                                 <thead>
                                     <tr>
                                         @*<th># Product</th>*@
@@ -51,7 +91,9 @@
                                         <th>Item Code</th>
                                         <th>Item Description</th>
                                         <th>Item Category</th>
+                                        <th>Item Type</th>
                                         <th>Item Reference</th>
+                                        <th>Item Account</th>
                                         <th>QTY Sold</th>
                                         <th>QTY On Hand</th>
                                         <th>Cost</th>
@@ -83,101 +125,121 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body login-card-body">
-                <div class="row">
-                    @*<div class="mb-5 col-lg-12">
-                            <input id="img-source" type="text" />
-                            <input id="img-filename" type="text" />
-                            <img id="logo" src="" alt="" style="height:120px;" />
-
-                        </div>*@
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Item Code</label>
-                            <input id="product-code" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-boxes text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Item Description</label>
-                            <input id="product-name" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-boxes text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group  is-filled">
-                            <label class="bmd-label-floating">Item Category</label>
-                            <input id="product-category" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-boxes text-info"></span>
-                                </div>
-                            </div>
-                        </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-pencil"></i> Create Product</h4>
                     </div>
 
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Quantity</label>
-                            <input id="product-available" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-cart-plus text-info"></span>
+                    <div class="card-body">
+                        <div class="row">
+                            @*<div class="mb-5 col-lg-12">
+                <input id="img-source" type="text" />
+                <input id="img-filename" type="text" />
+                <img id="logo" src="" alt="" style="height:120px;" />
+
+            </div>*@
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Item Code</label>
+                                    <input id="product-code" class="form-control" type="text">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Cost</label>
-                            <input id="cost" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-dollar-sign text-info"></span>
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Item Description</label>
+                                    <input id="product-name" class="form-control" type="text">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Selling Price</label>
-                            <input id="product-price" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-dollar-sign text-info"></span>
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group  is-filled">
+                                    <label class="bmd-label-floating">Item Category</label>
+                                    <input id="product-category" class="form-control" type="text">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
-                            @*<label class="bmd-label-floating">Product Reference</label>*@
-                            <input id="product-reference" disabled class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-hashtag text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @*<div class="mb-3 col-lg-12">
-                            <div class="input-group form-group bmd-form-group">
-                                <div class="custom-file">
-                                    <input class="custom-file-input text-light" id="input-logo" type="file">
-                                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
-                                </div>
-                            </div>
-                        </div>*@
+
+                            @*<div class="mb-3 col-lg-12">
+                <div class="input-group form-group bmd-form-group is-filled">
+                    <label class="bmd-label-floating">Quantity</label>
+                    <input id="product-available" class="form-control" type="text">
                 </div>
+            </div>*@
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Cost</label>
+                                    <input id="cost" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Selling Price</label>
+                                    <input id="product-price" class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-1 col-lg-12">
+                                <div class="input-group form-group bmd-form-group">
+                                    @*<label class="bmd-label-floating">Product Reference</label>*@
+                                    <input id="product-reference" disabled class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-1 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedProductType" class="safriSelect2 form-control" onchange="productTypeChanged()" style="width:100%;min-width:100%; min-height:100px;">
+                                        <option value="0">SELECT PRODUCT TYPE</option>
+                                        <option value="1">Inventory</option>
+                                        <option value="2">Consumable</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="productsContainer" class="mb-1 col-md-12" style="display: none;">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedProducts" multiple="multiple" onchange="selectedProductsChanged()" class="safriMultiSelect2" style="width:100%;min-width:100%; min-height:100px;">
+                                    </select>
+                                </div>
+
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>QTY To Use</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: Requirements">
+                                        <tr>
+                                            <td data-bind="text: Name"></td>
+                                            <td>
+                                                <div class="input-group form-group bmd-form-group is-filled">
+                                                    <input data-bind="value: Qty" class="form-control" type="text">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>                            
+
+                            <div class="mb-1 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectedInventoryAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                    </select>
+                                </div>
+                            </div>
+                            @*<div class="mb-3 col-lg-12">
+                <div class="input-group form-group bmd-form-group">
+                    <div class="custom-file">
+                        <input class="custom-file-input text-light" id="input-logo" type="file">
+                        <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
+                    </div>
+                </div>
+            </div>*@
+                        </div>
+                    </div>                  
+
+
+                </div>
+                
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
@@ -200,101 +262,125 @@
                 </button>
             </div>
             <div class="modal-body login-card-body">
-                <div class="row">
-                    @*<div class="mb-5 col-lg-12">
-                            <input id="edit-img-source" type="text" />
-                            <input id="edit-img-filename" type="text" />
-                            <img id="edit-logo" src="" alt="" style="height:120px;" />
-
-                        </div>*@
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Item Code</label>
-                            <input id="edit-product-code" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-boxes text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Item Description</label>
-                            <input id="edit-product-name" data-bind="value: ProductName" class="form-control" type="text">
-                            <input id="edit-product-id" hidden class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-boxes text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Item Category</label>
-                            <input id="edit-product-category" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-boxes text-info"></span>
-                                </div>
-                            </div>
-                        </div>
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-pencil"></i> Edit Product</h4>
                     </div>
 
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Quantity</label>
-                            <input id="edit-product-available" data-bind="value: ProductAvailable" class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-cart-plus text-info"></span>
+                    <div class="card-body">
+                        <div class="row">
+                            @*<div class="mb-5 col-lg-12">
+            <input id="edit-img-source" type="text" />
+            <input id="edit-img-filename" type="text" />
+            <img id="edit-logo" src="" alt="" style="height:120px;" />
+
+        </div>*@
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Item Code</label>
+                                    <input id="edit-product-code" class="form-control" type="text">
                                 </div>
                             </div>
-                        </div>
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Item Description</label>
+                                    <input id="edit-product-name" data-bind="value: ProductName" class="form-control" type="text">
+                                    <input id="edit-product-id" hidden class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Item Category</label>
+                                    <input id="edit-product-category" class="form-control" type="text">
+                                </div>
+                            </div>
+
+                            @*<div class="mb-3 col-lg-12">
+            <div class="input-group form-group bmd-form-group is-filled">
+                <label class="bmd-label-floating">Quantity</label>
+                <input id="edit-product-available" data-bind="value: ProductAvailable" class="form-control" type="text">
+                <div class="input-group-append">
+                    <div class="input-group-text  bg-white border-white">
+                        <span class="fas fa-cart-plus text-info"></span>
                     </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Cost</label>
-                            <input id="edit-cost" class="form-control" type="number">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-dollar-sign text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group is-filled">
-                            <label class="bmd-label-floating">Selling Price</label>
-                            <input id="edit-product-price" data-bind="value: SellingPrice" class="form-control" type="number">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-dollar-sign text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 col-lg-12">
-                        <div class="input-group form-group bmd-form-group">
-                            @*<label class="bmd-label-floating">Product Reference</label>*@
-                            <input id="edit-product-reference" disabled class="form-control" type="text">
-                            <div class="input-group-append">
-                                <div class="input-group-text  bg-white border-white">
-                                    <span class="fas fa-hashtag text-info"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @*<div class="mb-3 col-lg-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <div class="custom-file">
-                                    <input class="custom-file-input text-light" id="input-logo" type="file">
-                                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
-                                </div>
-                            </div>
-                        </div>*@
                 </div>
+            </div>
+        </div>*@
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Cost</label>
+                                    <input id="edit-cost" class="form-control" type="number">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-lg-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating">Selling Price</label>
+                                    <input id="edit-product-price" data-bind="value: SellingPrice" class="form-control" type="number">
+                                </div>
+                            </div>
+                            <div class="mb-1 col-lg-12">
+                                <div class="input-group form-group bmd-form-group">
+                                    @*<label class="bmd-label-floating">Product Reference</label>*@
+                                    <input id="edit-product-reference" disabled class="form-control" type="text">
+                                </div>
+                            </div>
+                            <div class="mb-1 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="editSelectedProductType" class="safriSelect2 form-control" onchange="editProductTypeChanged()" style="width:100%;min-width:100%; min-height:100px;">
+                                        <option value="0">SELECT PRODUCT TYPE</option>
+                                        <option value="1">Inventory</option>
+                                        <option value="2">Consumable</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="editProductsContainer" class="mb-1 col-md-12" style="display:none;">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="editSelectedProducts" multiple="multiple" class="safriMultiSelect2" onchange="editSelectedProductsChanged()" style="width:100%;min-width:100%; min-height:100px;">
+                                    </select>
+                                </div>
+
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>QTY To Use</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: EditRequirements">
+                                        <tr>
+                                            <td data-bind="text: Name"></td>
+                                            <td>
+                                                <div class="input-group form-group bmd-form-group is-filled">
+                                                    <input data-bind="value: Qty" class="form-control" type="text">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mb-1 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="editSelectedInventoryAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                    </select>
+                                </div>
+                            </div>
+                            @*<div class="mb-3 col-lg-12">
+            <div class="input-group form-group bmd-form-group is-filled">
+                <div class="custom-file">
+                    <input class="custom-file-input text-light" id="input-logo" type="file">
+                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
+                </div>
+            </div>
+        </div>*@
+                        </div>
+                    </div>
+
+
+                </div>
+                
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
@@ -345,7 +431,725 @@
     <!-- /.modal-dialog -->
 </div>
 
+<div class="modal fade" id="addQuantity">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="tenants-documents-title" class="modal-title">@*<i class="fa fa-plus"></i>*@Add Quantity</h5>
+                <input type="text" id="tenant-id" hidden />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title"><i class="fa fa-plus"></i> Add Quantity</h4>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="mb-3 col-lg-12">
+                            <div class="input-group form-group bmd-form-group is-filled">
+                                <label class="bmd-label-floating">QTY</label>
+                                <input id="quantity" class="form-control" type="number">
+                            </div>
+                        </div>
+                        <div class="mb-1 col-md-12">
+                            <div class="alert alert-info" style="border:none !important;">
+                                <strong>NB!</strong> Products below are required to add more quantity to this product.
+                            </div>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>QTY Available</th>
+                                        <th>QTY To Use</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: AddQuantityRequirements">
+                                    <tr>
+                                        <td data-bind="text: Name"></td>
+                                        <td data-bind="text: QtyAvailable"></td>
+                                        <td data-bind="text: Qty"></td>                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-light" onclick="addProductQuantity()"><i class="fa fa-plus text-info"></i> Add</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 @section scripts{
-    <script src="~/Scripts/Inventory/products.js"></script>
-    <script src="~/Scripts/Inventory/app.inbox.js"></script>
+
+    <script>
+
+        var _products = [];
+
+        $(document).ready(function () {
+            $('.safriMultiSelect2').select2({
+                placeholder: 'SELECT REQUIRED PRODUCTS'
+            });
+            loadAccounts();
+            loadProducts();
+
+            if (userWrite == 'true') {
+                $('#CreateProduct').show();
+                $('#ImportProduct').show();
+            }
+        });        
+
+
+
+        function loadAccounts() {
+
+            var url = "/api/Accounting/GetTrialBalanceAccounts";
+
+            SafriSoftGetRequest(url, (response) => {
+                if (response.Obj.length > 0) {
+                    $("#selectedInventoryAccount").append('<option value="-100">SELECT INVENTORY ACCOUNT</option>');
+                    $("#editSelectedInventoryAccount").append('<option value="0">SELECT INVENTORY ACCOUNT</option>');
+
+                    for (var i = 0; i < response.Obj.length; i++) {
+                        $("#selectedInventoryAccount").append(`<option value="${response.Obj[i].Id}">${response.Obj[i].AccountNumber} - ${response.Obj[i].AccountName}</option>`);
+                        $("#editSelectedInventoryAccount").append(`<option value="${response.Obj[i].Id}">${response.Obj[i].AccountNumber} - ${response.Obj[i].AccountName}</option>`);
+                    }
+                }
+            });
+        }
+
+        function loadProducts() {
+
+            var url = "/api/Inventory/GetProducts";
+
+            SafriSoftGetRequest(url, (response) => {
+                console.log(response);
+                if (response.length > 0) {
+
+                    for (var i = 0; i < response.length; i++) {
+                        if (response[i].ProductType == 2) {
+                            
+                        } 
+                        _products.push(response[i]);
+                        $("#selectedProducts").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
+                        $("#editSelectedProducts").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
+                    }
+                }
+            });
+        }
+
+        function productTypeChanged() {
+
+            var productTypeId = $("#selectedProductType").val();
+
+            if (productTypeId == 1) {
+                $("#productsContainer").show();
+            } else {
+                $("#productsContainer").hide();
+            }
+        }
+
+        function editProductTypeChanged() {
+
+            var productTypeId = $("#editSelectedProductType").val();
+
+            if (productTypeId == 1) {
+                $("#editProductsContainer").show();
+            } else {
+                $("#editProductsContainer").hide();
+            }
+        }
+
+        var _addProductQtyId = 0;
+
+        function addQuantity(id) {
+            $('#addQuantity').modal('show');
+
+            _addProductQtyId = id;
+
+            var url = '/api/Inventory/GetProducts/' + id;
+
+            SafriSoftGetRequest(url, (response) => {
+                vm.AddQuantityRequirements([]);
+                if (response[0].Products != null) {
+                    for (var i = 0; i < response[0].Requirements.length; i++) {
+                        var product = _products.find(x => x.Id == response[0].Requirements[i].Id);
+                        var req = new requirement(product.Id, product.ProductName, response[0].Requirements[i].Qty, product.ItemsAvailable);
+
+                        vm.AddQuantityRequirements.push(req);
+
+                    }
+                } 
+            });
+
+        }
+
+        function addProductQuantity() {
+
+            var qty = $('#quantity').val();
+
+            if (qty == '') {
+                toastr.error('Please provide quantity');
+                return;
+            }
+
+            var url = '/api/Inventory/AddQuantity';
+
+            var data = {
+                ProductId: _addProductQtyId,
+                Qty: qty,
+                Requirements: ko.toJS(vm.AddQuantityRequirements())
+            }
+
+            SafriSoftPostJsonRequest(url, data, (response) => {
+                if (response.Success) {
+                    $('#addQuantity').modal('hide');
+                    toastr.success(response.Message);
+                    window.location.reload();
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
+
+        }
+
+
+        //$(function () {
+        var productDataTable = $("#products-table").DataTable({
+            ordering: false,
+            destroy: true,
+            fixedColumns: {
+                end: 10
+            },
+            paging: false,
+            scrollCollapse: true,
+            scrollX: true,
+            scrollY: 550,
+            lengthMenu: [[-1], ["All"]],
+            ajax: {
+                url: '/api/Inventory/GetProducts/',
+                method: 'GET',
+                "dataSrc": ""
+            },
+            'columns': [
+                //{
+                //    'data': 'Id',
+                //    'searchable': true
+                //},
+                //{
+                //    'data': 'ProductImage',
+                //    'render': function (data, type, full, meta) {
+                //        if (data.includes(".jpg") || data.includes(".png") || data.includes(".jpeg")) {
+                //            return '<td> <img src="../../assets/img/' + data + '" alt="No Image" height="50" width="50" /></td>'
+                //        } else {
+                //            return '<td> <img src="' + data + '" height="110" width="150" style="border-radius:2px" /></td>'
+                //        }
+
+                //    }
+                //},
+                {
+                    'data': 'ProductCode',
+                    className: 'normalTextCol',
+                    'searchable': true
+                },
+                {
+                    'data': 'ProductName',
+                    className: 'productNameStyle',
+                    'searchable': true
+                },
+                {
+                    'data': 'ProductCategory',
+                    className: 'normalTextCol',
+                    'searchable': true
+                },
+                {
+                    'data': 'ProductTypeStr',
+                    className: 'normalTextCol',
+                    'searchable': true
+                },
+                {
+                    'data': 'ProductReference',
+                    className: 'normalTextCol',
+                    'searchable': true
+                },
+                {
+                    'data': 'InventoryAccountName',
+                    className: 'normalTextCol',
+                    'searchable': true
+                },
+                {
+                    'data': 'ItemsSold',
+                    className:'qtyCols',
+                    'searchable': true
+                },
+                {
+                    'data': 'ItemsAvailable',
+                    className: 'qtyCols',
+                    'searchable': true
+                },
+                {
+                    'data': 'Cost',
+                    'searchable': true,
+                    'className': 'text-right',
+                    'render': function (data, type, full, meta) {
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
+                    'data': 'SellingPrice',
+                    'searchable': true,
+                    'className': 'text-right',
+                    'render': function (data, type, full, meta) {
+                        if (type === 'display')
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
+                        else
+                            return data;
+                    }
+                },
+                {
+                    'data': 'Id',
+                    className:'btnCol',
+                    'render': function (data, type, full, meta) {
+
+                        var addQty = '';
+
+                        if (full.ProductTypeStr == "Inventory") {
+                            addQty = '<a id="' + full.Id + '" class="btn btn-white" href="#" onclick="addQuantity(this.id)" data-toggle="tooltip" data-placement="left" title="Add Quantity"><i class="fas fa-plus text-info"></i></a>';
+                        }
+
+                        if (userWrite == 'true') {
+                            return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${full.Id}" data-toggle="tooltip" data-placement="left" title="Edit Product Details" class="btn btn-white" href="#" onclick="editProductDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ${addQty}</div> </td>`;
+                        } else {
+                            return '';
+                        }
+                        
+                    }
+                }
+            ]
+        });
+
+        productDataTable.on('draw', function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        var date = new Date();
+        var productDate = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+
+        $('#CreateProduct').on('click', function () {
+            $('#logo').attr('src', "../../assets/img/iconOnly.png");
+            $('#creat-product-modal').modal('show');
+            $('#product-reference').val(productDate);
+        });
+
+        $("#product-code").on("input", function () {
+            $('#product-reference').val($(this).val() + "-" + productDate);
+        });
+
+        $('#product-final-create').on('click', function () {
+            var productCode = $("#product-code").val();
+            var productCategory = $("#product-category").val();
+            var productName = $("#product-name").val();
+            var productReference = $("#product-reference").val();
+            var sellingPriceInput = $("#product-price").val();
+            var costInput = $("#cost").val();
+            //var itemsAvailable = $("#product-available").val();
+            var productTypeId = $("#selectedProductType").val();
+            var products = $("#selectedProducts").val();
+            var requirements = ko.toJS(vm.Requirements());
+            var inventoryAccountId = $("#selectedInventoryAccount").val();
+            var productImage = "none";
+            //var itemsSold = "0";
+            var sellingPrice = 0;
+            var cost = 0;
+
+            if (sellingPriceInput != 0) {
+                sellingPrice = sellingPriceInput;
+            }
+
+            if (costInput != 0) {
+                cost = costInput;
+            }
+
+            if (productName != "" && productCode != "") {
+
+                var product = {
+                    'ProductCode': productCode,
+                    'ProductCategory': productCategory,
+                    'ProductName': productName,
+                    'ProductType': productTypeId,
+                    'ProductReference': productReference,
+                    'SellingPrice': sellingPrice,
+                    'Cost': cost,
+                    'ProductImage': productImage,
+                    'InventoryAccountId': inventoryAccountId,
+                    'Products': products,
+                    'Requirements': requirements
+                };
+
+                var url = '/api/Inventory/ProductCreate';
+
+                SafriSoftPostJsonRequest(url, product, (data) => {
+                    if (data.Success) {
+                        console.log(data);
+                        $('#creat-product-modal').modal('hide');
+                        toastr.success('Successfully created product search product table for confirmation!');
+                        productDataTable.ajax.reload(function (res) { }, false);
+                    } else {
+                        console.log(data);
+                        toastr.error('An error occured while trying to save product contact administrator!');
+                    }
+                });
+
+            } else {
+                if (productName == "") {
+                    toastr.error('Product name cannot be empty!');
+                } else if (productCode == "") {
+                    toastr.error('Product Code cannot be empty!');
+                }
+            }
+
+        });
+
+        // Product
+        //      Edit 
+        //          Stuff
+        //              For Some Reason
+        //
+
+        $('#product-final-update').on('click', function () {
+            var productId = $("#edit-product-id").val();
+            var productName = $("#edit-product-name").val();
+            var productReference = $("#edit-product-reference").val();
+            var sellingPriceInput = $("#edit-product-price").val();
+            var costInput = $("#edit-cost").val();
+            //var itemsAvailable = $("#edit-product-available").val();
+            var productCode = $("#edit-product-code").val();
+            var productCategory = $("#edit-product-category").val();
+            var inventoryAccountId = $("#editSelectedInventoryAccount").val();
+            var productTypeId = $("#editSelectedProductType").val();
+            var products = $("#editSelectedProducts").val();
+            var requirements = ko.toJS(vm.EditRequirements());
+            var productImage = "none";
+            var sellingPrice = 0;
+            var cost = 0;
+
+            if (sellingPriceInput != 0) {
+                sellingPrice = sellingPriceInput;
+            }
+
+            if (costInput != 0) {
+                cost = costInput;
+            }
+
+            if (productName != "" && productCode != "") {
+
+                var product = {
+                    'Id': productId,
+                    'ProductName': productName,
+                    'ProductReference': productReference,
+                    'SellingPrice': sellingPrice,
+                    'Cost': cost,
+                    'ProductCode': productCode,
+                    'ProductCategory': productCategory,
+                    'ProductImage': productImage,
+                    'InventoryAccountId': inventoryAccountId,
+                    'ProductType': productTypeId,
+                    'Products': products,
+                    'Requirements': requirements
+                };
+
+                var url = '/api/Inventory/ProductUpdate';
+
+                SafriSoftPostJsonRequest(url, product, (data) => {
+                    if (data.Success) {
+                        console.log(data);
+                        $('#edit-product-modal').modal('hide');
+                        toastr.success('Successfully updated product search product table for confirmation!');
+                        productDataTable.ajax.reload(function (res) { }, false);
+                    } else {
+                        console.log(data);
+                        toastr.error('An error occured while trying to save product contact administrator!');
+                    }
+                });
+
+            } else {
+                if (productName == "") {
+                    toastr.error('Product name cannot be empty!');
+                } else if (productCode == "") {
+                    toastr.error('Product Code cannot be empty!');
+                }
+            }
+
+        });
+
+        function productDeleteDetails(id) {
+            var product = {
+                'Id': id
+            };
+
+            $.ajax({
+                url: '/api/Inventory/ProductDelete',
+                method: 'POST',
+                dataType: 'json',
+                data: product,
+                contextType: "application/json",
+                traditional: true
+            }).done(function (data) {
+                if (data.Success) {
+                    toastr.success('Successfully deleted product search product table for confirmation!');
+                    productDataTable.ajax.reload(function (res) { }, false);
+                } else {
+                    console.log(data);
+                    toastr.error('An error occured while trying to delete product contact administrator!');
+                }
+
+            });
+        }
+
+        //});
+
+        function editProductDetails(id) {
+            $('#edit-logo').attr('src', "");
+            $('#edit-img-source').hide();
+            $('#edit-img-filename').hide();
+            $.ajax({
+                url: '/api/Inventory/GetProducts/' + id,
+                method: 'GET',
+                dataType: 'json'
+            }).done(function (data) {
+                console.log(data);
+                $('#edit-product-modal').modal('show');
+                $('#edit-product-name').val(data[0].ProductName);
+                $('#edit-product-available').val(data[0].ItemsAvailable);
+                $('#edit-product-price').val(data[0].SellingPrice);
+                $('#edit-cost').val(data[0].Cost);
+                $('#edit-product-reference').val(data[0].ProductReference);
+                $('#edit-product-code').val(data[0].ProductCode);
+                $('#edit-product-category').val(data[0].ProductCategory);
+                $("#editSelectedInventoryAccount").val(data[0].InventoryAccountId);
+                $('#editSelectedInventoryAccount').trigger('change.select2');
+                $("#editSelectedProductType").val(data[0].ProductType);
+                $('#editSelectedProductType').trigger('change.select2');
+                $("#editSelectedProducts").val(data[0].Products);
+                $('#editSelectedProducts').trigger('change.select2');
+                $('#edit-logo').attr('src', data[0].ProductImage);
+                if ($('#edit-logo').val() == null) {
+                    $('#edit-logo').attr('src', "../../assets/img/iconOnly.png");
+                }
+                $('#edit-product-id').val(id);
+
+                if (data[0].Products != null) {
+                    vm.EditRequirements([]);
+
+                    for (var i = 0; i < data[0].Requirements.length; i++) {
+                        var product = _products.find(x => x.Id == data[0].Requirements[i].Id);
+                        var req = new requirement(product.Id, product.ProductName, data[0].Requirements[i].Qty);
+
+                        vm.EditRequirements.push(req);
+
+                    }
+                }                
+
+            });
+
+        }
+
+        $("#edit-product-name").on("input", function () {
+            $('#edit-product-reference').val($(this).val() + "-" + productDate);
+        });
+
+        $('#ImportProduct').on('click', function () {
+            $('#upload-excel').modal('show');
+
+            $('#dropzone').fileupload({
+                dropZone: $('#dropzone'),
+                dataType: "application/json",
+                url: '/api/Inventory/UploadExcelData/' + "1"
+            }).on('fileuploadadd', function (e, data) {
+                data.submit();
+            }).on('fileuploadalways', function (e, data) {
+                console.log(e);
+                productDataTable.ajax.reload(function (res) { }, false);
+                $('#upload-excel').modal('hide');
+                toastr.success("Your data has been uploaded successfully");
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+            });
+
+            $(document).bind('dragover', function (e) {
+                var dropZone = $('#dropzone');
+                dropZone.addClass('hover');
+            });
+
+            $(document).bind('dragleave', function (e) {
+                var dropZone = $('#dropzone');
+                dropZone.removeClass('hover');
+            });
+
+            $(document).bind('drop dragover', function (e) {
+                e.preventDefault();
+            });
+
+        });
+
+        $('#img-source').hide();
+        $('#img-filename').hide();
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img-source').val(e.target.result);
+                    $('#img-filename').val(input.value.substring((input.value.lastIndexOf("\\")) + 1));
+                    $('#logo').attr('src', e.target.result);
+
+                    $('#edit-img-source').val(e.target.result);
+                    $('#edit-img-filename').val(input.value.substring((input.value.lastIndexOf("\\")) + 1));
+                    $('#edit-logo').attr('src', e.target.result);
+
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+
+        // Hide premium Buttons
+        var packageId = $('#packageId').val();
+
+        if (packageId != 2 && packageId != 3) {
+            $('#ImportProduct').hide();
+            $('#ImportProduct-lock').show();
+        } else {
+            $('#ImportProduct-lock').hide();
+        }
+
+        function requirement(id, name, qty, available = 0) {
+            this.Id = id;
+            this.Name = name;
+            this.Qty = qty;
+            this.QtyAvailable = available;
+        }
+
+        function selectedProductsChanged(e) {
+            var selectedProducts = $('#selectedProducts').val();
+
+            vm.Requirements([]);
+
+            for (var i = 0; i < selectedProducts.length; i++) {
+                var product = _products.find(x => x.Id == selectedProducts[i]);
+                var req = new requirement(product.Id, product.ProductName, 0);
+
+                vm.Requirements.push(req);
+            }
+        }
+
+        function editSelectedProductsChanged(e) {
+            var selectedProducts = $('#editSelectedProducts').val();
+            debugger;
+            var backup = vm.EditRequirements();
+
+            vm.EditRequirements([]);
+
+            for (var i = 0; i < selectedProducts.length; i++) {
+                var product = _products.find(x => x.Id == selectedProducts[i]);
+                var bak = backup.find(x => x.Id == selectedProducts[i]);
+
+                var qty = 0;
+
+                if (bak != null) {
+                    qty = bak.Qty;
+                }
+
+                var req = new requirement(product.Id, product.ProductName, qty);
+
+                vm.EditRequirements.push(req);
+            }
+        }
+
+
+    </script>
+
+    <script>
+        var productViewModel = function () {
+            var self = this;
+            // Stuff For Product Editting
+            self.ProductName = ko.observable('');
+            self.ProductAvailable = ko.observable('');
+            self.SellingPrice = ko.observable('');
+            self.ProductReference = ko.observable('');
+            self.Requirements = ko.observableArray([]);
+            self.EditRequirements = ko.observableArray([]);
+            self.AddQuantityRequirements = ko.observableArray([]);
+
+            self.OrderAuditData = ko.observableArray([]);
+            self.LabelDates = ko.observable();
+
+            var audiData = function (description, changed, dateCreated, userId) {
+                self.Description = ko.observable(description);
+                self.Changed = ko.observable(changed);
+                self.DateCreated = ko.observable(dateCreated);
+                self.LabelDates(dateCreated);
+                self.UserName = ko.observable(userId);
+
+                if (changed == "Inception") {
+                    self.Theme = ko.observable('bg-danger');
+                }
+                if (changed == "Processed") {
+                    self.Theme = ko.observable('bg-danger');
+                }
+                if (changed == "Packaged") {
+                    self.Theme = ko.observable('bg-warning');
+                }
+                if (changed == "InTransit") {
+                    self.Theme = ko.observable('bg-info');
+                }
+                if (changed == "Delivered") {
+                    self.Theme = ko.observable('bg-success');
+                }
+                if (changed == "Email Client") {
+                    self.Theme = ko.observable('bg-purple');
+                }
+
+            }
+
+            self.GetOrderAudit = function (id) {
+
+                var orderData = {
+                    'OrderId': id
+                }
+                self.OrderAuditData.removeAll();
+                $.ajax({
+                    url: '/api/Inventory/GetOrderAudit',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: orderData
+                }).done(function (data) {
+                    console.log(data);
+                    for (var i = 0; i < data.length; i++) {
+                        self.OrderAuditData.push(new audiData(data[i].Description, data[i].Changed, data[i].CreatedDate, data[i].UserId));
+                    }
+                    $('#view-order-title').text(id);
+                });
+            }
+                       
+        }
+
+        var vm = new productViewModel();
+
+        ko.applyBindings(vm); 
+    </script>
+
 }

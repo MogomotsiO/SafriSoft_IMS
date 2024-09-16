@@ -1,5 +1,8 @@
-﻿using SafriSoftv1._3.Models;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
+using SafriSoftv1._3.Models.SystemModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -159,7 +162,7 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public Result SaveInvoiceFileDetails(string fileName, string fileContentType, DateTime date, string description, int qty, double vatAmount, double amount, int vatAccountId, int invoiceAccountId, int organisationId, int id, int productId)
+        public Result SaveInvoiceFileDetails(string fileName, string fileContentType, DateTime date, string description, int qty, double vatAmount, double amount, int vatAccountId, int invoiceAccountId, int organisationId, int id, int productId, string userId)
         {
             var result = new Result();
 
@@ -193,6 +196,7 @@ namespace SafriSoftv1._3.Services
                 VatAccountId = vatAccountId,
                 InvoiceAccountId = invoiceAccountId,
                 ProductId = productId,
+                UserId = userId
             };
 
             db.SupplierInvoices.Add(invoiceFile);
@@ -201,18 +205,6 @@ namespace SafriSoftv1._3.Services
 
             if (res > 0)
             {
-                if(productId > 0)
-                {
-                    var product = db.Products.Where(x => x.Id == productId).FirstOrDefault();
-
-                    if(product != null)
-                    {
-                        product.ItemsAvailable += qty;
-                    }
-
-                    db.SaveChanges();
-                }
-
                 // save gls
                 var vatAccount = db.TrialBalanceAccounts.Where(x => x.Id == vatAccountId).FirstOrDefault();
 
@@ -312,6 +304,87 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
+        public Result LoadProductStock(int invoiceId, int organisationId, string userId)
+        {
+            var result = new Result();
+
+            var invoice = db.SupplierInvoices.Where(x => x.Id == invoiceId && x.OrganisationId == organisationId).FirstOrDefault();
+
+            if(invoice != null)
+            {
+                if(invoice.ProductId > 0)
+                {
+                    var product = db.Products.Where(x => x.Id == invoice.ProductId).FirstOrDefault();
+
+                    if (product != null)
+                    {
+                        var qty = invoice.Qty;
+
+                        var inventoryAmt = product.Cost * qty;
+                        var productName = product.ProductName;
+
+                        var inventoryAccount = db.TrialBalanceAccounts.Where(x => x.Id == product.InventoryAccountId).FirstOrDefault();
+
+                        if(inventoryAccount == null)
+                        {
+                            result.Success = false;
+                            result.Message = "Could not find the trial balance account";
+                            return result;
+                        }
+
+                        var gl = new GlAccountViewModel
+                        {
+                            AccountReference = $"REF(ID) - INVENTORY",
+                            AccountName = $"{inventoryAccount.AccountName}",
+                            AccountNumber = inventoryAccount.AccountNumber,
+                            Description = $"{productName} (QTY - {qty}) (COST - {product.Cost})",
+                            Debit = 0,
+                            Credit = inventoryAmt,
+                            Date = DateTime.Now,
+                            Month = DateTime.Now.Month,
+                            Year = DateTime.Now.Year,
+                        };
+
+                        var aSvc = new AccountingService();
+
+                        var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                        var supplier = db.Suppliers.Where(x => x.Id == invoice.SupplierId && x.OrganisationId == organisationId).FirstOrDefault();
+
+                        SaveProductAudit(product.Id, $"Stock loaded from supplier: {supplier.CompanyName} invoice: {invoice.Description} QTY: {qty}", organisationId, userId);
+
+                        //db updates
+                        product.ItemsAvailable += qty;
+                        invoice.StockLoaded = DateTime.Now;
+                        invoice.StockLoadedUser = userId;
+
+                        db.SaveChanges();
+
+                        result.Success = true;
+                        result.Message = "Stock Loaded";
+                        return result;
+                    }
+                    else
+                    {
+                        result.Success = false;
+                        result.Message = "Product not found in the database";
+                    }                    
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Invoice does not contain a product";
+                }                
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not find the invoice";
+            }
+
+            return result;
+        }
+
         public List<SupplierInvoiceDetailViewModel> GetSupplierInvoices(int id, int organisationId)
         {
             var vm = new List<SupplierInvoiceDetailViewModel>();
@@ -322,6 +395,8 @@ namespace SafriSoftv1._3.Services
             {
                 var product = db.Products.Where(x => x.Id == inv.ProductId && x.OrganisationId == organisationId).FirstOrDefault();
 
+                var user = dbSafriSoftApp.Users.Where(x => x.Id == inv.StockLoadedUser).FirstOrDefault();
+
                 vm.Add(new SupplierInvoiceDetailViewModel()
                 {
                     Id = inv.Id,
@@ -330,7 +405,10 @@ namespace SafriSoftv1._3.Services
                     Product = product != null ? product.ProductName : string.Empty,
                     Qty = inv.Qty,
                     VatAmount = inv.VatAmount,
-                    Amount = inv.Amount
+                    Amount = inv.Amount,
+                    DateStockLoadedStr = inv.StockLoaded.HasValue ? inv.StockLoaded.GetValueOrDefault().ToString("dd/MM/yyyy") : string.Empty,
+                    StockLoadedUser = user != null ? $"{user.UserName}" : string.Empty,
+                    StockLoaded = inv.StockLoaded.HasValue
                 });
             }
 
@@ -434,6 +512,250 @@ namespace SafriSoftv1._3.Services
 
             return result;
 
+        }
+
+        public Result SaveProductRequirements(int id, List<RequirementViewModel> requirements, int organisationId)
+        {
+            var result = new Result();
+
+            var items = db.ProductRequirements.Where(x => x.ProductId == id && x.OrganisationId == organisationId).ToList();
+
+            var removeReq = db.ProductRequirements.RemoveRange(items);
+
+            foreach(var requirement in requirements)
+            {
+                var req = new ProductRequirement()
+                {
+                    ProductId = id,
+                    ProductName = requirement.Name,
+                    RequiredProductId = requirement.Id,
+                    QtyRequired = requirement.Qty,
+                    Inserted = DateTime.Now,
+                    Updated = DateTime.Now,
+                    OrganisationId = organisationId
+                };
+
+                var item = db.ProductRequirements.Add(req);
+
+                var resSave = db.SaveChanges();
+            }            
+
+            return result;
+        }
+
+        public Result SaveProductAudit(int id, string description, int organisationId, string userId)
+        {
+            var result = new Result();
+
+            var audit = new ProductAudit()
+            {
+                ProductId = id,
+                Description = description,
+                UserId = userId,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+                OrganisationId = organisationId
+            };
+
+            var item = db.ProductAudits.Add(audit);
+
+            var resSave = db.SaveChanges();
+
+            return result;
+        }
+
+        public Result AddQuantity(AddQuantityViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            // check quantity rules
+            foreach(var req in vm.Requirements)
+            {
+                if(req.Qty > req.QtyAvailable)
+                {
+                    result.Success = false;
+                    result.Message = $"Quantity required is more than quantity available Product: {req.Name}";
+                    return result;
+                }
+
+                var totalLine = req.Qty * vm.Qty;
+
+                if (totalLine > req.QtyAvailable)
+                {
+                    result.Success = false;
+                    result.Message = $"Quantity required to produce is more than quantity available Product: {req.Name}";
+                    return result;
+                }
+            }
+
+            foreach (var req in vm.Requirements)
+            {
+                var totalLine = req.Qty * vm.Qty;
+
+                var product = db.Products.Where(x => x.Id == req.Id).FirstOrDefault();
+
+                product.ItemsAvailable -= totalLine;
+                product.ItemsSold += totalLine;
+
+                db.SaveChanges();
+            }
+
+            var item = db.Products.Where(x => x.Id == vm.ProductId).FirstOrDefault();
+
+            item.ItemsAvailable += vm.Qty;
+
+            db.SaveChanges();
+
+            result.Success = true;
+            result.Message = $"Success";
+            return result;
+        }
+
+        public Result GetCurrencies()
+        {
+            var result = new Result();
+
+            var items = db.Countries.ToList();
+
+            result.obj = items;
+
+            result.Success = true;
+            result.Message = "Loaded";
+
+            return result;
+        }
+
+        public List<NameValuePair> GetUserRoles()
+        {
+            var result = new List<NameValuePair>();
+
+            var roles = dbSafriSoftApp.Roles.ToList();
+
+            foreach ( var role in roles)
+            {
+                result.Add(new NameValuePair()
+                {
+                    Value = role.Id,
+                    Name = role.Name
+                });
+            }
+
+            return result;
+        }
+
+        public Result UpdateUser(RegisterViewModel vm, int organisationId)
+        {
+            var result = new Result();
+
+            ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+            var user = dbSafriSoftApp.Users.Where(x => x.Id == vm.UserId).FirstOrDefault();
+            
+            if(user != null)
+            {
+                var userRoles = userManager.GetRoles(user.Id).ToList();
+
+                foreach (var userRole in userRoles)
+                {
+                    var removeRes = userManager.RemoveFromRole(user.Id, userRole);
+                }                
+
+                foreach(var role in vm.Roles)
+                {
+                    var userRoleDetails = dbSafriSoftApp.Roles.Where(x => x.Id == role).FirstOrDefault();
+
+                    var res = userManager.AddToRole(user.Id, userRoleDetails.Name);
+                }
+
+                user.FirstName = vm.FirstName;
+                user.LastName = vm.LastName;
+                user.Read = vm.Read;
+                user.Write = vm.Write;
+
+                dbSafriSoftApp.SaveChanges();
+            }
+
+            return result;
+        }
+
+        public Result UploadCustomerDocuments(string fileName, int customerId, int organisationId)
+        {
+            var result = new Result();
+
+            var document = new CustomerDocument()
+            {
+                FileName = fileName,
+                CustomerId = customerId,
+                OrganisationId = organisationId,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now
+            };
+
+            var addRes = db.CustomerDocuments.Add(document);
+
+            var saveRes = db.SaveChanges();
+
+            if(saveRes > 0)
+            {
+                result.Success = true;
+                result.Message = "File saved";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save file";
+            }
+
+            return result;
+        }
+
+        public Result GetDocuments(int id, int organisationId)
+        {
+            var result = new Result();
+
+            var documentsVm = new List<CustomersDocumentsViewModel>();
+
+            var items = db.CustomerDocuments.Where(x => x.CustomerId == id).ToList();
+
+            foreach(var item in items)
+            {
+                documentsVm.Add(new CustomersDocumentsViewModel()
+                {
+                    Id = item.Id,
+                    FileName = item.FileName,
+                    CustomerId = item.CustomerId,
+                    DateFileCreated = item.Inserted.ToString("dd/MM/yyyy")
+                });
+            }
+
+            if(documentsVm.Count > 0)
+            {
+                result.Success = true;
+                result.Message = "Documents loaded";
+                result.obj = documentsVm;
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "No documents";
+                result.obj = documentsVm;
+            }
+
+            return result;
+        }
+
+        public string GetCustomerDocument(int id)
+        {
+            var file = db.CustomerDocuments.Where(x => x.Id == id).FirstOrDefault();
+
+            if(file != null && string.IsNullOrEmpty(file.FileName) == false)
+            {
+                return file.FileName;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }

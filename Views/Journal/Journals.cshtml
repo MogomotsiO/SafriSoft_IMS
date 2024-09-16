@@ -41,7 +41,7 @@
 
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <button id="createJournal" type="submit" class="btn btn-light" style="text-align:right !important;" onclick="createJournalModal()"><i class="fa fa-plus text-info"></i> Create Journal</button>
+                            <button id="createJournal" type="submit" class="btn btn-light" style="text-align:right !important;display:none;" onclick="createJournalModal()"><i class="fa fa-plus text-info"></i> Create Journal</button>
                             <br />
                             <br />
                             <table id="journalsDt" class="table table-bordered ">
@@ -208,6 +208,10 @@
 
     <script type="text/javascript">
 
+        if (userWrite == 'true') {
+            $('#createJournal').show();
+        }
+
         var accounts = JSON.parse('@Html.Raw(Json.Encode(Model.TrialBalanceAccounts))');
 
         var _jnlEditId = 0;
@@ -270,7 +274,12 @@
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
 
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Journal" onclick="viewJournal(this.id)"><i class="fas fa-balance-scale text-info"></i></a> </div> </td>'
+                        if (userWrite == 'true') {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Journal" onclick="viewJournal(this.id)"><i class="fas fa-balance-scale text-info"></i></a> </div> </td>'
+                        } else {
+                            return '';
+                        }
+                        
                     }
                 }
             ]

@@ -1,4 +1,9 @@
 ﻿$(document).ready(function () {
+
+    if (userWrite == 'true') {
+        $('#ImportGeneralLedger').show();
+    }
+
     var today = new Date();
     var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     debugger;
@@ -9,6 +14,7 @@
     document.getElementById("end").defaultValue = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + endDay;
 
     refreshGeneralLedgerDT();
+
 });
 
 var generalLedgerTable = $("#generalLedgerTable").DataTable({
@@ -63,7 +69,7 @@ var generalLedgerTable = $("#generalLedgerTable").DataTable({
             'className': 'indexStyle text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -74,7 +80,7 @@ var generalLedgerTable = $("#generalLedgerTable").DataTable({
             'className': 'indexStyle text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -167,7 +173,7 @@ var importFromSafriSoftTB = $("#importFromSafriSoftTB").DataTable({
             'className': 'indexStyle text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -178,7 +184,7 @@ var importFromSafriSoftTB = $("#importFromSafriSoftTB").DataTable({
             'className': 'indexStyle text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }

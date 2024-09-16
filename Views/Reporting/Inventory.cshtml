@@ -50,8 +50,8 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <p class="text-inf"><span class="fa fa-pie-chart"></span> Accounting</p>
+                        <div class="col-md-6" style="display: none;" id="bookkeepingReports">
+                            <p class="text-inf"><span class="fa fa-pie-chart"></span> Bookkeeping</p>
                             <hr class="text-info" />
                             <div class="col-md-12">
                                 <a href="#" onclick="generateBalanceSheetReport()">
@@ -850,6 +850,10 @@
 
     <script type="text/javascript">
 
+        if (userRoleIds.includes(admin.toString()) || userRoleIds.includes(bookkeeping.toString())) {
+            $('#bookkeepingReports').show();
+        }
+
         function runBalanceSheet() {
 
             var start = $('#start').val();
@@ -919,7 +923,7 @@
 
                             if (full.IsHeading == false) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
                                 
@@ -1038,7 +1042,7 @@
 
                             if (full.IsHeading == false) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
 
@@ -1152,7 +1156,7 @@
                             className: 'text-right',
                             render: function (data, type, full, meta) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
                             }
@@ -1230,7 +1234,7 @@
                             className: 'text-right',
                             render: function (data, type, full, meta) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
                             }
@@ -1313,7 +1317,7 @@
                             className: 'text-right',
                             render: function (data, type, full, meta) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
                             }
@@ -1325,7 +1329,7 @@
                             className: 'text-right',
                             render: function (data, type, full, meta) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
                             }
@@ -1337,7 +1341,7 @@
                             className: 'text-right',
                             render: function (data, type, full, meta) {
                                 if (type === 'display')
-                                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                                 else
                                     return data;
                             }

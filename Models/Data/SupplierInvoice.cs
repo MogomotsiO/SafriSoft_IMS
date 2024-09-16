@@ -19,5 +19,8 @@ namespace SafriSoftv1._3.Models.Data
         public int InvoiceAccountId { get; set; }
         public int SupplierId { get; set; }
         public int ProductId { get; set; }
+        public string UserId { get; set; }
+        public DateTime? StockLoaded {get;set;}
+        public string StockLoadedUser { get; set; }
     }
 }

@@ -48,7 +48,7 @@
             'render': function (data, type, full, meta) {
 
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -57,18 +57,23 @@
             'data': 'OrderStatus',
             'searchable': true,
             'render': function (data, type, full, meta) {
-                if (data == "Processed") {
-                    return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-danger" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-danger"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
+                if (userWrite == 'true') {
+                    if (data == "Processed") {
+                        return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-danger" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-danger"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
+                    }
+                    if (data == "Packaged") {
+                        return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-warning" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-warning"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
+                    }
+                    if (data == "InTransit") {
+                        return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-info" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-info"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
+                    }
+                    if (data == "Delivered") {
+                        return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-success" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-success"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
+                    }
+                } else {
+                    return '';
                 }
-                if (data == "Packaged") {
-                    return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-warning" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-warning"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
-                }
-                if (data == "InTransit") {
-                    return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-info" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-info"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
-                }
-                if (data == "Delivered") {
-                    return '<div class="btn-group" style="width:100%;margin:0px !important;"> <button id="btn-' + data + '" class="btn btn-success" type="button">' + data + '</button> <button id="dropdown-' + full.OrderId.replace('#', ' ').trim() + '" class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown"> <span class="sr-only">Toggle Dropdown</span> <div class="dropdown-menu" role="menu"> <a name="Packaged" class="dropdown-item" href="#" id="Packaged-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Packaged</a><a name="InTransit" class="dropdown-item" href="#" id="InTransit-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">In Transit</a><a name="Delivered" class="dropdown-item" href="#" id="Delivered-' + full.OrderId.replace('#', ' ').trim() + '" onclick="changeStatus(this.id)">Delivered</a> </div> </button><button hidden id="wait-' + full.OrderId.replace('#', ' ').trim() + '" type="button" class="btn btn-success"><i class="fas fa-spinner fa-pulse text-white"></i> </button> </div>'
-                }                
+                              
             }
         },
         {
@@ -112,7 +117,12 @@
         {
             'data': 'OrderId',
             'render': function (data, type, full, meta) {
-                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" onclick="orderDeleteDetails(this.id)"><i class="fas fa-trash text-info"></i></a><a id="' + full.OrderId + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Email Customer" onclick="createOrderEmail(this.id)"><i class="fa fa-envelope text-info"></i></a> </div> </td>'
+                if (userWrite == 'true') {
+                    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Email Customer" onclick="createOrderEmail(this.id)"><i class="fa fa-envelope text-info"></i></a> </div> </td>'
+                } else {
+                    return '';
+                }
+                
             }
         }
     ]
@@ -368,17 +378,17 @@ function invoiceViewModal(id) {
         $('#table-order-id').text(data[0].OrderId);
         $('#num-of-orders').text(data[0].NumberOfItems);
         $('#product-name').text(data[0].ProductName);
-        $('#order-worth').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].OrderWorth));
-        $('#order-worth-snd').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].OrderWorth));
+        $('#order-worth').text(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data[0].OrderWorth));
+        $('#order-worth-snd').text(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data[0].OrderWorth));
         $('#account-name').text(data[0].AccountName);
         $('#account-no').text(data[0].AccountNo);
         $('#bank-name').text(data[0].BankName);
         $('#bank-branch').text(data[0].BranchName);
         $('#branch-code').text(data[0].BranchCode);
         $('#client-reference').text(data[0].ClientReference.toUpperCase() + "/" + data[0].OrderId.substr(1, data[0].OrderId.length));
-        $('#vat-amount').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].VatAmount));
-        $('#shipping-amount').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].ShippingCost));
-        $('#order-total').text(new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data[0].InvoiceTotal));
+        $('#vat-amount').text(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data[0].VatAmount));
+        $('#shipping-amount').text(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data[0].ShippingCost));
+        $('#order-total').text(new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data[0].InvoiceTotal));
         $('#invoice-view-modal').modal('show');
     });
 }

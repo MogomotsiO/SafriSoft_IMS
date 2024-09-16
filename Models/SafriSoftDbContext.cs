@@ -11,7 +11,10 @@ namespace SafriSoftv1._3.Models
         }
 
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProductRequirement> ProductRequirements { get; set; }
+        public virtual DbSet<ProductAudit> ProductAudits { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<CustomerDocument> CustomerDocuments { get; set; }
         public virtual DbSet<CustomerTransaction> CustomerTransactions { get; set; }
         public virtual DbSet<InboxMessages> InboxMessages { get; set; }
         public virtual DbSet<InboxReplies> InboxReplies { get; set; }
@@ -36,6 +39,7 @@ namespace SafriSoftv1._3.Models
         public virtual DbSet<ReportBalanceSheetAccountLink> ReportBalanceSheetAccountLinks { get; set; }
         public virtual DbSet<ReportIncomeStatementAccount> ReportIncomeStatementAccounts { get; set; }
         public virtual DbSet<ReportIncomeStatementAccountLink> ReportIncomeStatementAccountLinks { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

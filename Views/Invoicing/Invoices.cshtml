@@ -6,7 +6,9 @@
 
 <style>
     .buttonWidth {
-        width: 100px !important;
+        width: 50px !important;
+        min-width: 50px !important;
+        max-width: 50px !important;
     }
 
     .alignRight {
@@ -243,21 +245,26 @@
                     className: 'buttonWidth',
                     'render': function (data, type, full, meta) {
 
-                        var pop = '';
+                        if (userWrite == 'true') {
+                            var pop = '';
 
-                        if (full.Pop != null && full.Pop != '') {
-                            pop = '<a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Download Proof of Payment" class="btn btn-light" href="DownloadPopFile?Id=' + data +'" ><i class="fa fa-paperclip text-info"></i></a>';
-                        }
+                            if (full.Pop != null && full.Pop != '') {
+                                pop = '<a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Download Proof of Payment" class="btn btn-light" href="DownloadPopFile?Id=' + data + '" ><i class="fa fa-paperclip text-info"></i></a>';
+                            }
 
-                        if(data === true)
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', false)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>';
-                        else
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', true)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>'
+                            if (data === true)
+                                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', false)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>';
+                            else
+                                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', true)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>'
                             //if (data === true)
-                        //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
-                        //else
-                        //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                            //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
+                            //else
+                            //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', true)" type="checkbox" id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
 
+                        } else {
+                            return '';
+                        }
+                        
                     }
                 },
                 {
@@ -287,7 +294,7 @@
                     'render': function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }
@@ -299,7 +306,7 @@
                     'render': function (data, type, full, meta) {
 
                         if (type === 'display')
-                            return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                            return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
                     }
@@ -309,7 +316,12 @@
                     searchable: true,
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-file-invoice text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-file-pdf text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Email Client Invoice" onclick="sendInvoiceEmail(this.id,\'' + full.InvoiceNumber + '\',\'' + full.Customer + '\')"><i class="fas fa-envelope text-info"></i></a> </div> </td>'
+                        if (userWrite == 'true') {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-eye text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-download text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Email Client Invoice" onclick="sendInvoiceEmail(this.id,\'' + full.InvoiceNumber + '\',\'' + full.Customer + '\')"><i class="fas fa-envelope text-info"></i></a> </div> </td>'
+                        } else {
+                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-eye text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-download text-info"></i></a> </div> </td>'
+                        }
+                        
                     }
                 }
             ]

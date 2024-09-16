@@ -84,7 +84,7 @@ $("#products-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -95,7 +95,7 @@ $("#products-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -110,7 +110,7 @@ $("#products-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -121,7 +121,7 @@ $("#products-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -132,7 +132,7 @@ $("#products-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -181,7 +181,7 @@ $("#orders-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }
@@ -278,7 +278,7 @@ $("#system-reports-table").DataTable({
             'className': 'text-right',
             'render': function (data, type, full, meta) {
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(data) + '</a>';
+                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
                 else
                     return data;
             }

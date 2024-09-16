@@ -28,4 +28,12 @@ namespace SafriSoftv1._3.Models
         public string Description { get; set; }
         public double Amount { get; set; }
     }
+
+    public class CustomersDocumentsViewModel
+    {
+        public int Id { get; set; }
+        public string FileName { get; set;}
+        public string DateFileCreated { get; set; }
+        public int CustomerId { get; set; }
+    }
 }

@@ -75,7 +75,7 @@ namespace SafriSoftv1._3.Services
             return vm;
         }
 
-        public Result SaveInvoice(InvoicingViewModel vm, int organisationId)
+        public Result SaveInvoice(InvoicingViewModel vm, int organisationId, string userId = "")
         {
             var result = new Result();
 
@@ -270,11 +270,84 @@ namespace SafriSoftv1._3.Services
                             product.ItemsAvailable -= item.Qty;
                             product.ItemsSold += item.Qty;
 
+                            var inventoryAccount = db.TrialBalanceAccounts.Where(x => x.Id == product.InventoryAccountId).FirstOrDefault();
+
+                            var gl = new GlAccountViewModel
+                            {
+                                AccountReference = $"REF(ID) - INVENTORY",
+                                AccountName = $"{inventoryAccount.AccountName}",
+                                AccountNumber = inventoryAccount.AccountNumber,
+                                Description = $"{item.Description} (QTY - {item.Qty}) - (COST - {product.Cost}) ",
+                                Debit = product.Cost * item.Qty,
+                                Credit = 0,
+                                Date = vm.InvoiceDetails.InvoiceDate,
+                                Month = vm.InvoiceDetails.InvoiceDate.Month,
+                                Year = vm.InvoiceDetails.InvoiceDate.Year,
+                            };
+
+                            var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
                             db.SaveChanges();
                         }
                     }
                 }
 
+                if (vm.CreateOrder == true)
+                {
+                    var qty = 0;
+                    var productName = string.Empty;
+                    string generateOrderId = $"#{vm.InvoiceDetails.InvoiceNumber}";
+
+                    foreach (var item in vm.InvoiceItems)
+                    {
+                        qty += item.Qty;
+                        productName += $"{item.Description} - ";
+                    }
+
+                    var customer = db.Customers.Where(x => x.Id == vm.InvoiceDetails.CustomerId).FirstOrDefault();
+
+                    var order = new Orders
+                    {
+                        OrderId = generateOrderId,
+                        CustomerId = vm.InvoiceDetails.CustomerId,
+                        CustomerName = customer != null ? customer.CustomerName : string.Empty,
+                        DateOrderCreated = DateTime.Now.ToString("dd/MM/yyyy"),
+                        ExpectedDeliveryDate = vm.InvoiceDetails.InvoiceDueDate.ToString("dd/MM/yyyy"),
+                        NumberOfItems = qty,
+                        ProductName = productName.Trim('-'),
+                        OrderStatus = "Processed",
+                        ShippingCost = Convert.ToDecimal(vm.InvoiceDetails.Shipping),
+                        OrderWorth = Convert.ToDecimal(vm.InvoiceDetails.Amount),
+                        OrderProgress = 10,
+                        OrganisationId = organisationId,
+                        Status = "Active",
+                        UserId = userId,
+                    };
+
+                    var orderDetails = db.Orders.Add(order);
+
+                    var orderRes = db.SaveChanges();
+
+                    if(orderDetails.Id > 0)
+                    {
+                        var description = "Inception - This order was created!";
+                        var changed = "Inception";
+
+                        var orderAudit = new OrderAudit
+                        {
+                            Changed = changed,
+                            Description = description,
+                            CreatedDate = DateTime.Now,
+                            OrderId = generateOrderId,
+                            UserId = userId,
+                        };
+
+                        var orderAuditDetails = db.OrderAudit.Add(orderAudit);
+
+                        var auditRes = db.SaveChanges();
+                    }
+
+                }
 
             }            
 
@@ -283,7 +356,7 @@ namespace SafriSoftv1._3.Services
             if (res > 0)
             {
                 result.Success = true;
-                result.Message = "Successfully save invoice";
+                result.Message = "Successfully saved invoice";
             }
             else
             {

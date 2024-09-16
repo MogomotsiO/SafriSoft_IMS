@@ -50,6 +50,7 @@ namespace SafriSoftv1._3.Models
         public int Id { get; set; }
         public string AccountNumber { get; set; }
         public string AccountName { get; set; }
+        public string AccountDescription { get; set; }
     }
 
     public class MapGeneralLedgerAccount
