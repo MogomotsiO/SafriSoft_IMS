@@ -10,6 +10,14 @@ namespace SafriSoftv1._3.Models.SystemModels
     {
     }
 
+    public enum MathOperatorType
+    {
+        Add = 1,
+        Subtract = 2,
+        Multiply = 3,
+        Divide = 4,
+    }
+
     public enum UserRoles
     {
         Admin = 1,

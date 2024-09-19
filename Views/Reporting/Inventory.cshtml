@@ -1027,7 +1027,7 @@
             SafriSoftPostRequest(url, data, (response) => {
 
                 for (var i = 0; i < response.obj.Coloumns.length; i++) {
-                    var dataCol = 'Balances.' + response.obj.Coloumns[i];
+                    var dataCol = 'ViewBalances.' + response.obj.Coloumns[i];
                     var nextCol = {
                         title: response.obj.Coloumns[i],
                         searchable: true,

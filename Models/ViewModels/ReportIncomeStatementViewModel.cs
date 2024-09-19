@@ -22,6 +22,8 @@ namespace SafriSoftv1._3.Models.ViewModels
         public string HeadingAccountName { get; set; }
         public int SubtotalAccountId { get; set; }
         public string SubtotalAccountName { get; set; }
+        public MathOperatorType OperatorType { get; set; }
+        public string OperatorTypeName { get; set; }
         public bool IsSubtotal { get; set; }
         public bool IsHeading { get; set; }
         public bool IsEmptySpace { get; set; }
@@ -63,6 +65,16 @@ namespace SafriSoftv1._3.Models.ViewModels
         public bool IsSubtotal { get; set; }
         public bool IsEmptySpace { get; set; }
         public int SubtotalAccountId { get; set; }
-        public Dictionary<string, double> Balances { get; set; } = new Dictionary<string, double>();
+        public MathOperatorType OperatorType { get; set; }
+        public List<Balance> Balances { get; set; } = new List<Balance>();
+        public Dictionary<string, double> ViewBalances { get; set; } = new Dictionary<string, double>();
+    }
+
+    public class Balance
+    {
+        public string Year { get; set; }
+        public MathOperatorType OperatoryType { get; set; }
+        public double Amount { get; set; }
+
     }
 }

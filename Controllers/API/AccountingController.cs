@@ -723,6 +723,52 @@ namespace SafriSoftv1._3.Controllers.API
             return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
         }
 
+        [HttpGet, Route("MoveUpIncomeStatementAccount/{id}")]
+        public IHttpActionResult MoveUpIncomeStatementAccount(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.MoveUpIncomeStatementAccount(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
+        [HttpGet, Route("MoveDownIncomeStatementAccount/{id}")]
+        public IHttpActionResult MoveDownIncomeStatementAccount(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new AccountingService();
+
+                result = service.MoveDownIncomeStatementAccount(id, organisationId);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, obj = result.obj });
+        }
+
         [HttpGet, Route("GetUnlinkedBsAccounts/{id}")]
         public IHttpActionResult GetUnlinkedBsAccounts(int id)
         {

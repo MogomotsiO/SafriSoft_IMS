@@ -633,7 +633,7 @@ namespace SafriSoftv1._3.Services
         {
             var result = new Result();
 
-            var vm = new List<ReportBalanceSheetDetailViewModel>();
+            var vm = new List<ReportIncomeStatementDetailViewModel>();
 
             var items = db.ReportIncomeStatementAccounts.Where(x => x.OrganisationId == organisationId || x.IsGlobal == true).ToList();
 
@@ -642,12 +642,13 @@ namespace SafriSoftv1._3.Services
                 var heading = db.ReportIncomeStatementAccounts.Where(x => x.Id == item.HeadingAccountId).FirstOrDefault();
                 var subtotal = db.ReportIncomeStatementAccounts.Where(x => x.Id == item.SubtotalAccountId).FirstOrDefault();
 
-                vm.Add(new ReportBalanceSheetDetailViewModel()
+                vm.Add(new ReportIncomeStatementDetailViewModel()
                 {
                     Id = item.Id,
                     Name = item.Name,
                     HeadingAccountName = heading?.Name,
                     SubtotalAccountName = subtotal?.Name,
+                    OperatorTypeName = item.OperatorType != 0 && (int)item.OperatorType != -100 ? item.OperatorType.ToString() : string.Empty,
                     IsHeading = item.IsHeading,
                     IsSubtotal = item.IsSubtotal,
                     Index = item.Index,
@@ -708,6 +709,7 @@ namespace SafriSoftv1._3.Services
                 Name = vm.Name,
                 HeadingAccountId = vm.HeadingAccountId,
                 SubtotalAccountId = vm.SubtotalAccountId,
+                OperatorType = vm.OperatorType,
                 IsHeading = vm.IsHeading,
                 IsSubtotal = vm.IsSubtotal,
                 Index = lastItem != null ? lastItem.Index + 1 : 1,
@@ -774,6 +776,7 @@ namespace SafriSoftv1._3.Services
             item.Name = vm.Name;
             item.HeadingAccountId = vm.HeadingAccountId;
             item.SubtotalAccountId = vm.SubtotalAccountId;
+            item.OperatorType = vm.OperatorType;
             item.IsHeading = vm.IsHeading;
             item.IsSubtotal = vm.IsSubtotal;
             item.IsEmptySpace = vm.IsEmptySpace;
@@ -1402,7 +1405,8 @@ namespace SafriSoftv1._3.Services
                     IsHeading = account.IsHeading,
                     IsSubtotal = account.IsSubtotal,
                     IsEmptySpace = account.IsEmptySpace,
-                    SubtotalAccountId = account.SubtotalAccountId
+                    SubtotalAccountId = account.SubtotalAccountId,
+                    OperatorType = account.OperatorType
                 });
             }
 
@@ -1410,13 +1414,18 @@ namespace SafriSoftv1._3.Services
 
             var subtotals = data.Where(x => x.IsSubtotal).ToList();
 
-            var dummyBalances = new Dictionary<string, double>();
+            var viewDummyBalances = new Dictionary<string, double>();
+
+            var dummyBalances = new List<Balance>();
+
             var newStartDate = vm.Start;
             while (startYear <= endYear)
             {
                 container.Coloumns.Add(startYear.ToString());
 
-                dummyBalances.Add(startYear.ToString(), 0);
+                viewDummyBalances.Add(startYear.ToString(), 0);
+
+                dummyBalances.Add(new Balance() { Year = startYear.ToString(), OperatoryType = MathOperatorType.Add, Amount = 0 });
 
                 var innerLoopStartDate = new DateTime(startYear, startDate.Month, 1); ;
                 var innerLoopEndDate = endDate;
@@ -1445,16 +1454,46 @@ namespace SafriSoftv1._3.Services
 
                     }
 
-                    account.Balances.Add(startYear.ToString(), balance);
+                    account.Balances.Add(new Balance()
+                    {
+                        Year = startYear.ToString(),
+                        OperatoryType = account.OperatorType,
+                        Amount = balance
+                    });
+
+                    account.ViewBalances.Add(startYear.ToString(), balance);
                 }
 
                 foreach (var subTot in subtotals)
                 {
-                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).Where(x => x.Year == startYear.ToString()).ToList();
 
-                    var yearBalances = subTotAccounts.Where(x => x.Key.Contains(startYear.ToString())).Select(x => x.Value);
+                    var subTotalBalance = 0.0;
 
-                    subTot.Balances.Add(startYear.ToString(), yearBalances.Sum());
+                    foreach (var subTotAccount in subTotAccounts)
+                    {
+                        if (subTotAccount.OperatoryType == MathOperatorType.Add)
+                        {
+                            subTotalBalance += subTotAccount.Amount;
+                        }
+                        else if(subTotAccount.OperatoryType == MathOperatorType.Subtract)
+                        {
+                            subTotalBalance -= subTotAccount.Amount;
+                        }
+                        else
+                        {
+                            subTotalBalance += subTotAccount.Amount;
+                        }
+                    }
+
+                    subTot.ViewBalances.Add(startYear.ToString(), subTotalBalance);
+
+                    subTot.Balances.Add(new Balance()
+                    {
+                        Year = startYear.ToString(),
+                        OperatoryType = MathOperatorType.Add,
+                        Amount = subTotalBalance
+                    });
                 }
 
                 startYear += 1;
@@ -1464,6 +1503,7 @@ namespace SafriSoftv1._3.Services
             foreach (var acc in data.Where(x => x.IsHeading))
             {
                 acc.Balances = dummyBalances;
+                acc.ViewBalances = viewDummyBalances;
             }
 
             container.Items = data;
@@ -1493,7 +1533,8 @@ namespace SafriSoftv1._3.Services
                     IsHeading = account.IsHeading,
                     IsSubtotal = account.IsSubtotal,
                     IsEmptySpace = account.IsEmptySpace,
-                    SubtotalAccountId = account.SubtotalAccountId
+                    SubtotalAccountId = account.SubtotalAccountId,
+                    OperatorType = account.OperatorType
                 });
             }
 
@@ -1501,13 +1542,17 @@ namespace SafriSoftv1._3.Services
 
             var subtotals = data.Where(x => x.IsSubtotal).ToList();
 
-            var dummyBalances = new Dictionary<string, double>();
+            var viewDummyBalances = new Dictionary<string, double>();
+
+            var dummyBalances = new List<Balance>();
 
             while (start <= end)
             {
                 container.Coloumns.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString());
 
-                dummyBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), 0);
+                viewDummyBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), 0);
+
+                dummyBalances.Add(new Balance() { Year = ((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), Amount = 0 });
 
                 foreach (var account in accountsRequireBalance)
                 {
@@ -1520,18 +1565,41 @@ namespace SafriSoftv1._3.Services
                         balance += GetTrialBalanceAccountBalanceByMonth(start.Year, start.Month, link.TbAccountId, organisation);
                     }
 
-                    account.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balance);
+                    account.ViewBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balance);
+
+                    account.Balances.Add(new Balance() { Year = ((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), Amount = balance });
                 }
 
                 foreach (var subTot in subtotals)
                 {
-                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).ToList();
+                    var subTotAccounts = data.Where(x => x.SubtotalAccountId == subTot.Id).SelectMany(x => x.Balances).Where(x => x.Year == ((MonthShort)start.Month).ToString() + " - " + start.Year.ToString()).ToList();
 
-                    var yearBalances = subTotAccounts.Where(x => x.Key.Contains(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString())).Select(x => x.Value);
+                    var subTotalBalance = 0.0;
 
-                    var balanceSum = yearBalances.Sum();
+                    foreach (var subTotAccount in subTotAccounts)
+                    {
+                        if (subTotAccount.OperatoryType == MathOperatorType.Add)
+                        {
+                            subTotalBalance += subTotAccount.Amount;
+                        }
+                        else if (subTotAccount.OperatoryType == MathOperatorType.Subtract)
+                        {
+                            subTotalBalance -= subTotAccount.Amount;
+                        }
+                        else
+                        {
+                            subTotalBalance += subTotAccount.Amount;
+                        }
+                    }
 
-                    subTot.Balances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), balanceSum);
+                    subTot.ViewBalances.Add(((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(), subTotalBalance);
+
+                    subTot.Balances.Add(new Balance()
+                    {
+                        Year = ((MonthShort)start.Month).ToString() + " - " + start.Year.ToString(),
+                        OperatoryType = MathOperatorType.Add,
+                        Amount = subTotalBalance
+                    });
                 }
 
                 start = start.AddMonths(1);
@@ -1541,6 +1609,7 @@ namespace SafriSoftv1._3.Services
             foreach (var acc in data.Where(x => x.IsHeading))
             {
                 acc.Balances = dummyBalances;
+                acc.ViewBalances = viewDummyBalances;
             }
 
             container.Items = data;

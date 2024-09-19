@@ -9,9 +9,17 @@
         text-align: center;
     }
 
+    .firstColumnWidth {
+        width: 200px !important;
+        max-width: 200px !important;
+        min-width: 200px !important;
+    }
+
     .buttonWidth {
         text-align: center;
-        width: 100px;
+        width: 50px !important;
+        max-width: 50px !important;
+        min-width: 50px !important;
     }
 </style>
 
@@ -53,6 +61,7 @@
                                         <th>Account Name</th>
                                         <th>Heading Account</th>
                                         <th>Subtotal Account</th>
+                                        <th>Operator</th>
                                         <th>Index</th>
                                         <th>Sorting</th>
                                         <th>Accounts</th>
@@ -112,6 +121,16 @@
                                 {
                                     <option value="@account.Id">@account.Name</option>
                                 }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group form-group bmd-form-group is-filled">
+                            <label class="bmd-label-floating"></label>
+                            <select id="selectOperator" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                <option value="-100">SELECT OPERATOR</option>
+                                <option value="@((int)SafriSoftv1._3.Models.SystemModels.MathOperatorType.Add)">Add</option>
+                                <option value="@((int)SafriSoftv1._3.Models.SystemModels.MathOperatorType.Subtract)">Subtract</option>
                             </select>
                         </div>
                     </div>
@@ -188,11 +207,11 @@
     <script type="text/javascript">
 
         var incomeStatementAccountsDT = $("#incomeStatementAccountsDT").DataTable({
-            scrollY: 450,
+            scrollY: 500,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[-1], ["All"]],
-            order: [[3, "asc"]],
+            order: [[4, "asc"]],
             ajax: {
                 url: '/api/Accounting/GetIncomeStatementAccounts/',
                 method: 'GET',
@@ -201,6 +220,7 @@
             columns: [
                 {
                     data: 'Name',
+                    className: 'firstColumnWidth',
                     searchable: true,
                     render: function (data, type, full, meta) {
 
@@ -222,6 +242,11 @@
                 {
                     data: 'SubtotalAccountName',
                     searchable: true,
+                },
+                {
+                    data: 'OperatorTypeName',
+                    searchable: true,
+                    className: 'buttonWidth',
                 },
                 {
                     data: 'Index',
@@ -371,6 +396,8 @@
             $('#selectHeaingAccount').trigger('change.select2');
             $('#selectSubtotalAccount').val(-100);
             $('#selectSubtotalAccount').trigger('change.select2');
+            $('#selectOperator').val(-100);
+            $('#selectOperator').trigger('change.select2');
             $('#isHeading').val(false);
             $('#isHeading').iCheck('uncheck');
 
@@ -395,6 +422,8 @@
                 $('#selectHeaingAccount').trigger('change.select2');
                 $('#selectSubtotalAccount').val(response.obj.SubtotalAccountId);
                 $('#selectSubtotalAccount').trigger('change.select2');
+                $('#selectOperator').val(response.obj.OperatorType);
+                $('#selectOperator').trigger('change.select2');
                 $('#isHeading').val(response.obj.IsHeading);
                 if (response.obj.IsHeading == true) {
                     $('#isHeading').iCheck('check');
@@ -423,6 +452,7 @@
             var name = $('#accountName').val();
             var headingAccount = $('#selectHeaingAccount').val();
             var subtotalAccount = $('#selectSubtotalAccount').val();
+            var operatorType = $('#selectOperator').val();
             var isHeading = $('#isHeading').val();
             var isSubtotal = $('#isSubtotal').val();
             var isEmptySpace = $('#isEmptySpace').val();
@@ -437,6 +467,7 @@
                 Name: name,
                 HeadingAccountId: headingAccount,
                 SubtotalAccountId: subtotalAccount,
+                OperatorType: operatorType,
                 IsHeading: isHeading,
                 IsSubtotal: isSubtotal,
                 IsEmptySpace: isEmptySpace,
@@ -447,7 +478,7 @@
             SafriSoftPostRequest(url, data, (response) => {
                 if (response.Success == true) {
                     toastr.success(response.Message);
-                    incomeStatementAccountsDT.ajax.reload();
+                    incomeStatementAccountsDT.ajax.reload(function (res) { }, false);
                     $("#createIsAccountModal").modal('hide');
                 } else {
                     toastr.error(response.Message);
@@ -460,7 +491,7 @@
             var url = `/api/Accounting/MoveUpIncomeStatementAccount/${id}`;
 
             SafriSoftGetRequest(url, (response) => {
-                incomeStatementAccountsDT.ajax.reload();
+                incomeStatementAccountsDT.ajax.reload(function (res) { }, false);
             });
 
         }
@@ -469,7 +500,7 @@
             var url = `/api/Accounting/MoveDownIncomeStatementAccount/${id}`;
 
             SafriSoftGetRequest(url, (response) => {
-                incomeStatementAccountsDT.ajax.reload();
+                incomeStatementAccountsDT.ajax.reload(function (res) { }, false);
             });
         }
 

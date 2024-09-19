@@ -9,9 +9,17 @@
         text-align: center;
     }
 
+    .firstColumnWidth {
+        width: 200px !important;
+        max-width: 200px !important;
+        min-width: 200px !important;
+    }
+
     .buttonWidth {
         text-align: center;
-        width: 100px;
+        width: 50px !important;
+        max-width: 50px !important;
+        min-width: 50px !important;
     }
 </style>
 
@@ -188,7 +196,7 @@
     <script type="text/javascript">
 
         var balanceSheetAccountsDT = $("#balanceSheetAccountsDT").DataTable({
-            scrollY: 450,
+            scrollY: 500,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[-1], ["All"]],
@@ -201,6 +209,7 @@
             columns: [
                 {
                     data: 'Name',
+                    className: 'firstColumnWidth',
                     searchable: true,
                     render: function (data, type, full, meta) {
 
