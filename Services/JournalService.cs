@@ -42,9 +42,9 @@ namespace SafriSoftv1._3.Services
                     Balance = balance,
                     IsActive = item.IsActive,
                     CreatedDateStr = item.Inserted.ToString("dd/MM/yyyy"),
-                    CreatedBy = createdBy != null ? createdBy.UserName : string.Empty,
+                    CreatedBy = createdBy != null ? $"{createdBy.FirstName} {createdBy.LastName}" : string.Empty,
                     ActivatedDateStr = item.ActivatedDate.HasValue ? item.ActivatedDate.GetValueOrDefault().ToString("dd/MM/yyyy") : string.Empty,
-                    ActivatedBy = activatedBy != null ? activatedBy.UserName : string.Empty,
+                    ActivatedBy = activatedBy != null ? $"{activatedBy.FirstName} {activatedBy.LastName}" : string.Empty,
                     //Entries = entries,
                 });
             }
@@ -95,7 +95,8 @@ namespace SafriSoftv1._3.Services
                 OrganisationId = organisationId,
                 Inserted = DateTime.Now,
                 Updated = DateTime.Now,
-                CreatedBy = userId
+                CreatedBy = userId,
+                UpdatedBy = string.Empty,
             };
 
             var res = db.Journals.Add(journal);
@@ -143,6 +144,8 @@ namespace SafriSoftv1._3.Services
                     OrganisationId = organisationId,
                     Updated = DateTime.Now,
                     Inserted = jnl.Inserted,
+                    CreatedBy = jnl.CreatedBy,
+                    UpdatedBy = jnl.UpdatedBy,
                 };
 
                 db.Entry(jnl).State = EntityState.Detached;

@@ -32,6 +32,7 @@ namespace SafriSoftv1._3.Models
         public double Amount { get; set; }
         public int OrganisationId { get; set; }
         public bool Paid { get; set; }
+        public bool OverDueInvoice { get; set; }
         public double AmountPaid { get; set; }
         public string Pop { get; set; }
     }

@@ -27,4 +27,14 @@ namespace SafriSoftv1._3.Models
         public string CompanyProvince { get; set; }
         public string CompanyCity { get; set; }
     }
+
+    public class AuditViewModel
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public string Changed { get; set; }
+        public string CreatedDate { get; set; }
+        public string UserId { get; set; }
+        public int OrderId { get; set; }
+    }
 }

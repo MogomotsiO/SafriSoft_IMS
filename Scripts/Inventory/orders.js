@@ -19,7 +19,15 @@
         },
         {
             'data': 'OrderId',
-            'searchable': true
+            'searchable': true,
+            render: function (data, type, full, meta) {
+                
+                if (full.InvoiceId > 0) {
+                    return `<a href="#" onclick="viewInvoice(${full.InvoiceId})">${data}</a>`;
+                } else {
+                    return data;
+                }
+            }
         },
         {
             'data': 'ProductName',
@@ -27,6 +35,7 @@
         },
         {
             'data': 'NumberOfItems',
+            'className': 'text-center',
             'searchable': true
         },
         {
@@ -98,6 +107,7 @@
         {
             'data': 'OrderProgress',
             'searchable': true,
+            'className': 'text-center',
             'render': function (data, type, full, meta) {
                 if (full.OrderStatus == "Processed") {
                     return '<span class="badge bg-danger">' + data + '%</span>'

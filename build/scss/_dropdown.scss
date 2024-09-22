@@ -88,22 +88,22 @@
 
 // Dropdown Sizes
 .dropdown-menu-xl {
-  max-width: 420px;
-  min-width: 360px;
-  padding: 0;
+    max-width: 700px;
+    min-width: 700px;
+    padding: 0;
 
-  .dropdown-divider {
-    margin: 0;
-  }
+    .dropdown-divider {
+        margin: 0;
+    }
 
-  .dropdown-item {
-    padding: $dropdown-padding-y $dropdown-item-padding-x;
-  }
+    .dropdown-item {
+        padding: $dropdown-padding-y $dropdown-item-padding-x;
+    }
 
-  p {
-    margin: 0;
-    white-space: normal;
-  }
+    p {
+        margin: 0;
+        white-space: normal;
+    }
 }
 
 // Dropdown header and footer

@@ -21,6 +21,7 @@ namespace SafriSoftv1._3.Models
         public int VatOptionId { get; set; }
         public int DebtorsAccountId { get; set; }
         public int InvoiceAccountId { get; set; }
+        public int InvoiceId { get; set; }
     }
 
     public class OrderRequestViewModel

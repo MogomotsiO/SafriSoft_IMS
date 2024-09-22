@@ -38,13 +38,13 @@
                             <table id="order-table" class="table table-bordered ">
                                 <thead>
                                     <tr>
-                                        <th>View</th>
+                                        <th>Audit</th>
                                         <th>Order #</th>
                                         <th>Product</th>
-                                        <th># Items</th>
+                                        <th>Qty</th>
                                         <th>Customer Name</th>
-                                        <th>Date Order Created</th>
-                                        <th>Expected Delivery Date</th>
+                                        <th>Date Issued</th>
+                                        <th>Date Due</th>
                                         <th>Invoice Amount</th>
                                         <th>Order Status</th>
                                         <th>Order Progress</th>
@@ -68,7 +68,7 @@
 <!-- /.content -->
 <!-- Modal -->
 <div class="modal fade" id="view-order">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="view-order-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h5>
@@ -335,4 +335,10 @@
 @section scripts{
     <script src="~/Scripts/Inventory/orders.js"></script>
     <script src="~/Scripts/Inventory/app.inbox.js"></script>
+
+    <script>
+        function viewInvoice(id) {
+            window.location.href = '@Url.Action("Invoice","Invoicing")' + '/' + id;
+        }
+    </script>
 }

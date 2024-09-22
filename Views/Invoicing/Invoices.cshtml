@@ -45,7 +45,7 @@
 
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fa fa-file"></i> Invoices</h4>
+                            <h4 class="card-title"><i class="fa fa-file-invoice"></i> Invoices</h4>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -61,6 +61,7 @@
                                         <th>Customer</th>
                                         <th>Invoice Amount</th>
                                         <th>Paid Amount</th>
+                                        <th>Paid</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -142,14 +143,14 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h4 class="card-title"><i class="fa fa-paste"></i> Proof of Payment</h4>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <div id="dropzone" class="fade">
-                            <h3 style="color: #17a2b8;">Drag & Drop File</h3>
+                <div class="card card-outline card-info">
+                    <div class="card-body" style="display: block;">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="dropzone" class="fade">
+                                    <h3 style="color: #17a2b8;">Drag & Drop File</h3>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -176,38 +177,36 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h4 class="card-title"><i class="fa fa-paste"></i> Payment Details</h4>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
-                                <label class="bmd-label-floating">Payment Date</label>
-                                <input id="date" class="form-control" type="date">
-                                <div class="input-group-append">
+                <div class="card card-outline card-info">
+                    <div class="card-body" style="display: block;">
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Payment Date</label>
+                                    <input id="date" class="form-control" type="date">
+                                    <div class="input-group-append">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
-                                <label class="bmd-label-floating">Amount Received</label>
-                                <input id="amount" class="form-control" type="number">
-                                <div class="input-group-append">
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled" style="border-color: none !important;">
+                                    <label class="bmd-label-floating">Amount Received</label>
+                                    <input id="amount" class="form-control" type="number">
+                                    <div class="input-group-append">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating"></label>
-                                <select id="selectAccount" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
-                                    <option value="-100">SELECT ACCOUNT</option>
-                                    @foreach (var account in Model.TrialBalanceAccounts)
-                                    {
-                                        <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
-                                    }
-                                </select>
+                            <div class="mb-3 col-md-12">
+                                <div class="input-group form-group bmd-form-group is-filled">
+                                    <label class="bmd-label-floating"></label>
+                                    <select id="selectAccount" class="safriSelect2 form-control" style="min-width:100%;width:100%; min-height:100px;">
+                                        <option value="-100">SELECT ACCOUNT</option>
+                                        @foreach (var account in Model.TrialBalanceAccounts)
+                                        {
+                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                        }
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -216,7 +215,7 @@
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-light" onclick="submitPaymentDetails()">Submit</button>
+                <button type="button" class="btn btn-light" onclick="submitPaymentDetails()"><i class="fa fa-coins text-info"></i> Submit</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -273,7 +272,13 @@
                 },
                 {
                     data: 'DateDueStr',
-                    searchable: true
+                    searchable: true,
+                    createdCell: function (cell, data, full, dataIndex) {
+
+                        if (full.OverDueInvoice == true) {
+                            $(cell).addClass('bg-warning');
+                        }
+                    }
                 },
                 {
                     data: 'InvoiceNumber',
@@ -309,6 +314,18 @@
                             return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
                         else
                             return data;
+                    }
+                },
+                {
+                    data: 'Paid',
+                    searchable: true,
+                    className: 'text-center buttonWidth',
+                    'render': function (data, type, full, meta) {
+
+                        if (data === true)
+                            return '<span class="fa fa-check text-success"></span>';
+                        else
+                            return '<span class="fa fa-minus text-warning"></span>';
                     }
                 },
                 {

@@ -650,6 +650,33 @@ namespace SafriSoftv1._3.Controllers.API
 
         }
 
+        [HttpGet, Route("GetProductAudit/{id}")]
+        public async Task<IHttpActionResult> GetProductAudit(int id)
+        {
+            var result = new Result();
+
+            try
+            {
+                var orgName = GetOrganisationName();
+                var orgId = GetOrganisationId(orgName);
+
+                var invSvc = new InventoryService();
+
+                result = invSvc.GetProductAudit(id, orgId);
+
+                result.Success = true;
+
+                return Json(result);
+
+            }catch(Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+
+                return Json(result);
+            }            
+        }
+
         [HttpPost, Route("AddQuantity")]
         public async Task<IHttpActionResult> AddQuantity(BaseViewModel vm)
         {
@@ -660,10 +687,11 @@ namespace SafriSoftv1._3.Controllers.API
                 var quantityVm = JsonConvert.DeserializeObject<AddQuantityViewModel>(vm.JsonString);
                 var organisationName = GetOrganisationName();
                 var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
 
                 var svc = new InventoryService();
 
-                result = svc.AddQuantity(quantityVm, organisationId);
+                result = svc.AddQuantity(quantityVm, organisationId, userId);
 
                 return Json(result);
             }
@@ -949,6 +977,7 @@ namespace SafriSoftv1._3.Controllers.API
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
             var organisationId = GetOrganisationId(getOrgClaim);
+            var db = new SafriSoftDbContext();
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
@@ -960,9 +989,15 @@ namespace SafriSoftv1._3.Controllers.API
                 {
                     while (reader.Read())
                     {
+                        var orderId = reader.GetString(0);
+
+                        var invoiceNumber = orderId.Replace('#', ' ').Trim(' ');
+
+                        var invoice = db.Invoices.Where(x => x.InvoiceNumber == invoiceNumber && x.OrganisationId == organisationId).FirstOrDefault();
+
                         var Orders = new OrderViewModel();
                         countUsers += 1;
-                        Orders.OrderId = reader.GetString(0);
+                        Orders.OrderId = orderId;
                         Orders.ProductName = reader.GetString(1);
                         Orders.NumberOfItems = reader.GetInt32(2);
                         Orders.CustomerName = reader.GetString(3);
@@ -972,6 +1007,7 @@ namespace SafriSoftv1._3.Controllers.API
                         Orders.ExpectedDeliveryDate = reader.GetString(7);
                         Orders.OrderWorth = reader.GetDecimal(8);
                         Orders.ShippingCost = reader.GetDecimal(9);
+                        Orders.InvoiceId = invoice != null ? invoice.Id : 0;
                         OrderViewModel.Add(Orders);
                     }
                     reader.NextResult();
@@ -1543,6 +1579,7 @@ namespace SafriSoftv1._3.Controllers.API
             var countUsers = 0;
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
+            ApplicationDbContext dbSafriSoftApp = new ApplicationDbContext();
 
             using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SafriSoftDbContext"].ToString()))
             {
@@ -1555,12 +1592,14 @@ namespace SafriSoftv1._3.Controllers.API
                     while (reader.Read())
                     {
                         var OrderAuditReords = new OrderAuditViewModel();
-                        var usernameUser = userManager.GetEmail(reader.GetString(4));
+                        var orderUserId = reader.GetString(4);
+                        var createdBy = dbSafriSoftApp.Users.Where(x => x.Id == orderUserId).FirstOrDefault();
+                        //var usernameUser = userManager.GetEmail(reader.GetString(4));
                         countUsers += 1;
                         OrderAuditReords.Id = countUsers;
                         OrderAuditReords.Description = reader.GetString(1);
                         OrderAuditReords.Changed = reader.GetString(2);
-                        OrderAuditReords.UserId = usernameUser;
+                        OrderAuditReords.UserId = createdBy != null ? $"{createdBy.FirstName} {createdBy.LastName}" : string.Empty;
                         var date = reader.GetDateTime(3);
                         OrderAuditReords.CreatedDate = date.ToString("MM/dd/yyyy HH:mm:ss");
                         OrderAuditViewModel.Add(OrderAuditReords);

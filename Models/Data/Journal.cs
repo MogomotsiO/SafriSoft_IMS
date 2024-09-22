@@ -11,6 +11,7 @@ namespace SafriSoftv1._3.Models.Data
         public string Number { get; set; }
         public string Description { get; set; }
         public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
         public DateTime? ActivatedDate { get; set; }
         public string ActivatedBy { get; set; }
         public bool IsActive { get; set; }

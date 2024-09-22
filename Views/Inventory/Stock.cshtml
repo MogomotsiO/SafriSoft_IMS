@@ -13,7 +13,7 @@
         width: 80px;
         min-width: 80px;
         max-width: 100%;
-        text-align:center;
+        text-align: center;
     }
 
     .normalTextCol {
@@ -54,7 +54,7 @@
                                 <p>Home / Stock</p>
                             </div>
                             <div class="icon">
-                                <i class="fas fa-boxes text-dark"></i>
+                                <i class="fas fa-box-open text-dark"></i>
                             </div>
                         </div>*@
                 </div><!-- /.col -->
@@ -72,13 +72,13 @@
 
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-boxes"></i> Products</h4>
+                            <h4 class="card-title"><i class="fas fa-box-open"></i> Products</h4>
                         </div>
                         <div class="card-body">
-                            <span class="text-right mr-1"><button id="CreateProduct" style="display:none;" type="submit" class="btn btn-light"><i class="fa fa-boxes text-info"></i> Create product</button></span>
+                            <span class="text-right mr-1"><button id="CreateProduct" style="display:none;" type="submit" class="btn btn-light"><i class="fas fa-box-open text-info"></i> Create product</button></span>
                             <span class="text-right">
                                 <button style="display:none;" id="ImportProduct" type="submit" class="btn btn-light"><i class="fa fa-upload text-info"></i> Import products</button>
-                                <button  id="ImportProduct-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Import products - Upgrade To Standard</button>
+                                <button id="ImportProduct-lock" type="submit" disabled class="btn btn-light"><i class="fa fa-lock text-purple"></i> Import products - Upgrade To Standard</button>
                             </span>
                         </div>
                         <!-- /.card-header -->
@@ -88,16 +88,17 @@
                                     <tr>
                                         @*<th># Product</th>*@
                                         @*<th>Product Image</th>*@
+                                        <th>Audit</th>
                                         <th>Item Code</th>
                                         <th>Item Description</th>
                                         <th>Item Category</th>
                                         <th>Item Type</th>
                                         <th>Item Reference</th>
-                                        <th>Item Account</th>
-                                        <th>QTY Sold</th>
-                                        <th>QTY On Hand</th>
+                                        <th>Inventory Account</th>
+                                        <th>QTY/Sold</th>
+                                        <th>QTY/Hand</th>
                                         <th>Cost</th>
-                                        <th>Selling Price</th>
+                                        <th>Selling</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -134,11 +135,11 @@
                     <div class="card-body">
                         <div class="row">
                             @*<div class="mb-5 col-lg-12">
-                <input id="img-source" type="text" />
-                <input id="img-filename" type="text" />
-                <img id="logo" src="" alt="" style="height:120px;" />
+                                    <input id="img-source" type="text" />
+                                    <input id="img-filename" type="text" />
+                                    <img id="logo" src="" alt="" style="height:120px;" />
 
-            </div>*@
+                                </div>*@
                             <div class="mb-3 col-lg-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating">Item Code</label>
@@ -159,11 +160,11 @@
                             </div>
 
                             @*<div class="mb-3 col-lg-12">
-                <div class="input-group form-group bmd-form-group is-filled">
-                    <label class="bmd-label-floating">Quantity</label>
-                    <input id="product-available" class="form-control" type="text">
-                </div>
-            </div>*@
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Quantity</label>
+                                        <input id="product-available" class="form-control" type="text">
+                                    </div>
+                                </div>*@
                             <div class="mb-3 col-lg-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating">Cost</label>
@@ -217,7 +218,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>                            
+                            </div>
 
                             <div class="mb-1 col-md-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
@@ -227,23 +228,23 @@
                                 </div>
                             </div>
                             @*<div class="mb-3 col-lg-12">
-                <div class="input-group form-group bmd-form-group">
-                    <div class="custom-file">
-                        <input class="custom-file-input text-light" id="input-logo" type="file">
-                        <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
-                    </div>
-                </div>
-            </div>*@
+                                    <div class="input-group form-group bmd-form-group">
+                                        <div class="custom-file">
+                                            <input class="custom-file-input text-light" id="input-logo" type="file">
+                                            <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
+                                        </div>
+                                    </div>
+                                </div>*@
                         </div>
-                    </div>                  
+                    </div>
 
 
                 </div>
-                
+
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button id="product-final-create" type="button" class="btn btn-light"><i class="fa fa-boxes text-info"></i> Create</button>
+                <button id="product-final-create" type="button" class="btn btn-light"><i class="fas fa-box-open text-info"></i> Create</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -270,11 +271,11 @@
                     <div class="card-body">
                         <div class="row">
                             @*<div class="mb-5 col-lg-12">
-            <input id="edit-img-source" type="text" />
-            <input id="edit-img-filename" type="text" />
-            <img id="edit-logo" src="" alt="" style="height:120px;" />
+                                    <input id="edit-img-source" type="text" />
+                                    <input id="edit-img-filename" type="text" />
+                                    <img id="edit-logo" src="" alt="" style="height:120px;" />
 
-        </div>*@
+                                </div>*@
                             <div class="mb-3 col-lg-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating">Item Code</label>
@@ -296,16 +297,16 @@
                             </div>
 
                             @*<div class="mb-3 col-lg-12">
-            <div class="input-group form-group bmd-form-group is-filled">
-                <label class="bmd-label-floating">Quantity</label>
-                <input id="edit-product-available" data-bind="value: ProductAvailable" class="form-control" type="text">
-                <div class="input-group-append">
-                    <div class="input-group-text  bg-white border-white">
-                        <span class="fas fa-cart-plus text-info"></span>
-                    </div>
-                </div>
-            </div>
-        </div>*@
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Quantity</label>
+                                        <input id="edit-product-available" data-bind="value: ProductAvailable" class="form-control" type="text">
+                                        <div class="input-group-append">
+                                            <div class="input-group-text  bg-white border-white">
+                                                <span class="fas fa-cart-plus text-info"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
                             <div class="mb-3 col-lg-12">
                                 <div class="input-group form-group bmd-form-group is-filled">
                                     <label class="bmd-label-floating">Cost</label>
@@ -368,23 +369,23 @@
                                 </div>
                             </div>
                             @*<div class="mb-3 col-lg-12">
-            <div class="input-group form-group bmd-form-group is-filled">
-                <div class="custom-file">
-                    <input class="custom-file-input text-light" id="input-logo" type="file">
-                    <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
-                </div>
-            </div>
-        </div>*@
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <div class="custom-file">
+                                            <input class="custom-file-input text-light" id="input-logo" type="file">
+                                            <label class="custom-file-label safri-file-input" for="input-logo">Product Image</label>
+                                        </div>
+                                    </div>
+                                </div>*@
                         </div>
                     </div>
 
 
                 </div>
-                
+
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button id="product-final-update" type="button" class="btn btn-light"><i class="fa fa-boxes text-info"></i> Update</button>
+                <button id="product-final-update" type="button" class="btn btn-light"><i class="fas fa-box-open text-info"></i> Update</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -470,7 +471,7 @@
                                     <tr>
                                         <td data-bind="text: Name"></td>
                                         <td data-bind="text: QtyAvailable"></td>
-                                        <td data-bind="text: Qty"></td>                                        
+                                        <td data-bind="text: Qty"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -486,6 +487,51 @@
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="productAudit">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="view-product-audit-title" class="modal-title">@*<i class="fa fa-plus"></i>*@</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="timeline">
+                    <!-- ko foreach: ProductAuditData -->
+                    <div class="time-label">
+                        <span class="" data-bind="text: DateCreated, class: Theme"></span>
+                    </div>
+                    <!-- /.timeline-label -->
+                    <!-- timeline item -->
+                    <div>
+                        <i class="fas fa-user" data-bind="class: Theme"></i>
+                        <div class="timeline-item">
+                            <span class="time" data-bind="text: DateCreated"></span>
+                            <h3 class="timeline-header"><a href="#" data-bind="text: UserName"></a></h3>
+
+                            <div class="timeline-body" data-bind="html: Description"></div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!-- END timeline item -->
+                    <div>
+                        <i class="fas fa-circle bg-gray"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-right">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                @*<button id="btn-invoice-view" type="button" class="btn btn-light" onclick=""><i class="fas fa-file-invoice text-info"></i> Invoice</button>*@
+            </div>
+        </div>
+
+    </div>
+    <!-- /.modal-content -->
 </div>
 
 @section scripts{
@@ -505,7 +551,7 @@
                 $('#CreateProduct').show();
                 $('#ImportProduct').show();
             }
-        });        
+        });
 
 
 
@@ -536,11 +582,10 @@
 
                     for (var i = 0; i < response.length; i++) {
                         if (response[i].ProductType == 2) {
-                            
-                        } 
-                        _products.push(response[i]);
-                        $("#selectedProducts").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
-                        $("#editSelectedProducts").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
+                            _products.push(response[i]);
+                            $("#selectedProducts").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
+                            $("#editSelectedProducts").append(`<option value="${response[i].Id}">${response[i].ProductName}</option>`);
+                        }                        
                     }
                 }
             });
@@ -587,7 +632,7 @@
                         vm.AddQuantityRequirements.push(req);
 
                     }
-                } 
+                }
             });
 
         }
@@ -633,6 +678,8 @@
             scrollCollapse: true,
             scrollX: true,
             scrollY: 550,
+            dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+            buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[-1], ["All"]],
             ajax: {
                 url: '/api/Inventory/GetProducts/',
@@ -655,6 +702,13 @@
 
                 //    }
                 //},
+                {
+                    'data': 'Id',
+                    className: 'btnCol',
+                    'render': function (data, type, full, meta) {
+                        return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${full.Id}" data-toggle="tooltip" data-placement="left" title="Product Audit" class="btn btn-white" href="#" onclick="viewProductAudit(this.id)"><i class="fas fa-eye text-info"></i></a></div> </td>`;
+                    }
+                },
                 {
                     'data': 'ProductCode',
                     className: 'normalTextCol',
@@ -687,7 +741,7 @@
                 },
                 {
                     'data': 'ItemsSold',
-                    className:'qtyCols',
+                    className: 'qtyCols',
                     'searchable': true
                 },
                 {
@@ -719,7 +773,7 @@
                 },
                 {
                     'data': 'Id',
-                    className:'btnCol',
+                    className: 'btnCol',
                     'render': function (data, type, full, meta) {
 
                         var addQty = '';
@@ -733,7 +787,7 @@
                         } else {
                             return '';
                         }
-                        
+
                     }
                 }
             ]
@@ -822,7 +876,7 @@
         });
 
         // Product
-        //      Edit 
+        //      Edit
         //          Stuff
         //              For Some Reason
         //
@@ -959,7 +1013,7 @@
                         vm.EditRequirements.push(req);
 
                     }
-                }                
+                }
 
             });
 
@@ -1083,6 +1137,11 @@
     </script>
 
     <script>
+        function viewProductAudit(id) {
+            vm.GetProductAudit(id);
+            $('#productAudit').modal('show');
+        }
+
         var productViewModel = function () {
             var self = this;
             // Stuff For Product Editting
@@ -1094,62 +1153,40 @@
             self.EditRequirements = ko.observableArray([]);
             self.AddQuantityRequirements = ko.observableArray([]);
 
-            self.OrderAuditData = ko.observableArray([]);
+            self.ProductAuditData = ko.observableArray([]);
             self.LabelDates = ko.observable();
 
-            var audiData = function (description, changed, dateCreated, userId) {
-                self.Description = ko.observable(description);
-                self.Changed = ko.observable(changed);
-                self.DateCreated = ko.observable(dateCreated);
-                self.LabelDates(dateCreated);
-                self.UserName = ko.observable(userId);
-
-                if (changed == "Inception") {
-                    self.Theme = ko.observable('bg-danger');
-                }
-                if (changed == "Processed") {
-                    self.Theme = ko.observable('bg-danger');
-                }
-                if (changed == "Packaged") {
-                    self.Theme = ko.observable('bg-warning');
-                }
-                if (changed == "InTransit") {
-                    self.Theme = ko.observable('bg-info');
-                }
-                if (changed == "Delivered") {
-                    self.Theme = ko.observable('bg-success');
-                }
-                if (changed == "Email Client") {
-                    self.Theme = ko.observable('bg-purple');
-                }
-
+            var auditData = function (description, changed, dateCreated, userId) {
+                this.Description = ko.observable(description);
+                this.Changed = ko.observable(changed);
+                this.DateCreated = ko.observable(dateCreated);
+                //this.LabelDates(dateCreated);
+                this.UserName = ko.observable(userId);
+                this.Theme = ko.observable('bg-light');
             }
 
-            self.GetOrderAudit = function (id) {
+            self.GetProductAudit = function (id) {
 
-                var orderData = {
-                    'OrderId': id
-                }
-                self.OrderAuditData.removeAll();
-                $.ajax({
-                    url: '/api/Inventory/GetOrderAudit',
-                    method: 'POST',
-                    dataType: 'json',
-                    data: orderData
-                }).done(function (data) {
+                self.ProductAuditData.removeAll();
+
+                var url = `/api/Inventory/GetProductAudit/${id}`;
+
+                SafriSoftGetRequest(url, (response) => {
+                    var data = response.obj;
                     console.log(data);
                     for (var i = 0; i < data.length; i++) {
-                        self.OrderAuditData.push(new audiData(data[i].Description, data[i].Changed, data[i].CreatedDate, data[i].UserId));
+                        self.ProductAuditData.push(new auditData(data[i].Description, data[i].Changed, data[i].CreatedDate, data[i].UserId));
                     }
-                    $('#view-order-title').text(id);
+                    $('#view-product-audit-title').text(response.Message);
                 });
+
             }
-                       
+
         }
 
         var vm = new productViewModel();
 
-        ko.applyBindings(vm); 
+        ko.applyBindings(vm);
     </script>
 
 }

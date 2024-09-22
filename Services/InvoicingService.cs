@@ -56,6 +56,23 @@ namespace SafriSoftv1._3.Services
             foreach (var invoice in invoices)
             {
                 var transactions = db.InvoiceTransactions.Where(x => x.InvoiceId == invoice.Id).ToList();
+
+                var overDueInvoice = false;
+
+                var paidInvoice = false;
+
+                var invoicePaidAmounts = transactions.Sum(x => x.Amount);
+
+                if (invoice.InvoiceDueDate < DateTime.Now && (invoicePaidAmounts * -1) < invoice.Amount)
+                {
+                    overDueInvoice = true;
+                }
+
+                if ((invoicePaidAmounts * -1) >= invoice.Amount)
+                {
+                    paidInvoice = true;
+                }
+
                 vm.Add(new InvoiceDetalsVm()
                 {
                     DateIssuedStr = invoice.InvoiceDate.ToString("dd/MM/yyyy"),
@@ -66,8 +83,9 @@ namespace SafriSoftv1._3.Services
                     Id = invoice.Id,
                     Amount = invoice.Amount,
                     OrganisationId = organisationId,
-                    Paid = invoice.Paid,
-                    AmountPaid = transactions.Sum(x => x.Amount),
+                    Paid = paidInvoice,
+                    OverDueInvoice = overDueInvoice,
+                    AmountPaid = invoicePaidAmounts,
                     Pop = invoice.ProofOfPoayment
                 });
             }
@@ -288,6 +306,10 @@ namespace SafriSoftv1._3.Services
                             var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
 
                             db.SaveChanges();
+
+                            var invSvc = new InventoryService();
+
+                            var auditResult = invSvc.SaveProductAudit(product.Id, $"Qty sold {item.Qty} Invoice: {vm.InvoiceDetails.InvoiceNumber}", organisationId, userId);
                         }
                     }
                 }
@@ -301,7 +323,7 @@ namespace SafriSoftv1._3.Services
                     foreach (var item in vm.InvoiceItems)
                     {
                         qty += item.Qty;
-                        productName += $"{item.Description} - ";
+                        productName += $" - {item.Description}";
                     }
 
                     var customer = db.Customers.Where(x => x.Id == vm.InvoiceDetails.CustomerId).FirstOrDefault();
@@ -314,7 +336,7 @@ namespace SafriSoftv1._3.Services
                         DateOrderCreated = DateTime.Now.ToString("dd/MM/yyyy"),
                         ExpectedDeliveryDate = vm.InvoiceDetails.InvoiceDueDate.ToString("dd/MM/yyyy"),
                         NumberOfItems = qty,
-                        ProductName = productName.Trim('-'),
+                        ProductName = productName.Trim(' ').Trim('-'),
                         OrderStatus = "Processed",
                         ShippingCost = Convert.ToDecimal(vm.InvoiceDetails.Shipping),
                         OrderWorth = Convert.ToDecimal(vm.InvoiceDetails.Amount),

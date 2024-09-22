@@ -46,6 +46,10 @@
             left: 0;
             top: 0
         }
+
+        /*.text-white{
+            color: #fff !important;
+        }*/
 </style>
 
 <!-- Content Wrapper. Contains page content -->
@@ -75,214 +79,159 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3 col-sm-3 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-info card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-user-friends"></i>
-                            </div>
-                            <p class="card-category">Customers</p>
-                            <h1 id="customer-count" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-user-friends"></i>
-                            </div>
-                        </div>
-                    </div>
-                    @*<div class="small-box bg-gradient-info">
-                            <div class="inner">
-                                <h3 id="customer-count"></h3>
-
-                                <p>Customers</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-user-friends"></i>
-                            </div>
-                        </div>*@
-                </div>
-                <div class="col-md-3 col-sm-3 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-info card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-dolly"></i>
-                            </div>
-                            <p class="card-category">Products Available</p>
-                            <h1 id="stock-available-count" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-dolly"></i>
-                            </div>
-                        </div>
-                    </div>
-                    @*<div class="small-box bg-gradient-info">
-                            <div class="inner">
-                                <h3 id="stock-available-count"></h3>
-
-                                <p>Stock Available</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-dolly"></i>
-                            </div>
-                        </div>*@
-                </div>
-                <!-- /.col -->
-                <div class="col-md-3 col-sm-3 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-info card-header-icon">
-                            <div class="card-icon">
-                                <i class="fa fa-thumbs-up"></i>
-                            </div>
-                            <p class="card-category">Products Sold</p>
-                            <h1 id="stock-sold-count" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fa fa-thumbs-up"></i>
-                            </div>
-                        </div>
-                    </div>
-                    @*<div class="small-box bg-gradient-info">
-                            <div class="inner">
-                                <h3 id="stock-sold-count"></h3>
-
-                                <p>Products Sold</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fa fa-thumbs-up"></i>
-                            </div>
-                        </div>*@
-                </div>
-                <div class="col-md-3 col-sm-3 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-info card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <p class="card-category">Revenue</p>
-                            <h1 id="stock-sold-value" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                        </div>
-                    </div>
-                    @*<div class="small-box bg-gradient-info">
-                            <div class="inner">
-                                <h3>R <span id="stock-sold-value"></span></h3>
-
-                                <p>Rand Value Sold</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                        </div>*@
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3 col-sm-6 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-danger card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <p class="card-category">Orders processesed</p>
-                            <h1 id="orders-processed" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-warning card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <p class="card-category">Orders packaged</p>
-                            <h1 id="orders-packaged" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-info card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                            <p class="card-category">Orders InTransit</p>
-                            <h1 id="orders-intransit" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-truck"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-12">
-                    <div class="card card-stats">
-                        <div class="card-header card-header-success card-header-icon">
-                            <div class="card-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <p class="card-category">Successfully delivered</p>
-                            <h1 id="orders-delivered" class="card-titlec"></h1>
-                        </div>
-                        <div class="card-footer">
-                            <div class="stats">
-                                <i class="fas fa-home"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col -->
-            </div>
-
-            <div class="row">
                 <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-3">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-info card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="fas fa-user-friends"></i>
+                                    </div>
+                                    <p class="card-category">Customers</p>
+                                    <h1 id="customer-count" class="card-titlec"></h1>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        <i class="fas fa-user-friends"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-3">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-info card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                    <p class="card-category">Revenue</p>
+                                    <h1 id="stock-sold-value" class="card-titlec"></h1>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-danger card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <p class="card-category">Orders processesed</p>
+                                    <h1 id="orders-processed" class="card-titlec"></h1>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-warning card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                    <p class="card-category">Orders packaged</p>
+                                    <h1 id="orders-packaged" class="card-titlec"></h1>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-info card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                    <p class="card-category">Orders InTransit</p>
+                                    <h1 id="orders-intransit" class="card-titlec"></h1>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-success card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <p class="card-category">Successfully delivered</p>
+                                    <h1 id="orders-delivered" class="card-titlec"></h1>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header card-header-info">
+                                <h4 class="card-title"><i class="fas fa-chart-pie"></i> Inventory</h4>
+                            </div>
+                            <div class="card-body table-responsive">
+                                <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
+                                <canvas width="752" height="300" class="chartjs-render-monitor" id="pieChart" style="width: 731px; height: 385px; display: block; min-height: 385px; max-height: 385px; max-width: 100%;"></canvas>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                
+                <!-- /.col -->
+            </div>
+
+            <div class="row">
+                <div class="col-md-6" style="display:none;" id="overDueInvoices">
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-chart-pie"></i> Inventory</h4>
+                            <h4 class="card-title"><i class="fas fa-file-invoice"></i> Overdue Invoices</h4>
                         </div>
                         <div class="card-body table-responsive">
-                            <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
-                            <canvas width="752" height="300" class="chartjs-render-monitor" id="pieChart" style="width: 731px; height: 385px; display: block; min-height: 385px; max-height: 385px; max-width: 100%;"></canvas>
+                            <table id="overDueInvoicesDt" class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Date Issued</th>
+                                        <th>Date Due</th>
+                                        <th>Invoice Number</th>
+                                        <th>Customer</th>
+                                        <th>Invoice Amount</th>
+                                        <th>Paid Amount</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
                         <!-- /.card-body -->
                     </div>
-
-                    <!-- BAR CHART
-                    <div class="card card-light">
-                        <div class="card-header">
-                            <h3 class="card-title"><i class="far fa-chart-bar"></i> Bar Chart</h3>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div class="chart">
-                            <canvas id="barChart" style="min-height: 400px; height: 400px; max-height: 400px; max-width: 100%;"></canvas>
-                        </div>
-                    </div>-->
-                    <!-- /.card -->
                 </div>
+                
                 <div class="col-md-6" style="display:none;" id="debitsAndCredits">
                     <div class="card">
                         <div class="card-header card-header-info">
@@ -312,13 +261,19 @@
 
 @section scripts{
     <script>
-
+        function viewInvoice(id) {
+            window.location.href = '@Url.Action("Invoice","Invoicing")' + '/' + id;
+        }
 
         window.onload = function () {
             $(function () {
 
                 if (userRoleIds.includes(admin.toString()) || userRoleIds.includes(bookkeeping.toString())) {
                     $('#debitsAndCredits').show();
+                }
+
+                if (userRoleIds.includes(admin.toString()) || userRoleIds.includes(sales.toString())) {
+                    $('#overDueInvoices').show();
                 }
 
                 /* ChartJS
@@ -452,6 +407,75 @@
                 //-------------
                 //- BAR CHART -
                 //-------------
+
+                var overDueInvoicesDt = $("#overDueInvoicesDt").DataTable({
+                    scrollY: 200,
+                    dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
+                    buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
+                    lengthMenu: [[-1], ["All"]],
+                    ajax: {
+                        url: '/api/Invoicing/GetOverdueInvoices/',
+                        method: 'GET',
+                        "dataSrc": "Obj"
+                    },
+                    columns: [
+                        {
+                            data: 'DateIssuedStr',
+                            searchable: true
+                        },
+                        {
+                            data: 'DateDueStr',
+                            searchable: true,
+                            createdCell: function (cell, data, full, dataIndex) {
+
+                                if (full.OverDueInvoice == true) {
+                                    $(cell).addClass('bg-warning text-white');
+                                }
+                            }
+                        },
+                        {
+                            data: 'InvoiceNumber',
+                            searchable: true,
+                            render: function (data, type, full,meta) {
+                                return `<a href="#" onclick="viewInvoice(${full.Id})">${data}</a>`;
+                            }
+                        },
+                        //{
+                        //    data: 'InvoiceName',
+                        //    searchable: true,
+                        //},
+                        {
+                            data: 'Customer',
+                            searchable: true,
+                        },
+                        {
+                            data: 'Amount',
+                            searchable: true,
+                            className: 'text-right',
+                            'render': function (data, type, full, meta) {
+
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        },
+                        {
+                            data: 'AmountPaid',
+                            searchable: true,
+                            className: 'text-right',
+                            'render': function (data, type, full, meta) {
+
+                                if (type === 'display')
+                                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency }).format(data) + '</a>';
+                                else
+                                    return data;
+                            }
+                        }
+                    ]
+                });
+
+
 
 
             });

@@ -42,11 +42,11 @@
 
                     <div class="card">
                         <div class="card-header card-header-info">
-                            <h4 class="card-title"><i class="fas fa-pallet"></i> Suppliers</h4>
+                            <h4 class="card-title"><i class="fas fa-people-carry"></i> Suppliers</h4>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <span class="text-right mr-1"><button id="addSupplier" onclick="openAddSupplierModal()" class="btn btn-light" style="text-align:right !important;display:none;"><i class="fas fa-pallet text-info"></i> Add Supplier</button></span>
+                            <span class="text-right mr-1"><button id="addSupplier" onclick="openAddSupplierModal()" class="btn btn-light" style="text-align:right !important;display:none;"><i class="fas fa-people-carry text-info"></i> Add Supplier</button></span>
                         </div>
                         <div class="card-body">
 
@@ -92,103 +92,111 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body login-card-body">
+            <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Company Name</label>
-                                <input id="supCompanyName" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Trading As </label>
-                                <input id="tradingAs" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Phone</label>
-                                <input id="phone" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Email</label>
-                                <input id="email" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Street</label>
-                                <input id="street" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Surburb</label>
-                                <input id="surburb" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">City</label>
-                                <input id="city" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Country</label>
-                                <input id="country" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Postal Code</label>
-                                <input id="postalCode" class="form-control" type="text">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Contact Person Name</label>
-                                <input id="contactPersonName" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Contact Person Position</label>
-                                <input id="contactPersonPosition" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Contact Person Phone</label>
-                                <input id="contactPersonPhone" class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="mb-3 col-md-12">
-                            <div class="input-group form-group bmd-form-group is-filled">
-                                <label class="bmd-label-floating">Contact Person Email</label>
-                                <input id="contactPersonEmail" class="form-control" type="text">
-                            </div>
-                        </div>
-                        @*<div class="col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedOption" class="safriSelect2 form-control" style="max-width:100%;width:100%; min-height:100px;"></select>
+                    <div class="card card-outline card-info">
+                      <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Company Name</label>
+                                            <input id="supCompanyName" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Trading As </label>
+                                            <input id="tradingAs" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Phone</label>
+                                            <input id="phone" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Email</label>
+                                            <input id="email" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Street</label>
+                                            <input id="street" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Surburb</label>
+                                            <input id="surburb" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">City</label>
+                                            <input id="city" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Country</label>
+                                            <input id="country" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Postal Code</label>
+                                            <input id="postalCode" class="form-control" type="text">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>*@
-                    </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Contact Person Name</label>
+                                            <input id="contactPersonName" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Contact Person Position</label>
+                                            <input id="contactPersonPosition" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Contact Person Phone</label>
+                                            <input id="contactPersonPhone" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-12">
+                                        <div class="input-group form-group bmd-form-group is-filled">
+                                            <label class="bmd-label-floating">Contact Person Email</label>
+                                            <input id="contactPersonEmail" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    @*<div class="col-md-12">
+                <div class="input-group form-group bmd-form-group is-filled">
+                    <label class="bmd-label-floating"></label>
+                    <select id="selectedOption" class="safriSelect2 form-control" style="max-width:100%;width:100%; min-height:100px;"></select>
+                </div>
+            </div>*@
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>                    
 
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-light" onclick="addSupplier()"><i class="fas fa-pallet text-info"></i> <span id="supplierModalBtn">Add</span></button>
+                <button type="button" class="btn btn-light" onclick="addSupplier()"><i class="fas fa-people-carry text-info"></i> <span id="supplierModalBtn">Add</span></button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -211,9 +219,6 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card card-outline card-info">
-                            <div class="card-header">
-                                <h4 class="card-title">Add Invoice</h4>
-                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="col-md-12">
@@ -319,9 +324,6 @@
             </div>
             <div class="modal-body">
                 <div class="card card-outline card-info">
-                    @*<div class="card-header">
-                        <h4 class="card-title">Invoices</h4>
-                    </div>*@
                     <div class="card-body" style="display: block;">
                         <div class="row">
                             <div class="col-lg-12">
@@ -357,64 +359,62 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="card">
-                    <div class="card-header card-header-info">
-                        <h4 class="card-title"><i class="fa fa-paste"></i> Pay Supplier</h4>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <div class="col-md-12">
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Date</label>
-                                    <input id="paymentDate" class="form-control" type="date">
+                <div class="card card-outline card-info">
+                    <div class="card-body" style="display: block;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Date</label>
+                                        <input id="paymentDate" class="form-control" type="date">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Description</label>
-                                    <input id="paymentDescription" class="form-control" type="text">
+                                <div class="mb-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Description</label>
+                                        <input id="paymentDescription" class="form-control" type="text">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating">Amount</label>
-                                    <input id="paymentAmount" class="form-control" type="text">
+                                <div class="mb-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating">Amount</label>
+                                        <input id="paymentAmount" class="form-control" type="text">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedPaymentInvoice" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
-                                        <option value="-100">SELECT INVOICE</option>
-                                        @foreach (var invoice in Model.SuppliersInvoices)
-                                        {
-                                            <option value="@invoice.Id">@invoice.InvoiceDate.GetValueOrDefault().ToString("dd-MM-yyy") - @invoice.Description</option>
-                                        }
-                                    </select>
+                                <div class="mb-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating"></label>
+                                        <select id="selectedPaymentInvoice" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                            <option value="-100">SELECT INVOICE</option>
+                                            @foreach (var invoice in Model.SuppliersInvoices)
+                                            {
+                                                <option value="@invoice.Id">@invoice.InvoiceDate.GetValueOrDefault().ToString("dd-MM-yyy") - @invoice.Description</option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3 col-md-12">
-                                <div class="input-group form-group bmd-form-group is-filled">
-                                    <label class="bmd-label-floating"></label>
-                                    <select id="selectedPaymentAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
-                                        <option value="-100">SELECT ACCOUNT</option>
-                                        @foreach (var account in Model.TrialBalanceAccounts)
-                                        {
-                                            <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
-                                        }
-                                    </select>
+                                <div class="mb-3 col-md-12">
+                                    <div class="input-group form-group bmd-form-group is-filled">
+                                        <label class="bmd-label-floating"></label>
+                                        <select id="selectedPaymentAccount" class="safriSelect2 form-control" style="width:100%;min-width:100%; min-height:100px;">
+                                            <option value="-100">SELECT ACCOUNT</option>
+                                            @foreach (var account in Model.TrialBalanceAccounts)
+                                            {
+                                                <option value="@account.Id">@account.AccountNumber - @account.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
-                    <!-- /.card-body -->
+
                 </div>
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-light" onclick="paySupplier()">Submit</button>
+                <button type="button" class="btn btn-light" onclick="paySupplier()"><i class="fa fa-coins text-info"></i> Submit</button>
             </div>
         </div>
         <!-- /.modal-content -->

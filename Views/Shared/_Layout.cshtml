@@ -228,6 +228,17 @@
             border-radius: 4px;
             cursor: text;
         }
+
+        .dropdown-menu-xl {
+            max-width: 700px !important;
+            min-width: 700px !important;
+            padding: 0;
+        }
+
+        .w-8 {
+            width: 8% !important;
+        }
+
     </style>
 
 </head>
@@ -255,9 +266,110 @@
                         <button class="btn btn-outline-info"><i class="fas fa-crown text-warning"></i> SafriSoft - Business</button>
                     }
                 </li>
-                @*<li class="nav-item">
-                    <button class="btn btn-info" style="border-radius:50px;"><i class="fas fa-plus text-white"></i></button>
-                </li>*@
+                <li class="nav-item dropdown">
+                    <button class="btn btn-info" data-toggle="dropdown" style="border-radius:50px;"><i class="fas fa-plus text-white"></i></button>
+                    <div class="dropdown-menu dropdown-menu-xl dropdown-menu-left">
+                        <div class="row">
+                            @if (userRoleIds.Contains(sales.ToString()) || userRoleIds.Contains(admin.ToString()))
+                            {
+                                <div class="col-md-6">
+                                    <a href="~/Inventory/Customers" class="dropdown-item"><i class="fa fa-user-plus text-info w-8"></i> Add Customer</a>
+                                </div>
+                            }
+
+                            @if (userRoleIds.Contains(suppliers.ToString()) || userRoleIds.Contains(admin.ToString()))
+                            {
+                                <div class="col-md-6">
+                                    <a href="~/Inventory/Suppliers" class="dropdown-item"><i class="fas fa-people-carry text-info w-8"></i> Add Supplier</a>
+                                </div>
+                            }
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="row">
+                            @if (userRoleIds.Contains(suppliers.ToString()) || userRoleIds.Contains(admin.ToString()))
+                            {
+                                <div class="col-md-6">
+                                    <a href="~/Inventory/Stock" class="dropdown-item"><i class="fas fa-box-open text-info w-8"></i> Add Product</a>
+                                </div>
+                            }
+
+                            @if (userRoleIds.Contains(suppliers.ToString()) || userRoleIds.Contains(admin.ToString()))
+                            {
+                                <div class="col-md-6">
+                                    <a href="~/Inventory/Orders" class="dropdown-item"><i class="fa fa-shopping-cart text-info w-8"></i> Manage Orders</a>
+                                </div>
+                            }
+
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        @if (userRoleIds.Contains(sales.ToString()) || userRoleIds.Contains(admin.ToString()))
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="~/Invoicing/Create" class="dropdown-item"><i class="fa fa-file-invoice text-info w-8"></i> Create Invoice & Order</a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="~/Invoicing/Invoices" class="dropdown-item"><i class="fa fa-file-invoice text-info w-8"></i> Manage Invoices</a>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        }
+
+                        @if (userRoleIds.Contains(bookkeeping.ToString()) || userRoleIds.Contains(admin.ToString()))
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="~/Expenses/Expenses" class="dropdown-item"><i class="fa fa-coins text-info w-8"></i> Add Income/Expense</a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="~/Journal/Create" class="dropdown-item"><i class="fa fa-balance-scale text-info w-8"></i> Create Journal</a>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="~/Accounting/GeneralLedger" class="dropdown-item"><i class="fa fa-table text-info w-8"></i> View General Ledger</a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="~/Accounting/TrialBalanceReport" class="dropdown-item"><i class="fa fa-table text-info w-8"></i> View Trial Balance</a>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="~/Accounting/BalanceSheetAccounts" class="dropdown-item"><i class="fa fa-file-excel text-info w-8"></i> Design Balance Sheet</a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="~/Accounting/IncomeStatementAccounts" class="dropdown-item"><i class="fa fa-file-excel text-info w-8"></i> Design Income Statement</a>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        }
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="~/Reporting/Inventory" class="dropdown-item"><i class="fa fa-file-excel text-info w-8"></i> View Reports</a>
+                            </div>
+                            @if (userRoleIds.Contains(admin.ToString()))
+                            {
+                                <div class="col-md-6">
+                                    <a href="~/Setting/Settings" class="dropdown-item"><i class="fa fa-cogs text-info w-8"></i> Add VAT Types</a>
+                                </div>
+                            }
+                            
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        @if (userRoleIds.Contains(admin.ToString()))
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="~/Inventory/User" class="dropdown-item"><i class="fa fa-users-cog text-info w-8"></i> Manage Users</a>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </li>
             </ul>
             <ul class="navbar-nav ml-auto">
                 @*<li class="nav-item dropdown">
@@ -382,7 +494,7 @@
                         {
                             <li class="nav-item">
                                 <a id="Products" href="~/Inventory/Stock" class="nav-link" data-toggle="tooltip" data-placement="right" title="Products">
-                                    <i class="nav-icon fas fa-boxes text-white"></i>
+                                    <i class="nav-icon fas fa-box-open text-white"></i>
                                     <p class="text-white">
                                         Products
                                     </p>
@@ -390,7 +502,7 @@
                             </li>
                             <li class="nav-item">
                                 <a id="Suppliers" href="~/Inventory/Suppliers" class="nav-link" data-toggle="tooltip" data-placement="right" title="Suppliers">
-                                    <i class="nav-icon fas fa-pallet text-white"></i>
+                                    <i class="nav-icon fas fa-people-carry text-white"></i>
                                     <p class="text-white">
                                         Suppliers
                                     </p>

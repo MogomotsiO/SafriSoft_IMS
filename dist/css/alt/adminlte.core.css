@@ -12780,9 +12780,9 @@ body.text-sm .control-sidebar {
 }
 
 .dropdown-menu-xl {
-  max-width: 420px;
-  min-width: 360px;
-  padding: 0;
+    max-width: 700px;
+    min-width: 700px;
+    padding: 0;
 }
 
 .dropdown-menu-xl .dropdown-divider {

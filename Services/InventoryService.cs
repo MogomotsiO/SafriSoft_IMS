@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.UI.HtmlControls;
 
@@ -564,7 +565,7 @@ namespace SafriSoftv1._3.Services
             return result;
         }
 
-        public Result AddQuantity(AddQuantityViewModel vm, int organisationId)
+        public Result AddQuantity(AddQuantityViewModel vm, int organisationId, string userId)
         {
             var result = new Result();
 
@@ -588,6 +589,8 @@ namespace SafriSoftv1._3.Services
                 }
             }
 
+            var item = db.Products.Where(x => x.Id == vm.ProductId).FirstOrDefault();
+
             foreach (var req in vm.Requirements)
             {
                 var totalLine = req.Qty * vm.Qty;
@@ -598,13 +601,15 @@ namespace SafriSoftv1._3.Services
                 product.ItemsSold += totalLine;
 
                 db.SaveChanges();
-            }
 
-            var item = db.Products.Where(x => x.Id == vm.ProductId).FirstOrDefault();
+                var auditRes = SaveProductAudit(product.Id, $"Qty used {vm.Qty} for product {item.ProductName}", organisationId, userId);
+            }
 
             item.ItemsAvailable += vm.Qty;
 
             db.SaveChanges();
+
+            var auditResult = SaveProductAudit(item.Id, $"Qty added {vm.Qty}", organisationId, userId);
 
             result.Success = true;
             result.Message = $"Success";
@@ -756,6 +761,37 @@ namespace SafriSoftv1._3.Services
             {
                 return string.Empty;
             }
+        }
+
+        public Result GetProductAudit(int id, int organisationId)
+        {
+            var result = new Result();
+
+            var vm = new List<AuditViewModel>();
+
+            var product = db.Products.Where(x => x.Id == id && x.OrganisationId == organisationId).FirstOrDefault();
+
+            var audits = db.ProductAudits.Where(x => x.ProductId == id && x.OrganisationId == organisationId).ToList();
+
+            foreach(var audit in audits)
+            {
+                var user = dbSafriSoftApp.Users.Where(x => x.Id == audit.UserId).FirstOrDefault();
+
+                vm.Add(new AuditViewModel()
+                {
+                    Id = audit.Id,
+                    Description = audit.Description,
+                    UserId = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty,
+                    CreatedDate = audit.Inserted.ToString("MM/dd/yyyy HH:mm:ss"),
+                    Changed = string.Empty
+                });
+                
+            }
+
+            result.Message = product.ProductName;
+            result.obj = vm;
+
+            return result;
         }
     }
 }

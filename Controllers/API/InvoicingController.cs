@@ -203,5 +203,32 @@ namespace SafriSoftv1._3.Controllers.API
                 return Json(result);
             }
         }
+
+        [HttpGet, Route("GetOverdueInvoices")]
+        public IHttpActionResult GetOverdueInvoices()
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+
+                var service = new InvoicingService();
+
+                result.obj = service.GetInvoices(organisationId).Where(x => x.OverDueInvoice == true).ToList();
+
+                result.Success = true;
+                result.Message = "Invoices retrieved";
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+
+            return Json(new { Success = result.Success, Message = result.Message, Obj = result.obj });
+        }
     }
 }
