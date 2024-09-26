@@ -6,9 +6,10 @@
 
 <style>
     .buttonWidth {
-        width: 50px !important;
-        min-width: 50px !important;
-        max-width: 50px !important;
+        width: 30px !important;
+        min-width: 30px !important;
+        max-width: 30px !important;
+        text-align:center !important;
     }
 
     .alignRight {
@@ -232,6 +233,7 @@
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
             lengthMenu: [[-1], ["All"]],
+            order: [[9, "asc"]],
             ajax: {
                 url: '/api/Invoicing/GetInvoices/',
                 method: 'GET',
@@ -248,13 +250,29 @@
                             var pop = '';
 
                             if (full.Pop != null && full.Pop != '') {
-                                pop = '<a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Download Proof of Payment" class="btn btn-light" href="DownloadPopFile?Id=' + data + '" ><i class="fa fa-paperclip text-info"></i></a>';
+                                pop = `<a class="dropdown-item" href="DownloadPopFile?Id=${data}">Download Proof of Payment</a>`;
                             }
 
-                            if (data === true)
-                                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', false)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>';
-                            else
-                                return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', true)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>'
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); paid(${data},false)">Attach Proof of Payment</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); receivePaymentDetails(${data})">Capture Invoice Receipt</a>
+                            ${pop}
+                            </div>`;
+
+                        //    if (data === true) { }
+                        //    return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                        //    <div class="dropdown-menu dropdown-menu-right">
+                        //    <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CustomerName}'); paid(${data},false)">Attach Proof of Payment</a>
+                        //    <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CustomerName}'); receivePaymentDetails(${data})">Capture Invoice Receipt</a>
+                        //    ${pop}
+                        //    </div>`;
+                        //    return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', false)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>';
+                        //}
+                        //else {
+
+                        //}
+                        //        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" data-toggle="tooltip" data-placement="right" title="Attach Proof of Payment" class="btn btn-light" href="#" onclick="paid(' + full.Id + ', true)"><i class="fas fa-receipt text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="right" title="Capture Invoice Receipt" onclick="receivePaymentDetails(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> ' + pop + ' </div> </td>'
                             //if (data === true)
                             //    return '<div class="icheck-success d-inline"> <input onclick="paid(' + full.Id + ', false)" type="checkbox" checked id="checkboxSuccess' + full.Id + '"> <label for="checkboxSuccess' + full.Id + '"> </label> </div>';
                             //else
@@ -276,7 +294,7 @@
                     createdCell: function (cell, data, full, dataIndex) {
 
                         if (full.OverDueInvoice == true) {
-                            $(cell).addClass('bg-warning');
+                            $(cell).addClass('bg-danger');
                         }
                     }
                 },
@@ -325,7 +343,7 @@
                         if (data === true)
                             return '<span class="fa fa-check text-success"></span>';
                         else
-                            return '<span class="fa fa-minus text-warning"></span>';
+                            return '<span class="fa fa-minus text-danger"></span>';
                     }
                 },
                 {
@@ -334,9 +352,20 @@
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
                         if (userWrite == 'true') {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-eye text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-download text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Email Client Invoice" onclick="sendInvoiceEmail(this.id,\'' + full.InvoiceNumber + '\',\'' + full.Customer + '\')"><i class="fas fa-envelope text-info"></i></a> </div> </td>'
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); viewInvoice(${data})"">View Invoice</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); downloadInvoice(${data}, ${full.OrganisationId})">Download</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); sendInvoiceEmail(${data}, '${full.InvoiceNumber}', '${full.Customer}')">Email Invoice</a>
+                            </div>`;
+                            //return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-eye text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-download text-info"></i></a><a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Email Client Invoice" onclick="sendInvoiceEmail(this.id,\'' + full.InvoiceNumber + '\',\'' + full.Customer + '\')"><i class="fas fa-envelope text-info"></i></a> </div> </td>'
                         } else {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-eye text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-download text-info"></i></a> </div> </td>'
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); viewInvoice(${data})"">View Invoice</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.InvoiceNumber}'); downloadInvoice(${data}, ${full.OrganisationId})">Download</a>
+                            </div>`;
+                            //return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="View Invoice" onclick="viewInvoice(this.id)"><i class="fas fa-eye text-info"></i></a><a id="' + data + '" data-toggle="tooltip" data-placement="left" title="Download Invoice" class="btn btn-light" href="#" onclick="downloadInvoice(this.id,' + full.OrganisationId + ')"><i class="fa fa-download text-info"></i></a> </div> </td>'
                         }
                         
                     }

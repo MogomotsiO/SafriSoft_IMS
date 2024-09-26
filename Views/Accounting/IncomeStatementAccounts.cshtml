@@ -17,9 +17,9 @@
 
     .buttonWidth {
         text-align: center;
-        width: 50px !important;
-        max-width: 50px !important;
-        min-width: 50px !important;
+        width: 30px !important;
+        max-width: 30px !important;
+        min-width: 30px !important;
     }
 </style>
 
@@ -64,7 +64,7 @@
                                         <th>Operator</th>
                                         <th>Index</th>
                                         <th>Sorting</th>
-                                        <th>Accounts</th>
+                                        @*<th>Accounts</th>*@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -261,38 +261,47 @@
                         return '<td class="text-right py-0 align-middle" style="height:20px !important;"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="moveUp(this.id)"><i class="fas fa-arrow-up text-info"></i></a> <a id="' + data + '" class="btn btn-light" href="#" onclick="moveDown(this.id)"><i class="fas fa-arrow-down text-info"></i></a> </div> </td>'
                     }
                 },
+                //{
+                //    data: 'Id',
+                //    searchable: true,
+                //    className: 'buttonWidth',
+                //    render: function (data, type, full, meta) {
+
+                //        if (full.IsHeading == true || full.IsSubtotal == true) {
+                //            return '';
+                //        }
+
+                //        return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${data}" class="btn btn-light" href="#" onclick="linkAccounts(this.id,'${full.Name}')"><i class="fas fa-link text-info"></i></a> </div> </td>`
+                //    }
+                //},
                 {
                     data: 'Id',
                     searchable: true,
                     className: 'buttonWidth',
                     render: function (data, type, full, meta) {
 
-                        if (full.IsHeading == true || full.IsSubtotal == true) {
-                            return '';
+                        var linkAccounts = `<a href="#" class="dropdown-item" onclick="linkAccounts(${data},'${full.Name}')">Link Trial Balance Accounts</a>`;
+
+                        if (full.IsHeading == true || full.IsSubtotal == true || full.IsEmptySpace == true) {
+                            linkAccounts = '';
                         }
 
-                        return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${data}" class="btn btn-light" href="#" onclick="linkAccounts(this.id,'${full.Name}')"><i class="fas fa-link text-info"></i></a> </div> </td>`
-                    }
-                },
-                {
-                    data: 'Id',
-                    searchable: true,
-                    className: 'buttonWidth',
-                    render: function (data, type, full, meta) {
+                        return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="editIsAccount(${data})">Edit Income Statement Account</a>
+                            ${linkAccounts}
+                            </div>`;
 
-                        return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" onclick="editIsAccount(this.id)"><i class="fa fa-edit text-info"></i></a> </div> </td>'
                     }
                 }
             ]
         });
 
         var linkTbAccountsTable = $("#linkTbAccountsTable").DataTable({
-            responsive: true,
-            autoWidth: false,
-            info: true,
+            scrollY: 500,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
-            lengthMenu: [[10], ["10"]],
+            lengthMenu: [[-1], ["All"]],
             ajax: {
                 url: `/api/Accounting/GetUnlinkedIsAccounts/0`,
                 method: 'GET',
@@ -317,12 +326,10 @@
 
 
         var unlinkTbAccountsTable = $("#unlinkTbAccountsTable").DataTable({
-            responsive: true,
-            autoWidth: false,
-            info: true,
+            scrollY: 500,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
             buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
-            lengthMenu: [[10], ["10"]],
+            lengthMenu: [[-1], ["All"]],
             ajax: {
                 url: `/api/Accounting/GetLinkedIsAccounts/0`,
                 method: 'GET',
@@ -350,8 +357,11 @@
         function linkAccounts(id, name) {
             _linkAccountId = id;
             $('#title').text(name);
-            linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedIsAccounts/${_linkAccountId}`).load();
-            unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedIsAccounts/${_linkAccountId}`).load();
+            setTimeout(function () {
+                linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedIsAccounts/${_linkAccountId}`).load(function (res) { }, false);
+                unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedIsAccounts/${_linkAccountId}`).load(function (res) { }, false);
+            }, 500);
+            
             $("#linkTbAccountsModal").modal('show');
         }
 
@@ -362,8 +372,8 @@
             SafriSoftGetRequest(url, (response) => {
 
                 if (response.Success == true) {
-                    linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedIsAccounts/${_linkAccountId}`).load();
-                    unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedIsAccounts/${_linkAccountId}`).load();
+                    linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedIsAccounts/${_linkAccountId}`).load(function (res) { }, false);
+                    unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedIsAccounts/${_linkAccountId}`).load(function (res) { }, false);
                     toastr.success(response.Message);
                 } else {
                     toastr.error(response.Message);
@@ -379,8 +389,8 @@
             SafriSoftGetRequest(url, (response) => {
 
                 if (response.Success == true) {
-                    linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedIsAccounts/${_linkAccountId}`).load();
-                    unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedIsAccounts/${_linkAccountId}`).load();
+                    linkTbAccountsTable.ajax.url(`/api/Accounting/GetUnlinkedIsAccounts/${_linkAccountId}`).load(function (res) { }, false);
+                    unlinkTbAccountsTable.ajax.url(`/api/Accounting/GetLinkedIsAccounts/${_linkAccountId}`).load(function (res) { }, false);
                     toastr.success(response.Message);
                 } else {
                     toastr.error(response.Message);

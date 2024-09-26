@@ -12,6 +12,7 @@
     'columns': [
         {
             'data': 'OrderId',
+            className: 'buttonWidth',
             'searchable': true,
             'render': function (data, type, full, meta) {
                 return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" href="#" data-toggle="tooltip" data-placement="left" title="Order Audit" onclick="viewOrder(this.id)" class="btn btn-white" href="#"><i class="fa fa-eye text-info"></i></a> <a id="' + full.OrderId + '" style="display:none;" class="btn btn-white" href="#" onclick="invoiceViewModal(this.id)"><i class="fas fa-file-invoice text-info"></i></a></div> </td>';
@@ -126,6 +127,7 @@
         },
         {
             'data': 'OrderId',
+            className: 'buttonWidth',
             'render': function (data, type, full, meta) {
                 if (userWrite == 'true') {
                     return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.OrderId + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Email Customer" onclick="createOrderEmail(this.id)"><i class="fa fa-envelope text-info"></i></a> </div> </td>'

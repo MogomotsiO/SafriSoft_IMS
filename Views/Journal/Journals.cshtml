@@ -7,7 +7,7 @@
 
 <style>
     .buttonWidth {
-        width: 50px;
+        width: 60px;
         text-align: center;
     }
 
@@ -275,7 +275,10 @@
                     render: function (data, type, full, meta) {
 
                         if (userWrite == 'true') {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Journal" onclick="viewJournal(this.id)"><i class="fas fa-edit text-info"></i></a> </div> </td>'
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="viewJournal(${data})"">Edit Journal</a>
+                            </div>`;
                         } else {
                             return '';
                         }

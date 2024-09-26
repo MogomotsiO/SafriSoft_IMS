@@ -41,6 +41,13 @@
     .fileDate{
         width:80px;
     }
+
+    .buttonWidth {
+        text-align: center;
+        width: 70px !important;
+        min-width: 70px !important;
+        max-width: 70px !important;
+    }
 </style>
 
 <!-- Content Wrapper. Contains page content -->
@@ -90,7 +97,7 @@
                                         <th>Customer Email</th>
                                         <th>Customer Phone #</th>
                                         <th>Customer Address</th>
-                                        <th># Orders</th>
+                                        <th>Orders</th>
                                         <th>Balance</th>
                                         <th>Actions</th>
                                     </tr>
@@ -495,6 +502,8 @@
                 {
                     'data': 'NumberOfOrders',
                     'searchable': true,
+                    className: 'buttonWidth',
+                    ordering: false,
                     'render': function (data, type, full, meta) {
                         return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <button id="' + full.Id + '" name="' + full.CustomerName + '" data-toggle="tooltip" data-placement="left" title="View customer orders" type="button" onclick="customerFeatures(this.id, this.name)" class="btn btn-white"><i class="fa fa-eye text-info"></i></button> <a class="btn btn-white" href="#">' + data + '</a> </div> </td>';
                     }
@@ -513,11 +522,17 @@
                 },
                 {
                     'data': 'Id',
+                    className: 'buttonWidth',
                     'render': function (data, type, full, meta) {
 
                         if (userWrite == 'true') {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Edit customer details" onclick="editCustomerDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ' +
-                                `<a id="${full.Id}" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Attach files" onclick="attachCustomerFiles(this.id, '${full.CustomerName}')"><i class="fas fa-file text-info"></i></a> </div> </td>`
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CustomerName}'); editCustomerDetails(${data})"">Edit Details</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CustomerName}'); attachCustomerFiles(${data}, '${full.CustomerName}')">Upload Attachments</a>
+                            </div>`;
+                            //return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + full.Id + '" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Edit customer details" onclick="editCustomerDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ' +
+                            //    `<a id="${full.Id}" class="btn btn-white" href="#" data-toggle="tooltip" data-placement="left" title="Attach files" onclick="attachCustomerFiles(this.id, '${full.CustomerName}')"><i class="fas fa-file text-info"></i></a> </div> </td>`
                         } else {
                             return '';
                         }

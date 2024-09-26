@@ -23,6 +23,7 @@
     }
 
     .btnCol {
+        text-align: center;
         width: 30px;
         min-width: 30px;
         max-width: 100%;
@@ -779,11 +780,17 @@
                         var addQty = '';
 
                         if (full.ProductTypeStr == "Inventory") {
-                            addQty = '<a id="' + full.Id + '" class="btn btn-white" href="#" onclick="addQuantity(this.id)" data-toggle="tooltip" data-placement="left" title="Add Quantity"><i class="fas fa-plus text-info"></i></a>';
+                            addQty = `<a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.ProductName}'); addQuantity(${data})">Add Quantity</a>`;
+                            //addQty = '<a id="' + full.Id + '" class="btn btn-white" href="#" onclick="addQuantity(this.id)" data-toggle="tooltip" data-placement="left" title="Add Quantity"><i class="fas fa-plus text-info"></i></a>';
                         }
 
                         if (userWrite == 'true') {
-                            return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${full.Id}" data-toggle="tooltip" data-placement="left" title="Edit Product Details" class="btn btn-white" href="#" onclick="editProductDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ${addQty}</div> </td>`;
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.ProductName}'); editProductDetails(${data})"">Edit Details</a>
+                            ${addQty}
+                            </div>`;
+                            /*return `<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="${full.Id}" data-toggle="tooltip" data-placement="left" title="Edit Product Details" class="btn btn-white" href="#" onclick="editProductDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ${addQty}</div> </td>`;*/
                         } else {
                             return '';
                         }

@@ -284,7 +284,7 @@
                                 </div>
                             }
                         </div>
-                        <div class="dropdown-divider"></div>
+
                         <div class="row">
                             @if (userRoleIds.Contains(suppliers.ToString()) || userRoleIds.Contains(admin.ToString()))
                             {
@@ -301,7 +301,7 @@
                             }
 
                         </div>
-                        <div class="dropdown-divider"></div>
+
                         @if (userRoleIds.Contains(sales.ToString()) || userRoleIds.Contains(admin.ToString()))
                         {
                             <div class="row">
@@ -312,7 +312,7 @@
                                     <a href="~/Invoicing/Invoices" class="dropdown-item"><i class="fa fa-file-invoice text-info w-8"></i> Manage Invoices</a>
                                 </div>
                             </div>
-                            <div class="dropdown-divider"></div>
+
                         }
 
                         @if (userRoleIds.Contains(bookkeeping.ToString()) || userRoleIds.Contains(admin.ToString()))
@@ -325,7 +325,7 @@
                                     <a href="~/Journal/Create" class="dropdown-item"><i class="fa fa-balance-scale text-info w-8"></i> Create Journal</a>
                                 </div>
                             </div>
-                            <div class="dropdown-divider"></div>
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <a href="~/Accounting/GeneralLedger" class="dropdown-item"><i class="fa fa-table text-info w-8"></i> View General Ledger</a>
@@ -334,7 +334,7 @@
                                     <a href="~/Accounting/TrialBalanceReport" class="dropdown-item"><i class="fa fa-table text-info w-8"></i> View Trial Balance</a>
                                 </div>
                             </div>
-                            <div class="dropdown-divider"></div>
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <a href="~/Accounting/BalanceSheetAccounts" class="dropdown-item"><i class="fa fa-file-excel text-info w-8"></i> Design Balance Sheet</a>
@@ -343,7 +343,7 @@
                                     <a href="~/Accounting/IncomeStatementAccounts" class="dropdown-item"><i class="fa fa-file-excel text-info w-8"></i> Design Income Statement</a>
                                 </div>
                             </div>
-                            <div class="dropdown-divider"></div>
+
                         }
 
                         <div class="row">
@@ -358,7 +358,7 @@
                             }
                             
                         </div>
-                        <div class="dropdown-divider"></div>
+
                         @if (userRoleIds.Contains(admin.ToString()))
                         {
                             <div class="row">

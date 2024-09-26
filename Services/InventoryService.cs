@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Database;
 using SafriSoftv1._3.Models;
 using SafriSoftv1._3.Models.Data;
 using SafriSoftv1._3.Models.SystemModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
@@ -515,6 +517,166 @@ namespace SafriSoftv1._3.Services
 
         }
 
+        public Result SaveSupplierInvoice(SaveSupplierInvoiceDetails vm, int organisationId, string userId)
+        {
+            var result = new Result();
+
+            var date = vm.Date;
+            var description = vm.Description;
+            var qty = vm.Qty;
+            var amount = vm.Amount;
+            var vatAmount = vm.VatAmount;
+            var id = vm.SupplierId;
+            var vatAccountId = vm.VatAccountId;
+            var invoiceAccountId = vm.InvoiceAccountId;
+            var productId = vm.ProductId;
+            var fileName = vm.Filename;
+            var file = vm.File.Split(',').Last();
+
+            var aSvc = new AccountingService();
+
+            var invoice = db.SupplierInvoices.Where(x => x.FileName == fileName && x.OrganisationId == organisationId).FirstOrDefault();
+
+            if (invoice != null)
+            {
+                result.Success = false;
+                result.Message = $"File with name {fileName} already exists";
+                return result;
+            }
+
+            var saveFileDir = System.Web.Hosting.HostingEnvironment.MapPath("~/Documents/SupplierInvoices");
+
+            var fullFileName = $"{saveFileDir}/{fileName}";
+
+            File.WriteAllBytes(fullFileName, Convert.FromBase64String(file));
+
+            amount *= -1;
+            vatAmount *= -1;
+
+            var invoiceFile = new SupplierInvoice()
+            {
+                InvoiceDate = date,
+                Description = description,
+                FileName = fileName,
+                FileContentType = "application/pdf",
+                Qty = qty,
+                VatAmount = vatAmount,
+                Amount = amount,
+                OrganisationId = organisationId,
+                SupplierId = id,
+                Inserted = DateTime.Now,
+                Updated = DateTime.Now,
+                VatAccountId = vatAccountId,
+                InvoiceAccountId = invoiceAccountId,
+                ProductId = productId,
+                UserId = userId
+            };
+
+            db.SupplierInvoices.Add(invoiceFile);
+
+            var res = db.SaveChanges();
+
+            if (res > 0)
+            {
+                // save gls
+                var vatAccount = db.TrialBalanceAccounts.Where(x => x.Id == vatAccountId).FirstOrDefault();
+
+                if (vatAccount != null)
+                {
+                    var gl = new GlAccountViewModel
+                    {
+                        AccountReference = $"REF(ID) - SVA",
+                        AccountName = $"{vatAccount.AccountName}",
+                        AccountNumber = vatAccount.AccountNumber,
+                        Description = $"{description} - {vatAccount.AccountName}",
+                        Debit = vatAmount > 0 ? vatAmount : 0,
+                        Credit = vatAmount < 0 ? vatAmount * -1 : 0,
+                        Date = date,
+                        Month = date.Month,
+                        Year = date.Year,
+                    };
+
+                    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                    var stVat = new SupplierTransaction
+                    {
+                        Description = $"{description} - {vatAccount.AccountName}",
+                        Amount = vatAmount,
+                        SupplierInvoiceId = res,
+                        OrganisationId = organisationId,
+                        SupplierId = id,
+                        Inserted = DateTime.Now,
+                        Updated = DateTime.Now,
+                    };
+
+                    SaveSupplierTransaction(stVat);
+
+                    var vt = new VatTransaction()
+                    {
+                        Date = date,
+                        TypeId = 0,
+                        Account = vatAccount.AccountNumber,
+                        Description = $"{description} - {vatAccount.AccountName}",
+                        Exclusive = amount,
+                        Inclusive = amount + vatAmount,
+                        TaxAmount = vatAmount,
+                        Inserted = DateTime.Now,
+                        Updated = DateTime.Now,
+                        OrganisationId = organisationId,
+                    };
+
+                    var vtRes = aSvc.SaveVatTransaction(vt, organisationId);
+                }
+
+                var invoiceAccount = db.TrialBalanceAccounts.Where(x => x.Id == invoiceAccountId).FirstOrDefault();
+
+                if (invoiceAccount != null)
+                {
+                    var gl = new GlAccountViewModel
+                    {
+                        AccountReference = $"REF(ID) - SIA",
+                        AccountName = $"{invoiceAccount.AccountName}",
+                        AccountNumber = invoiceAccount.AccountNumber,
+                        Description = $"{description} - {invoiceAccount.AccountName}",
+                        Debit = amount > 0 ? amount : 0,
+                        Credit = amount < 0 ? amount * -1 : 0,
+                        Date = date,
+                        Month = date.Month,
+                        Year = date.Year,
+                    };
+
+                    var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
+
+                    if (glRes.Success == true)
+                    {
+                        var st = new SupplierTransaction
+                        {
+                            Description = $"{description} - {invoiceAccount.AccountName}",
+                            Amount = amount,
+                            SupplierInvoiceId = res,
+                            OrganisationId = organisationId,
+                            SupplierId = id,
+                            Inserted = DateTime.Now,
+                            Updated = DateTime.Now,
+                        };
+
+                        SaveSupplierTransaction(st);
+                    }
+                }
+
+
+                result.Success = true;
+                result.Message = "File processed";
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Could not save file details";
+            }
+
+            return result;
+        }
+
         public Result SaveProductRequirements(int id, List<RequirementViewModel> requirements, int organisationId)
         {
             var result = new Result();
@@ -793,5 +955,7 @@ namespace SafriSoftv1._3.Services
 
             return result;
         }
+
+
     }
 }

@@ -80,4 +80,19 @@ namespace SafriSoftv1._3.Models
         public string Description { get; set; }
         public double Amount { get; set; }
     }
+
+    public class SaveSupplierInvoiceDetails
+    {
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+        public int Qty { get; set; }
+        public double Amount { get; set; }
+        public double VatAmount { get; set; }
+        public int VatAccountId { get; set;}
+        public int InvoiceAccountId { get; set;}
+        public int ProductId { get; set;}
+        public int SupplierId { get; set;}
+        public string File { get; set; }
+        public string Filename { get; set; }
+    }
 }

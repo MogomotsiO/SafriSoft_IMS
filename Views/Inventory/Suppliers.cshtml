@@ -5,11 +5,14 @@
 }
 
 <style>
-    /*.buttonWidth {
-        width: 100px;
+    .buttonWidth {
+        text-align: center;
+        width: 50px !important;
+        min-width: 50px !important;
+        max-width: 50px !important;
     }
 
-    .filenameWidth {
+    /*.filenameWidth {
         width: 200px;
     }
 
@@ -288,10 +291,24 @@
                                             </select>
                                         </div>
                                     </div>
+
+                                    <div id="invoiceFileSection" style="display:none;" class="mb-3 col-md-4">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <td id="supplierInvoiceFileName"></td>
+                                                <td class="text-center"><span class="fa fa-trash text-danger" style="cursor:pointer;" onclick="removeSupplierInvoice()"></span></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="mb-3 col-md-12">
+                                        <button class="btn btn-info" onclick="$('#supplierInvoiceFile').trigger('click');"><span class="fa fa-file-pdf"></span> Choose File</button>
+                                        <input id="supplierInvoiceFile" type="file" accept=".pdf" hidden />
+                                    </div>
                                 </div>
-                                <div id="dropzone" class="fade">
+                                @*<div id="dropzone" class="fade">
                                     <h3 style="color: #17a2b8;">Drag & Drop File</h3>
-                                </div>
+                                </div>*@
                             </div>
 
                             <!-- /.card-body -->
@@ -303,6 +320,7 @@
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" onclick="saveSupplierInvoice()"><span class="fa fa-file-invoice"></span> Save Invoice</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -414,7 +432,7 @@
             </div>
             <div class="modal-footer justify-content-right">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-light" onclick="paySupplier()"><i class="fa fa-coins text-info"></i> Submit</button>
+                <button type="button" class="btn btn-light" onclick="paySupplier()"><i class="fa fa-coins text-info"></i> Pay Supplier</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -427,6 +445,35 @@
 @section scripts{
 
     <script type="text/javascript">
+
+        var _supplierInvoiceBase64 = '';
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    //$('#img-source').val(e.target.result);
+                    $('#supplierInvoiceFileName').text(input.value.substring((input.value.lastIndexOf("\\")) + 1));
+                    $('#supplierInvoiceFile').attr('src', e.target.result);
+                }
+
+                //_supplierInvoiceBase64 = reader.readAsDataURL(input.files[0]); // convert to base64 string
+                console.log(reader.readAsDataURL(input.files[0]));
+                $('#invoiceFileSection').show();
+            }
+        }
+
+        $("#supplierInvoiceFile").change(function () {
+            readURL(this);
+        });
+
+        function removeSupplierInvoice() {
+            _supplierInvoiceBase64 = '';
+            $('#supplierInvoiceFileName').text('');
+            $('#supplierInvoiceFile').attr('src', '');
+            $('#invoiceFileSection').hide();
+        }
 
         if (userWrite == 'true') {
             $('#addSupplier').show();
@@ -502,17 +549,24 @@
                 {
                     data: 'Id',
                     searchable: true,
-                    //className: 'buttonWidth',
+                    className: 'buttonWidth',
                     render: function (data, type, full, meta) {
                         if (userWrite == 'true') {
-                            return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Supplier Details" onclick="getSupplierDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ' +
-                                '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Load Supplier Invoice" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a>' +
-                                '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="View Supplier Invoices" href="#" onclick="viewSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-eye text-info"></i></a>' +
-                                '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Pay Supplier" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
+                            return `<button class="btn btn-light" data-toggle="dropdown"><span class="fas fa-list-ul text-info"></span></button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CompanyName}'); getSupplierDetails(${data})"">Edit Details</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CompanyName}'); uploadSupplierInvoices(${data})">Upload Invoice</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CompanyName}'); viewSupplierInvoices(${data})">View Invoices</a>
+                            <a href="#" class="dropdown-item" onclick="$('.modal-title').text('${full.CompanyName}'); paySupplierModal(${data})">Capture Payment</a>
+                            </div>`;
+                            //return '<td class="text-right py-0 align-middle"> <div class="btn-group btn-group-sm"> <a id="' + data + '" class="btn btn-light" href="#" data-toggle="tooltip" data-placement="left" title="Edit Supplier Details" onclick="getSupplierDetails(this.id)"><i class="fas fa-edit text-info"></i></a> ' +
+                            //    '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Load Supplier Invoice" href="#" onclick="uploadSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-file-invoice text-info"></i></a>' +
+                            //    '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="View Supplier Invoices" href="#" onclick="viewSupplierInvoices(this.id,' + full.Id + ')"><i class="fa fa-eye text-info"></i></a>' +
+                            //    '<a id="' + data + '" class="btn btn-light" data-toggle="tooltip" data-placement="left" title="Pay Supplier" href="#" onclick="paySupplierModal(' + full.Id + ')"><i class="fa fa-coins text-info"></i></a> </div> </td>'
                         } else {
                             return '';
                         }
-                        
+
                     }
                 }
             ]
@@ -671,124 +725,100 @@
         function viewSupplierInvoices(id) {
             $('#supplierInvoicesModal').modal('show');
             supplierInvoicesDt.ajax.url('/api/Inventory/GetSupplierInvoices/' + id).load();
-            
+
+        }
+
+        function saveSupplierInvoice() {
+            var date = $("#date").val();
+            var description = $("#description").val();
+            var qty = $("#qty").val();
+            var vatAmount = $("#vatAmount").val();
+            var amount = $("#amount").val();
+            var vatAccountId = $("#selectedVatAccount").val();
+            var invoiceAccountId = $("#selectedInvoiceAccount").val();
+            var productId = $("#selectedProduct").val();
+            var file = $('#supplierInvoiceFile').attr("src");
+            var fileName = $('#supplierInvoiceFileName').text();
+
+            if (date == '') {
+                toastr.error('Please provide the date of invoice');
+                return;
+            }
+
+            if (description == '') {
+                toastr.error('Please provide the description of the invoice');
+                return;
+            }
+
+            if (qty == '') {
+                toastr.error('Please provide the quantity of the product');
+                return;
+            }
+
+            if (amount == '') {
+                toastr.error('Please provide the Total Invoice Amount');
+                return;
+            }
+
+            if (vatAmount == '') {
+                toastr.error('Please provide the Invoice Vat Amount');
+                return;
+            }
+
+            if (vatAccountId == -100) {
+                toastr.error('Please provide the Invoice Vat Account Id');
+                return;
+            }
+
+            if (invoiceAccountId == -100) {
+                toastr.error('Please provide the Invoice Account');
+                return;
+            }
+
+            if (productId == -100) {
+                toastr.error('Please select a product');
+                return;
+            }
+
+            if (file == '' || file == undefined || file == null) {
+                toastr.error('Please choose a file');
+                return;
+            }
+
+            var data = {
+                Date: date,
+                Description: description,
+                Qty: qty,
+                Amount: amount,
+                VatAmount: vatAmount,
+                VatAccountId: vatAccountId,
+                InvoiceAccountId: invoiceAccountId,
+                ProductId: productId,
+                File: file,
+                Filename: fileName,
+                SupplierId: _supplierId
+            }
+
+            var url = `/api/Inventory/SaveSupplierInvoice`;
+
+            SafriSoftPostRequest(url, data, (response) => {
+                if (response.Success == true) {
+                    toastr.success(response.Message);
+                    $('#supplierInvoices').modal('hide');
+                    setTimeout(function () {
+                        viewSupplierInvoices(_supplierId);
+                    }, 1000);
+                } else {
+                    toastr.error(response.Message);
+                }
+            });
         }
 
         function uploadSupplierInvoices(id) {
 
             $('#supplierInvoices').modal('show');
 
-            $('#dropzone').fileupload({
-                dropZone: $('#dropzone'),
-                dataType: "application/json",
-                url: '/api/Inventory/UploadSupplierInvoices/' + id,
-                autoUpload: false,
-                beforeSend: function (request) {
-
-                    var date = $("#date").val();
-                    var description = $("#description").val();
-                    var qty = $("#qty").val();
-                    var vatAmount = $("#vatAmount").val();
-                    var amount = $("#amount").val();
-                    var vatAccountId = $("#selectedVatAccount").val();
-                    var invoiceAccountId = $("#selectedInvoiceAccount").val();
-                    var productId = $("#selectedProduct").val();
-
-                    request.setRequestHeader("safrisoft", date.replaceAll('-', '|'));
-                    request.setRequestHeader("description", description);
-                    request.setRequestHeader("qty", qty);
-                    request.setRequestHeader("vatAmount", vatAmount);
-                    request.setRequestHeader("amount", amount);
-                    request.setRequestHeader("vatAccountId", vatAccountId);
-                    request.setRequestHeader("invoiceAccountId", invoiceAccountId);
-                    request.setRequestHeader("productId", productId);
-                }
-            }).on('fileuploadadd', function (e, data) {
-
-                var dropZone = $('#dropzone');
-                dropZone.removeClass('hover');
-
-                var error = false;
-
-                var date = $("#date").val();
-                var description = $("#description").val();
-                var qty = $("#qty").val();
-                var vatAmount = $("#vatAmount").val();
-                var amount = $("#amount").val();
-                var vatAccountId = $("#selectedVatAccount").val();
-                var invoiceAccountId = $("#selectedInvoiceAccount").val();
-
-                if (date == '') {
-                    toastr.error('Please provide the date of invoice');
-                    error = true;
-                }
-
-                if (description == '') {
-                    toastr.error('Please provide the description of the invoice');
-                    error = true;
-                }
-
-                if (qty == '') {
-                    toastr.error('Please provide the quantity of the product');
-                    error = true;
-                }
-
-                if (amount == '') {
-                    toastr.error('Please provide the Total Invoice Amount');
-                    error = true;
-                }
-
-                if (vatAmount == '') {
-                    toastr.error('Please provide the Invoice Vat Amount');
-                    error = true;
-                }
-
-                if (vatAccountId == -100) {
-                    toastr.error('Please provide the Invoice Vat Account Id');
-                    error = true;
-                }
-
-                if (invoiceAccountId == -100) {
-                    toastr.error('Please provide the Invoice Account');
-                    error = true;
-                }
-
-                if (error == false) {
-                    data.files[0]["safrisoft"] = date.replaceAll('-', '|');
-                    data.files[0]["description"] = description;
-                    data.files[0]["qty"] = qty;
-                    data.files[0]["vatAmount"] = vatAmount;
-                    data.files[0]["amout"] = amount;
-                    data.files[0]["vatAccountId"] = vatAccountId;
-                    data.files[0]["invoiceAccountId"] = invoiceAccountId;
-                    console.log(data);
-                    data.submit();
-                }
-
-            }).on('fileuploadalways', function (e, data) {
-
-                supplierInvoicesDt.ajax.reload();
-                var dropZone = $('#dropzone');
-                dropZone.removeClass('hover');
-                $("#dateEffective").val('');
-                $("#qty").val('');
-                $("#vatAmount").val('');
-                $("#amount").val('');
-            });
-
-            $(document).bind('dragover', function (e) {
-                var dropZone = $('#dropzone');
-                dropZone.addClass('hover');
-            });
-
-            $(document).bind('dragleave', function (e) {
-                var dropZone = $('#dropzone');
-                dropZone.removeClass('hover');
-            });
-
-            $(document).bind('drop dragover', function (e) {
-                e.preventDefault();
-            });
+            _supplierId = id;
         }
 
         var supplierInvoicesDt = $("#supplierInvoicesDt").DataTable({

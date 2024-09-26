@@ -2231,6 +2231,31 @@ namespace SafriSoftv1._3.Controllers.API
             }
         }
 
+        [HttpPost, Route("SaveSupplierInvoice")]
+        public async Task<IHttpActionResult> SaveSupplierInvoice(SaveSupplierInvoiceDetails vm)
+        {
+            var result = new Result();
+
+            try
+            {
+                var organisationName = GetOrganisationName();
+                var organisationId = BaseService.GetOrganisationId(organisationName);
+                var userId = GetUserId();
+
+                var iSvc = new InventoryService();
+
+                result = iSvc.SaveSupplierInvoice(vm, organisationId, userId);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.Message;
+                return Json(result);
+            }
+        }
+
         // functions
         public static Bitmap Base64StringToBitmap(string base64String)
         {

@@ -215,7 +215,7 @@
                             <h4 class="card-title"><i class="fas fa-file-invoice"></i> Overdue Invoices</h4>
                         </div>
                         <div class="card-body table-responsive">
-                            <table id="overDueInvoicesDt" class="table table-borderless">
+                            <table id="overDueInvoicesDt" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Date Issued</th>
@@ -409,6 +409,7 @@
                 //-------------
 
                 var overDueInvoicesDt = $("#overDueInvoicesDt").DataTable({
+                    ordering: false,
                     scrollY: 200,
                     dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
                     buttons: [{ extend: 'csv', exportOptions: { orthogonal: { display: ':null' } } }, { extend: 'excel', exportOptions: { orthogonal: { display: ':null' } } }],
@@ -429,7 +430,7 @@
                             createdCell: function (cell, data, full, dataIndex) {
 
                                 if (full.OverDueInvoice == true) {
-                                    $(cell).addClass('bg-warning text-white');
+                                    $(cell).addClass('bg-danger');
                                 }
                             }
                         },
