@@ -14,8 +14,8 @@ namespace SafriSoftv1._3.Controllers.API
     [RoutePrefix("api/Expenses")]
     public class ExpensesController : BaseApiController
     {
-        [HttpGet, Route("GetExpenses")]
-        public async Task<IHttpActionResult> GetExpenses()
+        [HttpPost, Route("GetExpenses")]
+        public async Task<IHttpActionResult> GetExpenses(DateParameters vm)
         {
             var result = new Result();            
 
@@ -26,7 +26,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var eSvc = new ExpensesService();
 
-                var res = eSvc.GetExpenses(organisationId);
+                var res = eSvc.GetExpenses(organisationId, vm);
 
                 result.obj = res;
                 result.Success = true;

@@ -42,8 +42,8 @@ namespace SafriSoftv1._3.Controllers.API
             return Json(new { Success = result.Success, Message = result.Message, Obj = result.obj });
         }
 
-        [HttpGet, Route("GetInvoices")]
-        public IHttpActionResult GetInvoices()
+        [HttpPost, Route("GetInvoices")]
+        public IHttpActionResult GetInvoices(DateParameters vm)
         {
             var result = new Result();
 
@@ -54,7 +54,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var service = new InvoicingService();
 
-                result.obj = service.GetInvoices(organisationId);
+                result.obj = service.GetInvoices(organisationId, vm);
 
                 result.Success = true;
                 result.Message = "Invoices retrieved";

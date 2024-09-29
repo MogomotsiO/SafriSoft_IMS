@@ -8,6 +8,8 @@ namespace SafriSoftv1._3.Models
     public class BaseViewModel
     {
         public string JsonString { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 
     public class BaseEmailViewModel

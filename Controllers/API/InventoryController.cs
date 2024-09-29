@@ -705,8 +705,8 @@ namespace SafriSoftv1._3.Controllers.API
         }
 
 
-        [HttpGet, Route("GetCustomers")]
-        public async Task<IHttpActionResult> GetCustomers()
+        [HttpPost, Route("GetCustomers")]
+        public async Task<IHttpActionResult> GetCustomers(DateParameters vm)
         {
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             SafriSoftDbContext SafriSoft = new SafriSoftDbContext();
@@ -745,7 +745,7 @@ namespace SafriSoftv1._3.Controllers.API
                         Customers.CustomerCell = reader.GetString(3);
                         Customers.CustomerAddress = reader.GetString(4);
                         Customers.DateCustomerCreated = reader.GetString(5);
-                        var numberOfOrders = SafriSoft.Orders.Where(x => x.CustomerId == Customers.Id).Count();
+                        var numberOfOrders = SafriSoft.Orders.Where(x => x.CustomerId == Customers.Id && x.DateIssued >= vm.Start && x.DateIssued <= vm.End).Count();
                         var customer = SafriSoft.Customers.Where(x => x.Id == Customers.Id).FirstOrDefault();
                         customer.NumberOfOrders = numberOfOrders;
                         SafriSoft.SaveChanges();
@@ -967,8 +967,8 @@ namespace SafriSoftv1._3.Controllers.API
             }
         }
 
-        [HttpGet, Route("GetOrders")]
-        public async Task<IHttpActionResult> GetOrders()
+        [HttpPost, Route("GetOrders")]
+        public async Task<IHttpActionResult> GetOrders(DateParameters vm)
         {
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             string userId = IdentityExtensions.GetUserId(User.Identity);
@@ -983,7 +983,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth],[ShippingCost] from [{0}].[dbo].[Orders] where Status = '{1}' AND OrganisationId = '{2}' ORDER BY OrderProgress ASC", conn.Database, "Active", organisationId);
+                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth],[ShippingCost] from [{0}].[dbo].[Orders] where Status = '{1}' AND OrganisationId = '{2}' AND DateIssued >= '{3}' AND DateDue <= '{4}' ORDER BY OrderProgress ASC", conn.Database, "Active", organisationId, vm.Start, vm.End);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -1018,8 +1018,8 @@ namespace SafriSoftv1._3.Controllers.API
             }
         }
 
-        [HttpGet, Route("GetOrders/{id}")]
-        public async Task<IHttpActionResult> GetOrders(int id)
+        [HttpPost, Route("GetCustomerOrders")]
+        public async Task<IHttpActionResult> GetCustomerOrders(DateParameters vm)
         {
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             string userId = IdentityExtensions.GetUserId(User.Identity);
@@ -1032,7 +1032,7 @@ namespace SafriSoftv1._3.Controllers.API
             {
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth] from [{0}].[dbo].[Orders] WHERE CustomerId = {1} ORDER BY OrderProgress ASC", conn.Database, id);
+                cmd.CommandText = string.Format("SELECT [OrderId],[ProductName],[NumberOfItems],[CustomerName],[OrderStatus],[OrderProgress],[DateOrderCreated],[ExpectedDeliveryDate],[OrderWorth],[ShippingCost] from [{0}].[dbo].[Orders] where Status = '{1}' AND CustomerId = '{2}' AND DateIssued >= '{3}' AND DateDue <= '{4}' ORDER BY OrderProgress ASC", conn.Database, "Active", vm.Id, vm.Start, vm.End);
 
                 using (var reader = cmd.ExecuteReader())
                 {
@@ -1263,14 +1263,15 @@ namespace SafriSoftv1._3.Controllers.API
 
         }
 
-        [HttpGet, Route("Home")]
-        public IHttpActionResult Home()
+        [HttpPost, Route("Home")]
+        public IHttpActionResult Home(BaseViewModel vm)
         {
             ApplicationUserManager userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
             string userId = IdentityExtensions.GetUserId(User.Identity);
             var organisationClaim = userManager.GetClaims(userId).First(x => x.Type == "Organisation");
             var getOrgClaim = organisationClaim.Value;
             var organisationId = GetOrganisationId(getOrgClaim);
+            var db = new SafriSoftDbContext();
 
             var customerCount = 0;
             var stockSold = 0;
@@ -1323,7 +1324,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersProcessedCmd = conn.CreateCommand();
-                    ordersProcessedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed' AND [OrganisationId] = {1}", conn.Database, organisationId);
+                    ordersProcessedCmd.CommandText = $"SELECT count([Id]) from [{conn.Database}].[dbo].[Orders] WHERE [OrderStatus] = 'Processed' AND [OrganisationId] = {organisationId} AND DateIssued >= '{vm.Start}' AND DateDue <= '{vm.End}'";
                     try
                     {
                         ordersProcessed = (Int32)ordersProcessedCmd.ExecuteScalar();
@@ -1335,7 +1336,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersPackagedCmd = conn.CreateCommand();
-                    ordersPackagedCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged' AND [OrganisationId] = {1}", conn.Database, organisationId);
+                    ordersPackagedCmd.CommandText = $"SELECT count([Id]) from [{conn.Database}].[dbo].[Orders] WHERE [OrderStatus] = 'Packaged' AND [OrganisationId] = {organisationId} AND DateIssued >= '{vm.Start}' AND DateDue <= '{vm.End}'";
                     try
                     {
                         ordersPackaged = (Int32)ordersPackagedCmd.ExecuteScalar();
@@ -1347,7 +1348,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersInTransitCmd = conn.CreateCommand();
-                    ordersInTransitCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit' AND [OrganisationId] = {1}", conn.Database, organisationId);
+                    ordersInTransitCmd.CommandText = $"SELECT count([Id]) from [{conn.Database}].[dbo].[Orders] WHERE [OrderStatus] = 'InTransit' AND [OrganisationId] = {organisationId} AND DateIssued >= '{vm.Start}' AND DateDue <= '{vm.End}'";
                     try
                     {
                         ordersInTransit = (Int32)ordersInTransitCmd.ExecuteScalar();
@@ -1359,7 +1360,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var ordersDeliveredCmd = conn.CreateCommand();
-                    ordersDeliveredCmd.CommandText = string.Format("SELECT count([Id]) from [{0}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [OrganisationId] = {1}", conn.Database, organisationId);
+                    ordersDeliveredCmd.CommandText = $"SELECT count([Id]) from [{conn.Database}].[dbo].[Orders] WHERE [OrderStatus] = 'Delivered' AND [OrganisationId] = {organisationId} AND DateIssued >= '{vm.Start}' AND DateDue <= '{vm.End}'";
                     try
                     {
                         ordersDelivered = (Int32)ordersDeliveredCmd.ExecuteScalar();
@@ -1371,7 +1372,7 @@ namespace SafriSoftv1._3.Controllers.API
 
 
                     var randValueSoldCmd = conn.CreateCommand();
-                    randValueSoldCmd.CommandText = string.Format("SELECT sum([Amount]) from [{0}].[dbo].[Invoice] WHERE [OrganisationId] = {1}", conn.Database, organisationId);
+                    randValueSoldCmd.CommandText = $"SELECT sum([Amount]) from [{conn.Database}].[dbo].[Invoice] WHERE [OrganisationId] = {organisationId} AND InvoiceDate >= '{vm.Start}' AND InvoiceDueDate <= '{vm.End}'";
                     try
                     {
                         randValueSold = (double)randValueSoldCmd.ExecuteScalar();

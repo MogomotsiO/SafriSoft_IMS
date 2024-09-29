@@ -1,4 +1,12 @@
-﻿var orderDataTable = $("#order-table").DataTable({
+﻿var startDate = $('#globalStart').val();
+var endDate = $('#globalEnd').val();
+
+var data = {
+    Start: startDate,
+    End: endDate
+};
+
+var orderDataTable = $("#order-table").DataTable({
     "responsive": true,
     "autoWidth": false,
     "info": true,
@@ -6,7 +14,9 @@
     "order": [[9, "asc"]],
     ajax: {
         url: '/api/Inventory/GetOrders/',
-        method: 'GET',
+        method: 'POST',
+        dataType: 'json',
+        data: data,
         "dataSrc": ""
     },
     'columns': [
@@ -58,7 +68,7 @@
             'render': function (data, type, full, meta) {
 
                 if (type === 'display')
-                    return '<a href="#">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</a>';
+                    return '<span class="text-success">' + new Intl.NumberFormat(currencyIsoName, { style: 'currency', currency: currency }).format(data) + '</span>';
                 else
                     return data;
             }
@@ -139,6 +149,40 @@
         }
     ]
 });
+
+$('#globalRefresh').on('click', function () {
+    refresh();
+});
+
+function refresh() {
+
+    var startDate = $('#globalStart').val();
+    var endDate = $('#globalEnd').val();
+
+    var data = {
+        Start: startDate,
+        End: endDate
+    };
+
+    var url = '/api/Inventory/GetOrders';
+
+    SafriSoftPostRequest(url, data, (response) => {
+        orderDataTable.clear();
+        orderDataTable.rows.add(response);
+        orderDataTable.draw(false);
+    });
+
+    var urlCustomers = '/api/Inventory/GetCustomers/';
+
+    SafriSoftPostRequest(urlCustomers, data, (response) => {
+        debugger;
+        customerDataTable.clear();
+        customerDataTable.rows.add(response);
+        customerDataTable.draw(false);
+    });
+}
+
+//refresh();
 
 orderDataTable.on('draw', function () {
     $('[data-toggle="tooltip"]').tooltip();
@@ -322,7 +366,8 @@ function changeStatus(value) {
     }).done(function (data) {
         if (data.Success) {
             console.log(data);
-            orderDataTable.ajax.reload();
+            refresh();
+            //orderDataTable.ajax.reload();
         } else {
             console.log(data);
             toastr.error('An error occured while trying to save customer contact administrator!');

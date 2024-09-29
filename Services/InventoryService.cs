@@ -471,8 +471,8 @@ namespace SafriSoftv1._3.Services
                     AccountName = $"{account.AccountName}",
                     AccountNumber = account.AccountNumber,
                     Description = $"{vm.Description} - {account.AccountName}",
-                    Debit = vm.Amount > 0 ? vm.Amount : 0,
-                    Credit = vm.Amount < 0 ? vm.Amount : 0,
+                    Debit = 0,
+                    Credit = vm.Amount,
                     Date = vm.Date,
                     Month = vm.Date.Month,
                     Year = vm.Date.Year,
@@ -550,8 +550,8 @@ namespace SafriSoftv1._3.Services
 
             File.WriteAllBytes(fullFileName, Convert.FromBase64String(file));
 
-            amount *= -1;
-            vatAmount *= -1;
+            //amount *= -1;
+            //vatAmount *= -1;
 
             var invoiceFile = new SupplierInvoice()
             {
@@ -589,8 +589,8 @@ namespace SafriSoftv1._3.Services
                         AccountName = $"{vatAccount.AccountName}",
                         AccountNumber = vatAccount.AccountNumber,
                         Description = $"{description} - {vatAccount.AccountName}",
-                        Debit = vatAmount > 0 ? vatAmount : 0,
-                        Credit = vatAmount < 0 ? vatAmount * -1 : 0,
+                        Debit = vatAmount,
+                        Credit = 0,
                         Date = date,
                         Month = date.Month,
                         Year = date.Year,
@@ -598,18 +598,18 @@ namespace SafriSoftv1._3.Services
 
                     var glRes = aSvc.CreateUpdateGlAccount(gl, organisationId);
 
-                    var stVat = new SupplierTransaction
-                    {
-                        Description = $"{description} - {vatAccount.AccountName}",
-                        Amount = vatAmount,
-                        SupplierInvoiceId = res,
-                        OrganisationId = organisationId,
-                        SupplierId = id,
-                        Inserted = DateTime.Now,
-                        Updated = DateTime.Now,
-                    };
+                    //var stVat = new SupplierTransaction
+                    //{
+                    //    Description = $"{description} - {vatAccount.AccountName}",
+                    //    Amount = vatAmount,
+                    //    SupplierInvoiceId = res,
+                    //    OrganisationId = organisationId,
+                    //    SupplierId = id,
+                    //    Inserted = DateTime.Now,
+                    //    Updated = DateTime.Now,
+                    //};
 
-                    SaveSupplierTransaction(stVat);
+                    //SaveSupplierTransaction(stVat);
 
                     var vt = new VatTransaction()
                     {
@@ -638,8 +638,8 @@ namespace SafriSoftv1._3.Services
                         AccountName = $"{invoiceAccount.AccountName}",
                         AccountNumber = invoiceAccount.AccountNumber,
                         Description = $"{description} - {invoiceAccount.AccountName}",
-                        Debit = amount > 0 ? amount : 0,
-                        Credit = amount < 0 ? amount * -1 : 0,
+                        Debit = amount,
+                        Credit = 0,
                         Date = date,
                         Month = date.Month,
                         Year = date.Year,
@@ -652,7 +652,7 @@ namespace SafriSoftv1._3.Services
                         var st = new SupplierTransaction
                         {
                             Description = $"{description} - {invoiceAccount.AccountName}",
-                            Amount = amount,
+                            Amount = (amount + vatAmount) * -1,
                             SupplierInvoiceId = res,
                             OrganisationId = organisationId,
                             SupplierId = id,

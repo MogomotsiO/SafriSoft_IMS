@@ -468,7 +468,12 @@
             lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
             ajax: {
                 url: '/api/Inventory/GetCustomers/',
-                method: 'GET',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    Start: $('#globalStart').val(),
+                    End: $('#globalEnd').val()
+                },
                 "dataSrc": ""
             },
             'columns': [
@@ -541,6 +546,31 @@
                 }
             ]
         });
+
+        //$('#globalRefresh').on('click', function () {
+        //    refresh();
+        //});
+
+        //function refresh() {
+
+        //    var startDate = $('#globalStart').val();
+        //    var endDate = $('#globalEnd').val();
+
+        //    var data = {
+        //        Start: startDate,
+        //        End: endDate
+        //    };
+
+        //    var url = '/api/Inventory/GetCustomers/';
+
+        //    SafriSoftPostRequest(url, data, (response) => {
+        //        debugger;
+        //        customerDataTable.clear();
+        //        customerDataTable.rows.add(response.obj);
+        //        customerDataTable.draw(false);
+        //    });
+
+        //}
 
         var _editId = 0;
 
@@ -777,7 +807,12 @@
             lengthMenu: [[10, 20, 30, -1], [10, 20, 30, "All"]],
             ajax: {
                 url: '/api/Inventory/GetOrders/',
-                method: 'GET',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    Start: $('#globalStart').val(),
+                    End: $('#globalEnd').val()
+                },
                 "dataSrc": ""
             },
             'columns': [
@@ -858,10 +893,54 @@
         });
 
         function customerFeatures(id, name) {
-            customerOrderDataTable.ajax.url('/api/Inventory/GetOrders/' + id).load();
+            //customerOrderDataTable.ajax.url('/api/Inventory/GetOrders/' + id).load();
+            var startDate = $('#globalStart').val();
+            var endDate = $('#globalEnd').val();
+
+            var data = {
+                Id: id,
+                Start: startDate,
+                End: endDate
+            };
+
+            var url = '/api/Inventory/GetCustomerOrders';
+
+            SafriSoftPostRequest(url, data, (response) => {
+                console.log(response);
+                debugger;
+                customerOrderDataTable.clear();
+                customerOrderDataTable.rows.add(response);
+                customerOrderDataTable.draw();
+            });
             $("#customer-orders-title").text(name + " Orders");
             $('#customer-orders').modal('show');
         }
+
+        //$('#globalRefresh').on('click', function () {
+        //    refresh();
+        //});
+
+        //function refresh() {
+        //    var startDate = $('#globalStart').val();
+        //    var endDate = $('#globalEnd').val();
+
+        //    var data = {
+        //        Start: startDate,
+        //        End: endDate
+        //    };
+
+        //    var url = '/api/Inventory/GetOrders';
+
+        //    SafriSoftPostRequest(url, data, (response) => {
+        //        console.log(response);
+        //        customerOrderDataTable.clear();
+        //        customerOrderDataTable.rows.add(response);
+        //        customerOrderDataTable.draw();
+        //    });
+
+        //}
+
+        //refresh();
 
 
         function editCustomerDetails(id) {

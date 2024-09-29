@@ -31,8 +31,9 @@ namespace SafriSoftv1._3.Models
 
     public class DateParameters
     {
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public int Id { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
     }
 
     public class UnmappedGlAccount

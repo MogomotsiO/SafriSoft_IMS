@@ -216,6 +216,14 @@
 
         var _jnlEditId = 0;
 
+        var startDate = $('#globalStart').val();
+        var endDate = $('#globalEnd').val();
+
+        var data = {
+            Start: startDate,
+            End: endDate
+        };
+
         var journalsDt = $("#journalsDt").DataTable({
             responsive: true,
             autoWidth: false,
@@ -225,7 +233,9 @@
             lengthMenu: [[-1], ["All"]],
             ajax: {
                 url: '/api/Journal/GetJournals/',
-                method: 'GET',
+                method: 'POST',
+                dataType: 'json',
+                data: data,
                 "dataSrc": "obj"
             },
             columns: [
@@ -292,12 +302,37 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
+        $('#globalRefresh').on('click', function () {
+            refresh();
+        });
+
+        function refresh() {
+
+            var startDate = $('#globalStart').val();
+            var endDate = $('#globalEnd').val();
+
+            var data = {
+                Start: startDate,
+                End: endDate
+            };
+
+            var url = '/api/Journal/GetJournals';
+
+            SafriSoftPostRequest(url, data, (response) => {
+                journalsDt.clear();
+                journalsDt.rows.add(response.obj);
+                journalsDt.draw(false);
+            });
+
+        }
+
         function deactivate(id) {
             var url = `/api/Journal/DeactivateJournal/${id}`;
             SafriSoftGetRequest(url, (response) => {
                 if (response.Success == true) {
                     toastr.success(response.Message);
-                    journalsDt.ajax.reload();
+                    refresh();
+                    //journalsDt.ajax.reload();
                 } else {
                     toastr.error(response.Message);
                 }
@@ -309,7 +344,8 @@
             SafriSoftGetRequest(url, (response) => {
                 if (response.Success == true) {
                     toastr.success(response.Message);
-                    journalsDt.ajax.reload();
+                    refresh();
+                    //journalsDt.ajax.reload();
                 } else {
                     toastr.error(response.Message);
                 }
@@ -463,7 +499,8 @@
                     if (response.Success == true) {
                         toastr.success(response.Message);
                         $('#journalModal').modal('hide');
-                        journalsDt.ajax.reload();
+                        refresh();
+                        //journalsDt.ajax.reload();
                     } else {
                         toastr.error(response.Message);
                     }

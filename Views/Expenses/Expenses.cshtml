@@ -207,7 +207,12 @@
             lengthMenu: [[-1], ["All"]],
             ajax: {
                 url: '/api/Expenses/GetExpenses/',
-                method: 'GET',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    Start: $('#globalStart').val(),
+                    End: $('#globalEnd').val()
+                },
                 "dataSrc": "obj"
             },
             columns: [
@@ -265,6 +270,30 @@
                 },
             ]
         });
+
+        $('#globalRefresh').on('click', function () {
+            refresh();
+        });
+
+        function refresh() {
+
+            var startDate = $('#globalStart').val();
+            var endDate = $('#globalEnd').val();
+
+            var data = {
+                Start: startDate,
+                End: endDate
+            };
+
+            var url = '/api/Expenses/GetExpenses';
+
+            SafriSoftPostRequest(url, data, (response) => {
+                expensesDt.clear();
+                expensesDt.rows.add(response.obj);
+                expensesDt.draw(false);
+            });
+
+        }
 
         function addExpense() {
 
@@ -336,7 +365,8 @@
                 if (response.Success == true) {
                     $("#addExpenseModal").modal('hide');
                     toastr.success(response.Message);
-                    expensesDt.ajax.reload();
+                    //expensesDt.ajax.reload();
+                    refresh();
                 } else {
                     toastr.error(response.Message);
                 }

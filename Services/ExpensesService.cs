@@ -27,11 +27,11 @@ namespace SafriSoftv1._3.Services
             return vm;
         }
 
-        public List<ExpensesViewModelItems> GetExpenses(int orgId)
+        public List<ExpensesViewModelItems> GetExpenses(int orgId, DateParameters dateVm)
         {
             var vm = new List<ExpensesViewModelItems>();
 
-            var items = db.Expenses.Where(x => x.OrganisationId == orgId).ToList();
+            var items = db.Expenses.Where(x => x.OrganisationId == orgId && x.Date >= dateVm.Start && x.Date <= dateVm.End).ToList();
 
             foreach (var item in items)
             {

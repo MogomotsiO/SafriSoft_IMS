@@ -15,8 +15,8 @@ namespace SafriSoftv1._3.Controllers.API
     [RoutePrefix("api/Journal")]
     public class JournalController : BaseApiController
     {
-        [HttpGet, Route("GetJournals")]
-        public async Task<IHttpActionResult> GetJournals()
+        [HttpPost, Route("GetJournals")]
+        public async Task<IHttpActionResult> GetJournals(DateParameters vm)
         {
             var result = new Result();
 
@@ -28,7 +28,7 @@ namespace SafriSoftv1._3.Controllers.API
 
                 var jSvc = new JournalService();
 
-                result = jSvc.GetJournals(organisationId);
+                result = jSvc.GetJournals(organisationId, vm);
 
                 result.Success = true;
                 result.Message = "Journals";

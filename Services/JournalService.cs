@@ -12,13 +12,13 @@ namespace SafriSoftv1._3.Services
 {
     public class JournalService: BaseService
     {
-        public Result GetJournals(int organisationId)
+        public Result GetJournals(int organisationId, DateParameters dateVm)
         {
             var result = new Result();
 
             var vm = new List<JournalListViewModel>();
             
-            var items = db.Journals.Where(x => x.OrganisationId == organisationId).ToList();
+            var items = db.Journals.Where(x => x.OrganisationId == organisationId && x.Date >= dateVm.Start && x.Date <= dateVm.End).ToList();
 
             foreach (var item in items)
             {

@@ -47,11 +47,20 @@ namespace SafriSoftv1._3.Services
             return vm;
         }
 
-        public List<InvoiceDetalsVm> GetInvoices(int organisationId)
+        public List<InvoiceDetalsVm> GetInvoices(int organisationId, DateParameters dateVm = null)
         {
             var vm = new List<InvoiceDetalsVm>();
 
-            var invoices = db.Invoices.Where(x => x.OrganisationId == organisationId).ToList();
+            var invoices = new List<Invoice>();
+
+            if (dateVm != null && dateVm.Start.HasValue)
+            {
+                invoices = db.Invoices.Where(x => x.OrganisationId == organisationId && x.InvoiceDate >= dateVm.Start && x.InvoiceDueDate <= dateVm.End).ToList();
+            }
+            else
+            {
+                invoices = db.Invoices.Where(x => x.OrganisationId == organisationId).ToList();
+            }
 
             foreach (var invoice in invoices)
             {
@@ -125,8 +134,8 @@ namespace SafriSoftv1._3.Services
                             AccountName = $"{account.AccountName}",
                             AccountNumber = account.AccountNumber,
                             Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
-                            Debit = invoiceAmountExclVat > 0 ? invoiceAmountExclVat : 0,
-                            Credit = invoiceAmountExclVat < 0 ? invoiceAmountExclVat : 0,
+                            Debit = 0,
+                            Credit = invoiceAmountExclVat,
                             Date = vm.InvoiceDetails.InvoiceDate,
                             Month = vm.InvoiceDetails.InvoiceDate.Month,
                             Year = vm.InvoiceDetails.InvoiceDate.Year,
@@ -154,8 +163,8 @@ namespace SafriSoftv1._3.Services
                             AccountName = $"{account.AccountName}",
                             AccountNumber = account.AccountNumber,
                             Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
-                            Debit = vatAmount > 0 ? vatAmount : 0,
-                            Credit = vatAmount < 0 ? vatAmount : 0,
+                            Debit = 0,
+                            Credit = vatAmount,
                             Date = vm.InvoiceDetails.InvoiceDate,
                             Month = vm.InvoiceDetails.InvoiceDate.Month,
                             Year = vm.InvoiceDetails.InvoiceDate.Year,
@@ -219,8 +228,8 @@ namespace SafriSoftv1._3.Services
                                 AccountName = $"{account.AccountName}",
                                 AccountNumber = account.AccountNumber,
                                 Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
-                                Debit = item.Amount > 0 ? item.Amount : 0,
-                                Credit = item.Amount < 0 ? item.Amount : 0,
+                                Debit = 0,
+                                Credit = item.Amount,
                                 Date = vm.InvoiceDetails.InvoiceDate,
                                 Month = vm.InvoiceDetails.InvoiceDate.Month,
                                 Year = vm.InvoiceDetails.InvoiceDate.Year,
@@ -248,8 +257,8 @@ namespace SafriSoftv1._3.Services
                                 AccountName = $"{account.AccountName}",
                                 AccountNumber = account.AccountNumber,
                                 Description = $"{vm.InvoiceDetails.InvoiceNumber} - {vm.InvoiceDetails.InvoiceDescription}",
-                                Debit = vatAmount > 0 ? vatAmount : 0,
-                                Credit = vatAmount < 0 ? vatAmount : 0,
+                                Debit = 0,
+                                Credit = vatAmount,
                                 Date = vm.InvoiceDetails.InvoiceDate,
                                 Month = vm.InvoiceDetails.InvoiceDate.Month,
                                 Year = vm.InvoiceDetails.InvoiceDate.Year,
@@ -335,6 +344,8 @@ namespace SafriSoftv1._3.Services
                         CustomerName = customer != null ? customer.CustomerName : string.Empty,
                         DateOrderCreated = DateTime.Now.ToString("dd/MM/yyyy"),
                         ExpectedDeliveryDate = vm.InvoiceDetails.InvoiceDueDate.ToString("dd/MM/yyyy"),
+                        DateIssued = DateTime.Now,
+                        DateDue = vm.InvoiceDetails.InvoiceDueDate,
                         NumberOfItems = qty,
                         ProductName = productName.Trim(' ').Trim('-'),
                         OrderStatus = "Processed",
@@ -475,8 +486,8 @@ namespace SafriSoftv1._3.Services
                                 AccountName = $"{account.AccountName}",
                                 AccountNumber = account.AccountNumber,
                                 Description = $"PR - {invoiceDetails.InvoiceNumber} - {invoiceDetails.InvoiceDescription}",
-                                Debit = vm.Amount > 0 ? vm.Amount * -1 : 0,
-                                Credit = vm.Amount < 0 ? vm.Amount * -1 : 0,
+                                Debit = vm.Amount * -1,
+                                Credit = 0,
                                 Date = vm.Date,
                                 Month = vm.Date.Month,
                                 Year = vm.Date.Year,

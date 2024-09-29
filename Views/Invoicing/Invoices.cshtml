@@ -228,6 +228,14 @@
 
     <script type="text/javascript">
 
+        var startDate = $('#globalStart').val();
+        var endDate = $('#globalEnd').val();
+
+        var data = {
+            Start: startDate,
+            End: endDate
+        };
+
         var invoicesDt = $("#invoicesDt").DataTable({
             scrollY: 600,
             dom: '<"bottom row"<"center-col col-md-6"B><"right-col col-md-6"f>>rtip',
@@ -236,7 +244,9 @@
             order: [[9, "asc"]],
             ajax: {
                 url: '/api/Invoicing/GetInvoices/',
-                method: 'GET',
+                method: 'POST',
+                dataType: 'json',
+                data: data,
                 "dataSrc": "Obj"
             },
             columns: [
@@ -377,6 +387,31 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
+        $('#globalRefresh').on('click', function () {
+            refresh();
+        });
+
+        function refresh() {
+            var startDate = $('#globalStart').val();
+            var endDate = $('#globalEnd').val();
+
+            var data = {
+                Start: startDate,
+                End: endDate
+            };
+
+            var url = '/api/Invoicing/GetInvoices/';
+
+            SafriSoftPostRequest(url, data, (response) => {
+                invoicesDt.clear();
+                invoicesDt.rows.add(response.Obj);
+                invoicesDt.draw(false);
+            });
+
+        }
+
+        //refresh();
+
         function viewInvoice(id) {
             window.location.href = '@Url.Action("Invoice","Invoicing")' + '/' + id;
         }
@@ -447,7 +482,9 @@
 
             }).on('fileuploadalways', function (e, data) {
 
-                invoicesDt.ajax.reload();
+                //invoicesDt.ajax.reload();
+
+                refresh();
 
                 var dropZone = $('#dropzone');
                 dropZone.removeClass('hover');
@@ -494,7 +531,8 @@
             SafriSoftPostRequest(url, data, (response) => {
 
                 if (response.Success == true) {
-                    invoicesDt.ajax.reload(function (res) {}, false);
+                    //invoicesDt.ajax.reload(function (res) {}, false);
+                    refresh();
                     $('#receivePaymentModal').modal('hide');
                     toastr.success(response.Message);
                 } else {

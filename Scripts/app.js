@@ -37,6 +37,8 @@ function SafriSoftPostRequest(url, data, callback) {
 }
 
 $(document).ajaxStart(function () {
+    $('.btn').attr('disabled', 'disabled');
+
     const loader = document.querySelector(".loader");
 
     loader.classList.remove("loader--hidden");
@@ -47,6 +49,8 @@ $(document).ajaxComplete(function () {
     const loader = document.querySelector(".loader");
 
     loader.classList.add("loader--hidden");
+
+    $('.btn').removeAttr('disabled');
 });
 
 $(function () {
